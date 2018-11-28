@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Nginx反向代理 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="反向代理反向代理介绍见百度百科 Nginx实现反向代理具体见官方文档指令很多，根据自己情况来定 栗子 Nginx配置 1234567891011server &amp;#123;    listen 80;     server_name 192.168.1.36;    location / &amp;#123;         proxy_pass       http://localhost:8000;">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx反向代理">
+<meta property="og:url" content="http://yacen.github.io/2015/07/28/nginx/2015-07-28-Nginx反向代理/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="反向代理反向代理介绍见百度百科 Nginx实现反向代理具体见官方文档指令很多，根据自己情况来定 栗子 Nginx配置 1234567891011server &amp;#123;    listen 80;     server_name 192.168.1.36;    location / &amp;#123;         proxy_pass       http://localhost:8000;">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.702Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx反向代理">
+<meta name="twitter:description" content="反向代理反向代理介绍见百度百科 Nginx实现反向代理具体见官方文档指令很多，根据自己情况来定 栗子 Nginx配置 1234567891011server &amp;#123;    listen 80;     server_name 192.168.1.36;    location / &amp;#123;         proxy_pass       http://localhost:8000;">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nginx/2015-07-28-Nginx反向代理" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/07/28/nginx/2015-07-28-Nginx反向代理/" class="article-date">
+  <time datetime="2015-07-27T16:00:00.000Z" itemprop="datePublished">2015-07-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx反向代理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h2><p>反向代理介绍见<a href="https://baike.baidu.com/item/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86" target="_blank" rel="noopener">百度百科</a></p>
+<h2 id="Nginx实现反向代理"><a href="#Nginx实现反向代理" class="headerlink" title="Nginx实现反向代理"></a>Nginx实现反向代理</h2><p>具体见<a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html" target="_blank" rel="noopener">官方文档</a><br>指令很多，根据自己情况来定</p>
+<h2 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h2><ol>
+<li><p>Nginx配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80; </span><br><span class="line">    server_name 192.168.1.36;</span><br><span class="line"></span><br><span class="line">    location / &#123; </span><br><span class="line">        proxy_pass       http://localhost:8000;</span><br><span class="line">        proxy_set_header Host      $host;</span><br><span class="line">        proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这里我们用Node.js 创建一个简单的业务服务器。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> http=<span class="built_in">require</span>(<span class="string">'http'</span>)</span><br><span class="line"><span class="keyword">var</span> server=http.createServer(<span class="function">(<span class="params">req,res</span>)=&gt;</span>&#123;</span><br><span class="line">    res.end(<span class="string">'this is node.js server\n'</span>)</span><br><span class="line">&#125;)</span><br><span class="line">server.listen(<span class="number">8000</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>访问,无论访问80端口还是8000端口都可以访问到</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx]<span class="comment"># curl http://localhost:80</span></span><br><span class="line">this is node.js server</span><br><span class="line">[root@localhost nginx]<span class="comment"># curl http://localhost:8000</span></span><br><span class="line">this is node.js server</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="proxy-pass-URL"><a href="#proxy-pass-URL" class="headerlink" title="proxy_pass URL;"></a>proxy_pass URL;</h2><p>设置代理服务器的协议和地址以及应映射位置的可选URI。</p>
+<p>可以指定“ http”或“ https”。</p>
+<p>可以将地址指定为域名或IP地址，以及可选端口</p>
+<h2 id="proxy-set-header"><a href="#proxy-set-header" class="headerlink" title="proxy_set_header"></a>proxy_set_header</h2><p>允许将字段重新定义或附加到传递给代理服务器的请求标头 。</p>
+<p>该value可以包含文本，变量，以及它们的组合。</p>
+<p>当且仅当proxy_set_header 在当前级别上没有定义指令时，这些指令才从先前级别继承 。</p>
+<p>默认情况下，只重新定义了两个字段：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">proxy_set_header Host       $proxy_host;</span><br><span class="line">proxy_set_header Connection close;</span><br></pre></td></tr></table></figure></p>
+<h2 id="X-Real-IP-或-X-Forwarded-For"><a href="#X-Real-IP-或-X-Forwarded-For" class="headerlink" title="X-Real-IP 或 X-Forwarded-For"></a>X-Real-IP 或 X-Forwarded-For</h2><p>参考(<a href="https://imququ.com/post/x-forwarded-for-header-in-http.html" target="_blank" rel="noopener">https://imququ.com/post/x-forwarded-for-header-in-http.html</a>)</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/07/28/nginx/2015-07-28-Nginx反向代理/" data-id="cjp10jdh3003edrcpbp380iq5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/08/06/nginx/2015-08-06-Nginx负载均衡/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Nginx负载均衡
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/07/20/nginx/2015-07-20-Nginx缓存/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Nginx缓存</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

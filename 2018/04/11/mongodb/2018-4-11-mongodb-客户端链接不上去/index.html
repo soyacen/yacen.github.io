@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>客户端链接不上远端mongodb数据库 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="问题当客户端链接远端mongodb数据库时 1mongo 172.16.233.128:27017 出现一下报错 12345MongoDB shell version: 2.6.10connecting to: 172.16.233.128:27017/test2018-04-11T11:20:56.773+0800 warning: Failed to connect to 172.16.233">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="客户端链接不上远端mongodb数据库">
+<meta property="og:url" content="http://yacen.github.io/2018/04/11/mongodb/2018-4-11-mongodb-客户端链接不上去/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="问题当客户端链接远端mongodb数据库时 1mongo 172.16.233.128:27017 出现一下报错 12345MongoDB shell version: 2.6.10connecting to: 172.16.233.128:27017/test2018-04-11T11:20:56.773+0800 warning: Failed to connect to 172.16.233">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.689Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="客户端链接不上远端mongodb数据库">
+<meta name="twitter:description" content="问题当客户端链接远端mongodb数据库时 1mongo 172.16.233.128:27017 出现一下报错 12345MongoDB shell version: 2.6.10connecting to: 172.16.233.128:27017/test2018-04-11T11:20:56.773+0800 warning: Failed to connect to 172.16.233">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mongodb/2018-4-11-mongodb-客户端链接不上去" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/11/mongodb/2018-4-11-mongodb-客户端链接不上去/" class="article-date">
+  <time datetime="2018-04-10T16:00:00.000Z" itemprop="datePublished">2018-04-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/mongodb/">mongodb</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      客户端链接不上远端mongodb数据库
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>当客户端链接远端mongodb数据库时</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo 172.16.233.128:27017</span><br></pre></td></tr></table></figure>
+<p>出现一下报错</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MongoDB shell version: 2.6.10</span><br><span class="line">connecting to: 172.16.233.128:27017/test</span><br><span class="line">2018-04-11T11:20:56.773+0800 warning: Failed to connect to 172.16.233.128:27017, reason: errno:111 Connection refused</span><br><span class="line">2018-04-11T11:20:56.774+0800 Error: couldn&apos;t connect to server 172.16.233.128:27017 (172.16.233.128), connection attempt failed at src/mongo/shell/mongo.js:148</span><br><span class="line">exception: connect failed</span><br></pre></td></tr></table></figure>
+<p>我google了一下,找到了解决方法:</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><h3 id="mongod-repair"><a href="#mongod-repair" class="headerlink" title="mongod --repair"></a><code>mongod --repair</code></h3><p>首先关闭远端mongodb服务,执行一下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod --repair</span><br></pre></td></tr></table></figure></p>
+<p>mongo就会自动检测问题,打印出:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">2018-04-10T20:31:11.782-0700 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine</span><br><span class="line">2018-04-10T20:31:11.782-0700 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem</span><br><span class="line">2018-04-10T20:31:11.782-0700 I STORAGE  [initandlisten] wiredtiger_open config: create,cache_size=256M,session_max=20000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000),statistics_log=(wait=0),verbose=(recovery_progress),,log=(enabled=false),</span><br><span class="line">2018-04-10T20:31:12.237-0700 I STORAGE  [initandlisten] Repairing size cache</span><br><span class="line">2018-04-10T20:31:12.237-0700 I STORAGE  [initandlisten] Verify succeeded on uri table:sizeStorer. Not salvaging.</span><br><span class="line">2018-04-10T20:31:12.238-0700 I STORAGE  [initandlisten] Repairing catalog metadata</span><br><span class="line">2018-04-10T20:31:12.239-0700 I STORAGE  [initandlisten] Verify succeeded on uri table:_mdb_catalog. Not salvaging.</span><br><span class="line">2018-04-10T20:31:12.240-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.240-0700 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.</span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.</span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] ** WARNING: This server is bound to localhost.</span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          Remote systems will be unable to connect to this server. </span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          Start the server with --bind_ip &lt;address&gt; to specify which IP </span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          addresses it should serve responses from, or with --bind_ip_all to</span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          bind to all interfaces. If this behavior is desired, start the</span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] **          server with --bind_ip 127.0.0.1 to disable this warning.</span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] ** WARNING: /sys/kernel/mm/transparent_hugepage/enabled is &apos;always&apos;.</span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] **        We suggest setting it to &apos;never&apos;</span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] ** WARNING: /sys/kernel/mm/transparent_hugepage/defrag is &apos;always&apos;.</span><br><span class="line">2018-04-10T20:31:12.243-0700 I CONTROL  [initandlisten] **        We suggest setting it to &apos;never&apos;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>可是发现原因是<code>bind_ip</code>没有设置.我就在<code>/etc/mongod.conf</code>文件中从<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bindIp: 127.0.0.1</span><br></pre></td></tr></table></figure></p>
+<p>改成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bindIp: 127.0.0.1,172.16.233.128</span><br></pre></td></tr></table></figure></p>
+<p>重启mongod服务后,就可以连接成功了.</p>
+<p>为了方便,我在写了<code>/data/db/mongodb.conf</code>配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">dbpath=/data/db/</span><br><span class="line"></span><br><span class="line">logpath=/data/db/mongo.log</span><br><span class="line"></span><br><span class="line">logappend=true</span><br><span class="line"></span><br><span class="line">fork=true</span><br><span class="line"></span><br><span class="line">port=27017</span><br><span class="line"></span><br><span class="line">bind_ip=172.16.233.128</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/04/11/mongodb/2018-4-11-mongodb-客户端链接不上去/" data-id="cjp10jdgs002rdrcpm2v9ycz7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/17/lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          lodash-array-head.indexOf.last.lastIndexOf函数实现
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/20/lodash/2018-3-20-lodash-array-flatten函数实现/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">lodash-array-flatten函数实现</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

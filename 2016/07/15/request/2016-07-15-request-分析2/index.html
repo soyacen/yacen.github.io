@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>request-分析2 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Request()构造函数123456789101112131415161718192021222324252627282930313233343536function Request (options) &amp;#123;  // if given the method property in options, set property explicitMethod to true  // exten">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="request-分析2">
+<meta property="og:url" content="http://yacen.github.io/2016/07/15/request/2016-07-15-request-分析2/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="Request()构造函数123456789101112131415161718192021222324252627282930313233343536function Request (options) &amp;#123;  // if given the method property in options, set property explicitMethod to true  // exten">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.704Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="request-分析2">
+<meta name="twitter:description" content="Request()构造函数123456789101112131415161718192021222324252627282930313233343536function Request (options) &amp;#123;  // if given the method property in options, set property explicitMethod to true  // exten">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-request/2016-07-15-request-分析2" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/15/request/2016-07-15-request-分析2/" class="article-date">
+  <time datetime="2016-07-14T16:00:00.000Z" itemprop="datePublished">2016-07-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/request/">request</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      request-分析2
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Request-构造函数"><a href="#Request-构造函数" class="headerlink" title="Request()构造函数"></a>Request()构造函数</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Request</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// if given the method property in options, set property explicitMethod to true</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// extend the Request instance with any non-reserved properties</span></span><br><span class="line">  <span class="comment">// remove any reserved functions from the options object</span></span><br><span class="line">  <span class="comment">// set Request instance to be readable and writable</span></span><br><span class="line">  <span class="comment">// call init</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> self = <span class="keyword">this</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// start with HAR, then override with additional options</span></span><br><span class="line">  <span class="keyword">if</span> (options.har) &#123;</span><br><span class="line">    self._har = <span class="keyword">new</span> Har(self)</span><br><span class="line">    options = self._har.options(options)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  stream.Stream.call(self)</span><br><span class="line">  <span class="keyword">var</span> reserved = <span class="built_in">Object</span>.keys(Request.prototype)</span><br><span class="line">  <span class="keyword">var</span> nonReserved = filterForNonReserved(reserved, options)</span><br><span class="line"></span><br><span class="line">  extend(self, nonReserved)</span><br><span class="line">  options = filterOutReservedFunctions(reserved, options)</span><br><span class="line"></span><br><span class="line">  self.readable = <span class="literal">true</span></span><br><span class="line">  self.writable = <span class="literal">true</span></span><br><span class="line">  <span class="keyword">if</span> (options.method) &#123;</span><br><span class="line">    self.explicitMethod = <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">  self._qs = <span class="keyword">new</span> Querystring(self)</span><br><span class="line">  self._auth = <span class="keyword">new</span> Auth(self)</span><br><span class="line">  self._oauth = <span class="keyword">new</span> OAuth(self)</span><br><span class="line">  self._multipart = <span class="keyword">new</span> Multipart(self)</span><br><span class="line">  self._redirect = <span class="keyword">new</span> Redirect(self)</span><br><span class="line">  self._tunnel = <span class="keyword">new</span> Tunnel(self)</span><br><span class="line">  self.init(options)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Request 构造函数，接受整理好的 options(params) 对象，new出一个request对象。</p>
+<ol>
+<li>会检查是否有har，有就会重写一些options；</li>
+<li>Request继承Stream；</li>
+<li>合并optinons属性到request对象上，从options上过滤出request没有的方法；</li>
+<li>是否明确request的method，默认是GET；</li>
+<li>初始化qs、auth、oauth、multipart、redirect、tunnel；</li>
+<li>初始化request对象。</li>
+</ol>
+<h2 id="HAR"><a href="#HAR" class="headerlink" title="HAR"></a>HAR</h2><p>HAR(HTTP Archive），是一个用来储存HTTP请求/响应信息的通用文件格式，基于JSON。这个格式的出现可以使HTTP监测工具以一种通用的格式导出所收集的数据，这些数据可以被其他支持HAR的HTTP分析工具（包括Firebug，httpwatch，Fiddler等）所使用，来分析网站的性能瓶颈。目前HAR规范最新版本为HAR 1.2。HAR文件必须是UTF-8编码，有无BOM无所谓。<br>request支持这种格式，例如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> request = <span class="built_in">require</span>(<span class="string">'request'</span>)</span><br><span class="line"> request(&#123;</span><br><span class="line">   method: <span class="string">'GET'</span>,</span><br><span class="line">   uri: <span class="string">'http://www.google.com'</span>,</span><br><span class="line"></span><br><span class="line">   har: &#123;</span><br><span class="line">     url: <span class="string">'http://www.mockbin.com/har'</span>,</span><br><span class="line">     method: <span class="string">'POST'</span>,</span><br><span class="line">     headers: [</span><br><span class="line">       &#123;</span><br><span class="line">         name: <span class="string">'content-type'</span>,</span><br><span class="line">         value: <span class="string">'application/x-www-form-urlencoded'</span></span><br><span class="line">       &#125;</span><br><span class="line">     ],</span><br><span class="line">     postData: &#123;</span><br><span class="line">       mimeType: <span class="string">'application/x-www-form-urlencoded'</span>,</span><br><span class="line">       params: [</span><br><span class="line">         &#123;</span><br><span class="line">           name: <span class="string">'foo'</span>,</span><br><span class="line">           value: <span class="string">'bar'</span></span><br><span class="line">         &#125;,</span><br><span class="line">         &#123;</span><br><span class="line">           name: <span class="string">'hello'</span>,</span><br><span class="line">           value: <span class="string">'world'</span></span><br><span class="line">         &#125;</span><br><span class="line">       ]</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;)</span><br></pre></td></tr></table></figure></p>
+<p>这段代码实际上不是GET请求<a href="http://www.google.com，而是POST请求http://www.mockbin.com。" target="_blank" rel="noopener">http://www.google.com，而是POST请求http://www.mockbin.com。</a><br>实现这种功能无非就是把har上的属性替换options上的属性，实际看看代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Har</span> (<span class="params">request</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.request = request</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Har.prototype.options = <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// skip if no har property defined</span></span><br><span class="line">  <span class="keyword">if</span> (!options.har) &#123;</span><br><span class="line">    <span class="keyword">return</span> options</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> har = &#123;&#125;</span><br><span class="line">  extend(har, options.har)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// only process the first entry</span></span><br><span class="line">  <span class="keyword">if</span> (har.log &amp;&amp; har.log.entries) &#123;</span><br><span class="line">    har = har.log.entries[<span class="number">0</span>]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// add optional properties to make validation successful</span></span><br><span class="line">  har.url = har.url || options.url || options.uri || options.baseUrl || <span class="string">'/'</span></span><br><span class="line">  har.httpVersion = har.httpVersion || <span class="string">'HTTP/1.1'</span></span><br><span class="line">  ... </span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!validate.request(har)) &#123;</span><br><span class="line">    <span class="keyword">return</span> options</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// clean up and get some utility properties</span></span><br><span class="line">  <span class="keyword">var</span> req = <span class="keyword">this</span>.prep(har)</span><br><span class="line"></span><br><span class="line">  <span class="comment">// construct new options</span></span><br><span class="line">  options.url = req.url</span><br><span class="line">  options.method = req.method</span><br><span class="line">  options.qs = req.queryObj</span><br><span class="line">  options.headers = req.headersObj</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">return</span> options</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最后也就是一个一个挪过去而已。</p>
+<h2 id="Querystring"><a href="#Querystring" class="headerlink" title="Querystring"></a>Querystring</h2><p>这里主要用了 qs 或者 querystring 模块来解析查询字符串。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> qs = <span class="built_in">require</span>(<span class="string">'qs'</span>)</span><br><span class="line"><span class="keyword">var</span> querystring = <span class="built_in">require</span>(<span class="string">'querystring'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Querystring</span> (<span class="params">request</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.request = request</span><br><span class="line">  <span class="keyword">this</span>.lib = <span class="literal">null</span></span><br><span class="line">  <span class="keyword">this</span>.useQuerystring = <span class="literal">null</span></span><br><span class="line">  <span class="keyword">this</span>.parseOptions = <span class="literal">null</span></span><br><span class="line">  <span class="keyword">this</span>.stringifyOptions = <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Querystring.prototype.init = <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.lib) &#123; <span class="keyword">return</span> &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.useQuerystring = options.useQuerystring</span><br><span class="line">  <span class="keyword">this</span>.lib = (<span class="keyword">this</span>.useQuerystring ? querystring : qs)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.parseOptions = options.qsParseOptions || &#123;&#125;</span><br><span class="line">  <span class="keyword">this</span>.stringifyOptions = options.qsStringifyOptions || &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Querystring.prototype.stringify = <span class="function"><span class="keyword">function</span> (<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (<span class="keyword">this</span>.useQuerystring)</span><br><span class="line">    ? <span class="keyword">this</span>.rfc3986(<span class="keyword">this</span>.lib.stringify(obj,</span><br><span class="line">      <span class="keyword">this</span>.stringifyOptions.sep || <span class="literal">null</span>,</span><br><span class="line">      <span class="keyword">this</span>.stringifyOptions.eq || <span class="literal">null</span>,</span><br><span class="line">      <span class="keyword">this</span>.stringifyOptions))</span><br><span class="line">    : <span class="keyword">this</span>.lib.stringify(obj, <span class="keyword">this</span>.stringifyOptions)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Querystring.prototype.parse = <span class="function"><span class="keyword">function</span> (<span class="params">str</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (<span class="keyword">this</span>.useQuerystring)</span><br><span class="line">    ? <span class="keyword">this</span>.lib.parse(str,</span><br><span class="line">      <span class="keyword">this</span>.parseOptions.sep || <span class="literal">null</span>,</span><br><span class="line">      <span class="keyword">this</span>.parseOptions.eq || <span class="literal">null</span>,</span><br><span class="line">      <span class="keyword">this</span>.parseOptions)</span><br><span class="line">    : <span class="keyword">this</span>.lib.parse(str, <span class="keyword">this</span>.parseOptions)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Querystring.prototype.rfc3986 = <span class="function"><span class="keyword">function</span> (<span class="params">str</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> str.replace(<span class="regexp">/[!'()*]/g</span>, <span class="function"><span class="keyword">function</span> (<span class="params">c</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'%'</span> + c.charCodeAt(<span class="number">0</span>).toString(<span class="number">16</span>).toUpperCase()</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Auth"><a href="#Auth" class="headerlink" title="Auth"></a>Auth</h2><p>HTTP Auth是一种基本连接认证，用http service post方式进行通讯，入参和出参都是一个参数</p>
+<p>http auth的过程：</p>
+<ol>
+<li>客户端发送http请求</li>
+<li>服务器发现配置了http auth，于是检查request里面有没有”Authorization”的http header</li>
+<li>如果有，则判断Authorization里面的内容是否在用户列表里面，Authorization header的典型数据为”Authorization: Basic jdhaHY0=”，其中Basic表示基础认证， jdhaHY0=是base64编码的”user:passwd”字符串。</li>
+<li>如果没有，或者用户密码不对，则返回http code 401页面给客户端</li>
+<li>标准的http浏览器在收到401页面之后，应该弹出一个对话框让用户输入帐号密码；并在用户点确认的时候再次发出请求，这次请求里面将带上Authorization header</li>
+</ol>
+<p>一次典型的访问场景是：</p>
+<ol>
+<li>浏览器发送http请求（没有Authorization header）</li>
+<li>服务器端返回401页面</li>
+<li>浏览器弹出认证对话框</li>
+<li>用户输入帐号密码，并点确认</li>
+<li>浏览器再次发出http请求（带着Authorization header）</li>
+<li>服务器端认证通过，并返回页面</li>
+<li>浏览器显示页面</li>
+</ol>
+<p>request实现源码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Auth.prototype.basic = <span class="function"><span class="keyword">function</span> (<span class="params">user, pass, sendImmediately</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> self = <span class="keyword">this</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> user !== <span class="string">'string'</span> || (pass !== <span class="literal">undefined</span> &amp;&amp; <span class="keyword">typeof</span> pass !== <span class="string">'string'</span>)) &#123;</span><br><span class="line">    self.request.emit(<span class="string">'error'</span>, <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'auth() received invalid user or password'</span>))</span><br><span class="line">  &#125;</span><br><span class="line">  self.user = user</span><br><span class="line">  self.pass = pass</span><br><span class="line">  self.hasAuth = <span class="literal">true</span></span><br><span class="line">  <span class="keyword">var</span> header = user + <span class="string">':'</span> + (pass || <span class="string">''</span>)</span><br><span class="line">  <span class="keyword">if</span> (sendImmediately || <span class="keyword">typeof</span> sendImmediately === <span class="string">'undefined'</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> authHeader = <span class="string">'Basic '</span> + toBase64(header)</span><br><span class="line">    self.sentAuth = <span class="literal">true</span></span><br><span class="line">    <span class="keyword">return</span> authHeader</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>首先看下服务器代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> basicServer = http.createServer(<span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ok</span><br><span class="line">    <span class="keyword">if</span> (req.headers.authorization) &#123;</span><br><span class="line">      <span class="keyword">if</span> (req.headers.authorization === <span class="string">'Basic '</span> + Buffer.from(<span class="string">'user123:pass123'</span>).toString(<span class="string">'base64'</span>)) &#123;</span><br><span class="line">        ok = <span class="literal">true</span></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Bad auth header, don't send back WWW-Authenticate header</span></span><br><span class="line">        ok = <span class="literal">false</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// No auth header, send back WWW-Authenticate header</span></span><br><span class="line">      ok = <span class="literal">false</span></span><br><span class="line">      res.setHeader(<span class="string">'www-authenticate'</span>, <span class="string">'Basic realm="Private"'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">      res.end(<span class="string">'ok'</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      res.statusCode = <span class="number">401</span></span><br><span class="line">      res.end(<span class="string">'401'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;).listen(<span class="number">0</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>客户端代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> r = request(&#123;</span><br><span class="line">  <span class="string">'method'</span>: <span class="string">'POST'</span>,</span><br><span class="line">  <span class="string">'form'</span>: &#123; <span class="string">'key'</span>: <span class="string">'value'</span> &#125;,</span><br><span class="line">  <span class="string">'uri'</span>: basicServer.url + <span class="string">'/post/'</span>,</span><br><span class="line">  <span class="string">'auth'</span>: &#123;</span><br><span class="line">    <span class="string">'user'</span>: <span class="string">'user123'</span>,</span><br><span class="line">    <span class="string">'pass'</span>: <span class="string">'pass123'</span>,</span><br><span class="line">    <span class="string">'sendImmediately'</span>: <span class="literal">false</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">error, res, body</span>) </span>&#123;&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>使用http auth的场景不会用cookie，也就是说每次都会送帐号密码信息过去。然后我们都知道base64编码基本上等于明文，这削弱了安全。</p>
+<p>由于种种缺点，http auth现在用的并不多。不过在路由器等场合还是有应用的，原因是http auth最简单，使用起来几乎是零成本。</p>
+<h2 id="Multipart"><a href="#Multipart" class="headerlink" title="Multipart"></a>Multipart</h2><p>Multipart 是上传文件用的，这里就不贴代码了，无非也是拼接request 请求的Header 和 Body</p>
+<h2 id="Redirect"><a href="#Redirect" class="headerlink" title="Redirect"></a>Redirect</h2><p>Redirect 重定向一般在浏览器常见，当遇到30X时候都会重定向到新的页面，request 也是支持的，来看看源码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Redirect.prototype.redirectTo = <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">var</span> redirectTo = <span class="literal">null</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">var</span> location = response.caseless.get(<span class="string">'location'</span>)</span><br><span class="line">  ...</span><br><span class="line">  redirectTo = location</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">return</span> redirectTo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Redirect.prototype.onResponse = <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> self = <span class="keyword">this</span></span><br><span class="line">  <span class="keyword">var</span> request = self.request</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> redirectTo = self.redirectTo(response)</span><br><span class="line">  ...</span><br><span class="line">  response.resume()</span><br><span class="line">  ···</span><br><span class="line">  request.uri = url.parse(redirectTo)</span><br><span class="line">  ···</span><br><span class="line"></span><br><span class="line">  request.emit(<span class="string">'redirect'</span>)</span><br><span class="line">  request.init()</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>得到需要重定向的地址后，初始化request对象，重新发送。</p>
+<h2 id="Tunnel"><a href="#Tunnel" class="headerlink" title="Tunnel"></a>Tunnel</h2><p>Tunnel 通道主要用在代理服务业务上，代码如下：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Tunnel</span> (<span class="params">request</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.request = request</span><br><span class="line">  <span class="keyword">this</span>.proxyHeaderWhiteList = defaultProxyHeaderWhiteList</span><br><span class="line">  <span class="keyword">this</span>.proxyHeaderExclusiveList = []</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> request.tunnel !== <span class="string">'undefined'</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.tunnelOverride = request.tunnel</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>proxyHeaderWhiteList 是一个与 代理服务器 贡献的 headers, 并且request 提供了一些默认headers；</li>
+<li>proxyHeaderExclusiveList 是仅仅与 代理服务器 共享的headers，而不与目标服务器共享的headers；</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2016/07/15/request/2016-07-15-request-分析2/" data-id="cjp10jdhj004idrcpqdz68zap" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/07/25/request/2016-07-25-request-分析3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          request-分析3
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/07/05/request/2016-07-05-request-分析1/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">request-分析1</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

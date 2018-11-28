@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>lodash-array-head.indexOf.last.lastIndexOf函数实现 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言今天所实现的是head(),indexOf,last,lastIndexOf函数。 head()这个方法返回获取数组 array 的第一个元素。 我的实现是123456function head(array)&amp;#123;    if(!array || !Array.isArray(array)||array.length&amp;lt;=0)&amp;#123;        return undefine">
+<meta name="keywords" content="lodash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lodash-array-head.indexOf.last.lastIndexOf函数实现">
+<meta property="og:url" content="http://yacen.github.io/2018/04/17/lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="前言今天所实现的是head(),indexOf,last,lastIndexOf函数。 head()这个方法返回获取数组 array 的第一个元素。 我的实现是123456function head(array)&amp;#123;    if(!array || !Array.isArray(array)||array.length&amp;lt;=0)&amp;#123;        return undefine">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.689Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lodash-array-head.indexOf.last.lastIndexOf函数实现">
+<meta name="twitter:description" content="前言今天所实现的是head(),indexOf,last,lastIndexOf函数。 head()这个方法返回获取数组 array 的第一个元素。 我的实现是123456function head(array)&amp;#123;    if(!array || !Array.isArray(array)||array.length&amp;lt;=0)&amp;#123;        return undefine">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/04/17/lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现/" class="article-date">
+  <time datetime="2018-04-16T16:00:00.000Z" itemprop="datePublished">2018-04-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      lodash-array-head.indexOf.last.lastIndexOf函数实现
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天所实现的是<code>head()</code>,<code>indexOf</code>,<code>last</code>,<code>lastIndexOf</code>函数。</p>
+<h2 id="head"><a href="#head" class="headerlink" title="head()"></a>head()</h2><p>这个方法返回获取数组 array 的第一个元素。</p>
+<h3 id="我的实现是"><a href="#我的实现是" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">head</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array || !<span class="built_in">Array</span>.isArray(array)||array.length&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">undefined</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> array[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接array[0].</p>
+<h3 id="lodash的实现是："><a href="#lodash的实现是：" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">head</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (array != <span class="literal">null</span> &amp;&amp; array.length)</span><br><span class="line">    ? array[<span class="number">0</span>]</span><br><span class="line">    : <span class="literal">undefined</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基本一样</p>
+<h2 id="indexOf"><a href="#indexOf" class="headerlink" title="indexOf()"></a>indexOf()</h2><p>使用 SameValueZero 等值比较，返回首次 value 在数组array中被找到的 索引值， 如果 fromIndex 为负值，将从数组array尾端索引进行匹配。</p>
+<h3 id="我的实现是-1"><a href="#我的实现是-1" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">indexOf</span>(<span class="params">array, value, fromIndex=<span class="number">0</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array|| !<span class="built_in">Array</span>.isArray(array)||array.length&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i=fromIndex,len=array.length;i&lt;len;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(array[i]===value)&#123;</span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>for</code>循环遍历数组,查找第一个出现的元素.</p>
+<h3 id="lodash的实现是：-1"><a href="#lodash的实现是：-1" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">indexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> index = fromIndex == <span class="literal">null</span> ? <span class="number">0</span> : +fromIndex</span><br><span class="line">  <span class="keyword">if</span> (index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    index = <span class="built_in">Math</span>.max(length + index, <span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> baseIndexOf(array, value, index)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseIndexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> value === value</span><br><span class="line">    ? strictIndexOf(array, value, fromIndex)</span><br><span class="line">    : baseFindIndex(array, baseIsNaN, fromIndex)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">strictIndexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> index = fromIndex - <span class="number">1</span></span><br><span class="line">  <span class="keyword">const</span> &#123; length &#125; = array</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (++index &lt; length) &#123;</span><br><span class="line">    <span class="keyword">if</span> (array[index] === value) &#123;</span><br><span class="line">      <span class="keyword">return</span> index</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseFindIndex</span>(<span class="params">array, predicate, fromIndex, fromRight</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; length &#125; = array</span><br><span class="line">  <span class="keyword">let</span> index = fromIndex + (fromRight ? <span class="number">1</span> : <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> ((fromRight ? index-- : ++index &lt; length)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (predicate(array[index], index, array)) &#123;</span><br><span class="line">      <span class="keyword">return</span> index</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里可能有点疑惑,怎么这么烦?瞧见lodash做了很多安全的保证，并支持负数。</p>
+<p>有些代码比较奇特.比如<code>let index = fromIndex == null ? 0 : +fromIndex</code>中<code>+fromIndex</code>是为了传入的<code>fromIndex</code>有可能时<code>string</code>,把它转成<code>number</code>，相当于<code>Number(value)</code>。</p>
+<p><code>value === value</code>这个我一开始也没明白，什么鬼。往后看发现<code>baseFindIndex(array, baseIsNaN, fromIndex)</code>传<code>NAN</code>，我接着试了一下<code>NaN === NaN</code>果然是false，好吧…</p>
+<h2 id="last"><a href="#last" class="headerlink" title="last()"></a>last()</h2><p>获取array中的最后一个元素。</p>
+<h3 id="我的实现是："><a href="#我的实现是：" class="headerlink" title="我的实现是："></a>我的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">last</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array || !<span class="built_in">Array</span>.isArray(array) || array.length &lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">undefined</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> array[array.length<span class="number">-1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>直接返回<code>array[array.length-1]</code></p>
+<h3 id="lodash的实现"><a href="#lodash的实现" class="headerlink" title="lodash的实现"></a>lodash的实现</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">last</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length</span><br><span class="line">  <span class="keyword">return</span> length ? array[length - <span class="number">1</span>] : <span class="literal">undefined</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>差不多</p>
+<h2 id="lastIndexOf"><a href="#lastIndexOf" class="headerlink" title="lastIndexOf()"></a>lastIndexOf()</h2><h3 id="我的实现是：-1"><a href="#我的实现是：-1" class="headerlink" title="我的实现是："></a>我的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">lastIndexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!array || !<span class="built_in">Array</span>.isArray(array) || array.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    fromIndex = fromIndex == <span class="literal">undefined</span> ? array.length - <span class="number">1</span> : fromIndex;</span><br><span class="line">    <span class="keyword">return</span> array.lastIndexOf(value, fromIndex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>偷懒，用了ES5语法。</p>
+<h3 id="lodash的实现-1"><a href="#lodash的实现-1" class="headerlink" title="lodash的实现"></a>lodash的实现</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">lastIndexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> index = length</span><br><span class="line">  <span class="keyword">if</span> (fromIndex !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">    index = index &lt; <span class="number">0</span> ? <span class="built_in">Math</span>.max(length + index, <span class="number">0</span>) : <span class="built_in">Math</span>.min(index, length - <span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value === value</span><br><span class="line">    ? strictLastIndexOf(array, value, index)</span><br><span class="line">    : baseFindIndex(array, baseIsNaN, index, <span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/04/17/lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现/" data-id="cjp10jdg4001fdrcpkopgyk9f" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lodash/">lodash</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/04/24/nodejs/2018-4-24-generator-怎么样判断一个函数是Generator/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          怎么样判断一个函数是Generator
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/04/11/mongodb/2018-4-11-mongodb-客户端链接不上去/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">客户端链接不上远端mongodb数据库</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>egg-core源码解析 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="egg.jsegg.js是阿里开源的node.js企业级框架，它在koa上封装一层，使得开发大型应用时候方便。egg.js官网 egg-coreegg-core 是egg.js的核心代码实现的package，它导出了基于egg开发时常用的四个类：1234567891011const EggCore = require(&apos;./lib/egg&apos;);const EggLoader = require(&apos;">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="egg-core源码解析">
+<meta property="og:url" content="http://yacen.github.io/2018/05/17/egg/2018-5-17-egg-core源码解析/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="egg.jsegg.js是阿里开源的node.js企业级框架，它在koa上封装一层，使得开发大型应用时候方便。egg.js官网 egg-coreegg-core 是egg.js的核心代码实现的package，它导出了基于egg开发时常用的四个类：1234567891011const EggCore = require(&apos;./lib/egg&apos;);const EggLoader = require(&apos;">
+<meta property="og:locale" content="Zh">
+<meta property="og:image" content="http://yacen.github.io/2018/05/17/egg/2018-5-17-egg-core源码解析/JFKAMfmPehWfhBPdCjrw.svg">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.687Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="egg-core源码解析">
+<meta name="twitter:description" content="egg.jsegg.js是阿里开源的node.js企业级框架，它在koa上封装一层，使得开发大型应用时候方便。egg.js官网 egg-coreegg-core 是egg.js的核心代码实现的package，它导出了基于egg开发时常用的四个类：1234567891011const EggCore = require(&apos;./lib/egg&apos;);const EggLoader = require(&apos;">
+<meta name="twitter:image" content="http://yacen.github.io/2018/05/17/egg/2018-5-17-egg-core源码解析/JFKAMfmPehWfhBPdCjrw.svg">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-egg/2018-5-17-egg-core源码解析" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/" class="article-date">
+  <time datetime="2018-05-16T16:00:00.000Z" itemprop="datePublished">2018-05-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/egg/">egg</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      egg-core源码解析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="egg-js"><a href="#egg-js" class="headerlink" title="egg.js"></a>egg.js</h2><p>egg.js是阿里开源的node.js企业级框架，它在koa上封装一层，使得开发大型应用时候方便。<a href="https://eggjs.org" target="_blank" rel="noopener">egg.js官网</a><br><img src="JFKAMfmPehWfhBPdCjrw.svg" alt="logo"></p>
+<h2 id="egg-core"><a href="#egg-core" class="headerlink" title="egg-core"></a>egg-core</h2><p><a href="https://github.com/eggjs/egg-core" target="_blank" rel="noopener">egg-core</a> 是egg.js的核心代码实现的package，它导出了基于egg开发时常用的四个类：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> EggCore = <span class="built_in">require</span>(<span class="string">'./lib/egg'</span>);</span><br><span class="line"><span class="keyword">const</span> EggLoader = <span class="built_in">require</span>(<span class="string">'./lib/loader/egg_loader'</span>);</span><br><span class="line"><span class="keyword">const</span> BaseContextClass = <span class="built_in">require</span>(<span class="string">'./lib/utils/base_context_class'</span>);</span><br><span class="line"><span class="keyword">const</span> utils = <span class="built_in">require</span>(<span class="string">'./lib/utils'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  EggCore,</span><br><span class="line">  EggLoader,</span><br><span class="line">  BaseContextClass,</span><br><span class="line">  utils,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="EggCore"><a href="#EggCore" class="headerlink" title="EggCore"></a>EggCore</h3><p><a href="https://github.com/eggjs/egg-core/blob/master/lib/egg.js" target="_blank" rel="noopener">EggCore</a> 是对koa的一个封装。如代码。它直接继承于koa:<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> KoaApplication = <span class="built_in">require</span>(<span class="string">'koa'</span>);</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EggCore</span> <span class="keyword">extends</span> <span class="title">KoaApplication</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = EggCore;</span><br></pre></td></tr></table></figure></p>
+<h4 id="constructor-NaN"><a href="#constructor-NaN" class="headerlink" title="constructor"></a>constructor</h4><p>EggCore的构造函数做了许多初始化的操作，比如:</p>
+<ol>
+<li>确定应用工作目录，一种一个作用是egg自动加载各个<a href="https://eggjs.org/zh-cn/basics/structure.html" target="_blank" rel="noopener">模块</a>的js文件；</li>
+<li>确定工作进程，详情见<a href="https://eggjs.org/zh-cn/core/cluster-and-ipc.html" target="_blank" rel="noopener">多进程模型和进程间通讯</a>；</li>
+<li>注册应用关闭时回调函数集合；</li>
+<li>设置超时时间；</li>
+<li>logger设置；</li>
+<li>ctx、controller、service的基类同为BaseContextClass；</li>
+<li>初始化loader；</li>
+</ol>
+<p>初始化做完后，就会调用<code>[INIT_READY]()</code>方法。这个方法会注册一些回调。</p>
+<h3 id="Eggloader"><a href="#Eggloader" class="headerlink" title="Eggloader"></a>Eggloader</h3><p><a href="https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js" target="_blank" rel="noopener">Eggloader</a><br>Loader可以说是egg的一个精华所在。详细介绍见<a href="https://eggjs.org/zh-cn/advanced/loader.html" target="_blank" rel="noopener">Loader</a>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.pkg = utility.readJSONSync(path.join(<span class="keyword">this</span>.options.baseDir, <span class="string">'package.json'</span>));</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.eggPaths = <span class="keyword">this</span>.getEggPaths();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.serverEnv = <span class="keyword">this</span>.getServerEnv();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.appInfo = <span class="keyword">this</span>.getAppInfo();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.serverScope = options.serverScope !== <span class="literal">undefined</span></span><br><span class="line">      ? options.serverScope</span><br><span class="line">      : <span class="keyword">this</span>.getServerScope();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Loader的构造函数主要逻辑有</p>
+<ol>
+<li>读取package.json文件</li>
+<li>获取所有继承与egg.Application框架的目录，loader将会加载他们。</li>
+<li>获取服务环境，有test环境、local环境和production环境等。</li>
+<li>获取应用信息，有appName、dir、env、scope、pkg等。</li>
+<li>获取服务作用域</li>
+</ol>
+<p>Loader还有几个方法:</p>
+<h4 id="loadFile"><a href="#loadFile" class="headerlink" title="loadFile"></a>loadFile</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">loadFile(filepath, ...inject) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加载一个js文件，返回这个js文件的exports对象，如果exports是一个function，就会立即执行。其实底层很简单，就是用require()函数。</p>
+<h4 id="getLoadUnits"><a href="#getLoadUnits" class="headerlink" title="getLoadUnits"></a>getLoadUnits</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">getLoadUnits() &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取所有加载的模块，包括：</p>
+<ol>
+<li>plugin</li>
+<li>framework</li>
+<li>app</li>
+</ol>
+<h4 id="loadToApp"><a href="#loadToApp" class="headerlink" title="loadToApp"></a>loadToApp</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">loadToApp(directory, property, opt) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用FileLoader加载文件，挂载到egg.Application对象上。</p>
+<h4 id="loadToContext"><a href="#loadToContext" class="headerlink" title="loadToContext"></a>loadToContext</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">loadToContext(directory, property, opt) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用loadToContext加载文件，挂载到ctx对象上。</p>
+<h3 id="BaseContextClass"><a href="#BaseContextClass" class="headerlink" title="BaseContextClass"></a>BaseContextClass</h3><p><a href="https://github.com/eggjs/egg-core/blob/master/lib/utils/base_context_class.js" target="_blank" rel="noopener">BaseContextClass</a><br>这个类是所有egg的ctx、controller、service的基类，仅仅定义了构造函数，定义了一些公用的属性，有ctx、app、config和service</p>
+<h3 id="utils"><a href="#utils" class="headerlink" title="utils"></a>utils</h3><p><a href="https://github.com/eggjs/egg-core/blob/master/lib/utils/index.js" target="_blank" rel="noopener">utils</a><br>这个类是实现egg基础的工具类，有几个方法：</p>
+<h4 id="loadFile-1"><a href="#loadFile-1" class="headerlink" title="loadFile"></a>loadFile</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">loadFile(filepath) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// if not js module, just return content buffer</span></span><br><span class="line">    <span class="keyword">const</span> extname = path.extname(filepath);</span><br><span class="line">    <span class="keyword">if</span> (extname &amp;&amp; !<span class="built_in">require</span>.extensions[extname]) &#123;</span><br><span class="line">      <span class="keyword">return</span> fs.readFileSync(filepath);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// require js module</span></span><br><span class="line">    <span class="keyword">const</span> obj = <span class="built_in">require</span>(filepath);</span><br><span class="line">    <span class="keyword">if</span> (!obj) <span class="keyword">return</span> obj;</span><br><span class="line">    <span class="comment">// it's es module</span></span><br><span class="line">    <span class="keyword">if</span> (obj.__esModule) <span class="keyword">return</span> <span class="string">'default'</span> <span class="keyword">in</span> obj ? obj.default : obj;</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    err.message = <span class="string">`[egg-core] load file: <span class="subst">$&#123;filepath&#125;</span>, error: <span class="subst">$&#123;err.message&#125;</span>`</span>;</span><br><span class="line">    <span class="keyword">throw</span> err;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法就是上面loader.loadFile()的底层实现。</p>
+<h4 id="async-callFn"><a href="#async-callFn" class="headerlink" title="async callFn"></a>async callFn</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> callFn(fn, args, ctx) &#123;</span><br><span class="line">  args = args || [];</span><br><span class="line">  <span class="keyword">if</span> (!is.function(fn)) <span class="keyword">return</span>;</span><br><span class="line">  <span class="keyword">if</span> (is.generatorFunction(fn)) fn = co.wrap(fn);</span><br><span class="line">  <span class="keyword">return</span> ctx ? fn.call(ctx, ...args) : fn(...args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数就为了方便使用async/await调用方式的。</p>
+<h4 id="middleware"><a href="#middleware" class="headerlink" title="middleware"></a>middleware</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">middleware(fn) &#123;</span><br><span class="line">  <span class="keyword">return</span> is.generatorFunction(fn) ? convert(fn) : fn;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+<p>将koa v1.x形式的generator函数转成koa v2.x 的middleware</p>
+<h3 id="FileLoader"><a href="#FileLoader" class="headerlink" title="FileLoader"></a>FileLoader</h3><h4 id="constructor"><a href="#constructor" class="headerlink" title="constructor"></a>constructor</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">  <span class="keyword">this</span>.options = <span class="built_in">Object</span>.assign(&#123;&#125;, defaults, options);</span><br><span class="line">  <span class="comment">// compatible old options _lowercaseFirst_</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.options.lowercaseFirst === <span class="literal">true</span>) &#123;</span><br><span class="line">    deprecate(<span class="string">'lowercaseFirst is deprecated, use caseStyle instead'</span>);</span><br><span class="line">    <span class="keyword">this</span>.options.caseStyle = <span class="string">'lower'</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>fileLoader的构造函数仅仅初始化了options，options包括：</p>
+<ul>
+<li>options.directory - directories to be loaded</li>
+<li>options.target - attach the target object from loaded files</li>
+<li>options.match - match the files when load, support glob, default to all js files</li>
+<li>options.ignore - ignore the files when load, support glob</li>
+<li>options.initializer - custom file exports, receive two parameters, first is the inject object(if not js file, will be content buffer), second is an <code>options</code> object that contain <code>path</code></li>
+<li>options.call - determine whether invoke when exports is function</li>
+<li>options.override - determine whether override the property when get the same name</li>
+<li>options.inject - an object that be the argument when invoke the function</li>
+<li>options.filter - a function that filter the exports which can be loaded</li>
+<li>options.caseStyle - set property’s case when converting a filepath to property list.</li>
+</ul>
+<p>fileLoader最主要还是load方法</p>
+<h4 id="load"><a href="#load" class="headerlink" title="load"></a>load</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">load() &#123;</span><br><span class="line">  <span class="comment">// 解析所有exports组成的数组items，每一个item都包含fullpath, properties, exports，properties就是文件路径映射的属性名数组。</span></span><br><span class="line">  <span class="keyword">const</span> items = <span class="keyword">this</span>.parse();</span><br><span class="line">  <span class="comment">// 被挂载的目标对象target</span></span><br><span class="line">  <span class="keyword">const</span> target = <span class="keyword">this</span>.options.target;</span><br><span class="line">  <span class="comment">// 遍历items，以对象属性的形式想target上挂载。</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> item <span class="keyword">of</span> items) &#123;</span><br><span class="line">    debug(<span class="string">'loading item %j'</span>, item);</span><br><span class="line">    <span class="comment">// item &#123; properties: [ 'a', 'b', 'c'], exports &#125;</span></span><br><span class="line">    <span class="comment">// =&gt; target.a.b.c = exports</span></span><br><span class="line">    item.properties.reduce(<span class="function">(<span class="params">target, property, index</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> obj;</span><br><span class="line">      <span class="keyword">const</span> properties = item.properties.slice(<span class="number">0</span>, index + <span class="number">1</span>).join(<span class="string">'.'</span>);</span><br><span class="line">      <span class="keyword">if</span> (index === item.properties.length - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (property <span class="keyword">in</span> target) &#123;</span><br><span class="line">          <span class="keyword">if</span> (!<span class="keyword">this</span>.options.override) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`can't overwrite property '<span class="subst">$&#123;properties&#125;</span>' from <span class="subst">$&#123;target[property][FULLPATH]&#125;</span> by <span class="subst">$&#123;item.fullpath&#125;</span>`</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        obj = item.exports;</span><br><span class="line">        <span class="keyword">if</span> (obj &amp;&amp; !is.primitive(obj)) &#123;</span><br><span class="line">          obj[FULLPATH] = item.fullpath;</span><br><span class="line">          obj[EXPORTS] = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        obj = target[property] || &#123;&#125;;</span><br><span class="line">      &#125;</span><br><span class="line">      target[property] = obj;</span><br><span class="line">      debug(<span class="string">'loaded %s'</span>, properties);</span><br><span class="line">      <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;, target);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> target;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>load方法功能就是向目标对象 挂载 文件exports出的对象，同事把文件路径映射成对象属性的形式。比如<code>app/controller/group/repository.js</code> =&gt; <code>target.group.repository</code></p>
+<h3 id="ContextLoader"><a href="#ContextLoader" class="headerlink" title="ContextLoader"></a>ContextLoader</h3><p>看完FileLoader，在看ContextLoader就更简单了，ContextLoader 直接继承 FileLoader，只是构造函数加了些东西：</p>
+<h4 id="constructor-1"><a href="#constructor-1" class="headerlink" title="constructor"></a>constructor</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="keyword">const</span> target = options.target = &#123;&#125;;</span><br><span class="line">    <span class="comment">// options.fieldClass - determine the field name of inject object.</span></span><br><span class="line">    <span class="keyword">if</span> (options.fieldClass) &#123;</span><br><span class="line">      options.inject[options.fieldClass] = target;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">super</span>(options);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> app = <span class="keyword">this</span>.options.inject;</span><br><span class="line">    <span class="keyword">const</span> property = options.property;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(app.context, property, &#123;</span><br><span class="line">      get() &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>[CLASSLOADER]) &#123;</span><br><span class="line">          <span class="keyword">this</span>[CLASSLOADER] = <span class="keyword">new</span> <span class="built_in">Map</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">const</span> classLoader = <span class="keyword">this</span>[CLASSLOADER];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> instance = classLoader.get(property);</span><br><span class="line">        <span class="keyword">if</span> (!instance) &#123;</span><br><span class="line">          instance = getInstance(target, <span class="keyword">this</span>);</span><br><span class="line">          classLoader.set(property, instance);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getInstance</span>(<span class="params">values, ctx</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> Class = values[EXPORTS] ? values : <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">let</span> instance;</span><br><span class="line">  <span class="keyword">if</span> (Class) &#123;</span><br><span class="line">    <span class="keyword">if</span> (is.class(Class)) &#123;</span><br><span class="line">      instance = <span class="keyword">new</span> Class(ctx);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      instance = Class;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (is.primitive(values)) &#123;</span><br><span class="line">    instance = values;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    instance = <span class="keyword">new</span> ClassLoader(&#123; ctx, <span class="attr">properties</span>: values &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出，构造函数额外的用<code>Object.defineProperty()</code>方法向<code>app.context</code>上定义了<code>getter</code>,当每次访问时候，就会从缓存中拿到classLoader，再用classLoader获取所需要的对象，这里有懒加载形式。看看classLoader实现：</p>
+<h4 id="ClassLoader"><a href="#ClassLoader" class="headerlink" title="ClassLoader"></a>ClassLoader</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassLoader</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="keyword">const</span> properties = options.properties;</span><br><span class="line">    <span class="keyword">this</span>._cache = <span class="keyword">new</span> <span class="built_in">Map</span>();</span><br><span class="line">    <span class="keyword">this</span>._ctx = options.ctx;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> property <span class="keyword">in</span> properties) &#123;</span><br><span class="line">      <span class="comment">// 定义getter，</span></span><br><span class="line">      <span class="keyword">this</span>.defineProperty(property, properties[property]);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  defineProperty(property, values) &#123;</span><br><span class="line">    <span class="comment">// 定义属性</span></span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(<span class="keyword">this</span>, property, &#123;</span><br><span class="line">      get() &#123;</span><br><span class="line">        <span class="comment">// 从_cache中获取instance</span></span><br><span class="line">        <span class="keyword">let</span> instance = <span class="keyword">this</span>._cache.get(property);</span><br><span class="line">        <span class="comment">// 如果instance为null</span></span><br><span class="line">        <span class="keyword">if</span> (!instance) &#123;</span><br><span class="line">          <span class="comment">// 得到instance</span></span><br><span class="line">          instance = getInstance(values, <span class="keyword">this</span>._ctx);</span><br><span class="line">          <span class="comment">// 把instance放入_cache</span></span><br><span class="line">          <span class="keyword">this</span>._cache.set(property, instance);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ClassLoader就是相当与一个代理，当访问一个属性时候，其实最终到访问到classloader中。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>egg的精华所在就在loader这里，这里我仅仅粗浅的认识下，还需要更深入的学习。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/05/17/egg/2018-5-17-egg-core源码解析/" data-id="cjp10jdfl0008drcptg37bg0v" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          使用js-yaml在Node.js中开始使用YAML
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">nodejs执行浅析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

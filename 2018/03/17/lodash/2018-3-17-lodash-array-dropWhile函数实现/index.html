@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>lodash-array-dropWhile函数实现 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言今天所实现的是dropWhile()和dropRightWhile()函数。 dropWhile()创建一个切片数组，去除array中从起点开始到 predicate 返回假值结束部分。predicate 会传入3个参数： (value, index, array)。 我的实现是1234567891011121314151617181920212223242526272829303132333">
+<meta name="keywords" content="lodash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="lodash-array-dropWhile函数实现">
+<meta property="og:url" content="http://yacen.github.io/2018/03/17/lodash/2018-3-17-lodash-array-dropWhile函数实现/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="前言今天所实现的是dropWhile()和dropRightWhile()函数。 dropWhile()创建一个切片数组，去除array中从起点开始到 predicate 返回假值结束部分。predicate 会传入3个参数： (value, index, array)。 我的实现是1234567891011121314151617181920212223242526272829303132333">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.689Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lodash-array-dropWhile函数实现">
+<meta name="twitter:description" content="前言今天所实现的是dropWhile()和dropRightWhile()函数。 dropWhile()创建一个切片数组，去除array中从起点开始到 predicate 返回假值结束部分。predicate 会传入3个参数： (value, index, array)。 我的实现是1234567891011121314151617181920212223242526272829303132333">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-lodash/2018-3-17-lodash-array-dropWhile函数实现" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/17/lodash/2018-3-17-lodash-array-dropWhile函数实现/" class="article-date">
+  <time datetime="2018-03-16T16:00:00.000Z" itemprop="datePublished">2018-03-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      lodash-array-dropWhile函数实现
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天所实现的是<code>dropWhile()</code>和<code>dropRightWhile()</code>函数。</p>
+<h2 id="dropWhile"><a href="#dropWhile" class="headerlink" title="dropWhile()"></a>dropWhile()</h2><p>创建一个切片数组，去除<code>array</code>中从起点开始到 <code>predicate</code> 返回假值结束部分。<code>predicate</code> 会传入3个参数： <code>(value, index, array)</code>。</p>
+<h3 id="我的实现是"><a href="#我的实现是" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">dropWhile</span>(<span class="params">array, predicate</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!array || !<span class="built_in">Array</span>.isArray(array) || array.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> [];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(!predicate)&#123;</span><br><span class="line">    <span class="keyword">return</span> array.concat();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> except;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> predicate === <span class="string">'function'</span>) &#123;</span><br><span class="line">    except = predicate;</span><br><span class="line">  &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">Array</span>.isArray(predicate))&#123;</span><br><span class="line">    except = <span class="function"><span class="params">obj</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> flag=<span class="literal">true</span>;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;predicate.length;i+=<span class="number">2</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(obj[predicate[i]] !== predicate[i+<span class="number">1</span>])</span><br><span class="line">        &#123;</span><br><span class="line">          flag=<span class="literal">false</span>;</span><br><span class="line">        &#125;   </span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> flag;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;<span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> predicate === <span class="string">'object'</span>) &#123;</span><br><span class="line">    except = <span class="function"><span class="params">obj</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> flag=<span class="literal">true</span>;</span><br><span class="line">      <span class="keyword">for</span>( <span class="keyword">var</span> key <span class="keyword">in</span> obj)&#123;</span><br><span class="line">        <span class="keyword">if</span>(obj[key] !== predicate[key])</span><br><span class="line">        &#123;</span><br><span class="line">          flag=<span class="literal">false</span>;</span><br><span class="line">        &#125;   </span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> flag;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">typeof</span> predicate===<span class="string">'string'</span>)&#123;</span><br><span class="line">    except=<span class="function"><span class="params">obj</span>=&gt;</span>&#123;</span><br><span class="line">      <span class="keyword">return</span> obj[predicate];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> array.concat();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> exceptArr=[];</span><br><span class="line">  array.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">obj,index</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(except(obj))&#123;</span><br><span class="line">      exceptArr.push(index);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">var</span> start=<span class="number">0</span>;</span><br><span class="line">  exceptArr.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">value,index</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(value === index)&#123;</span><br><span class="line">      start++;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> array.slice(start);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我先校验传入的参数，然后根据传入的<code>predicate</code>类型不同做出不同的处理。当<code>predicate</code>是一个<code>function</code>时候就直接调用此函数；当<code>predicate</code>是一个<code>Array</code>时候就定义一个函数，遍历<code>predicate</code>与原数组<code>array</code>的每一个元素的属性是否相同；当<code>predicate</code>是一个对象时候，和<code>array</code>差不多；当<code>predicate</code>是个字符串时候，直接查看<code>array</code>每一个元素的此属性。遍历数组<code>array</code>把符合<code>predicate</code>的下标都放到一个<code>exceptArr</code>数组里，然后根据<code>exceptArr</code>确定<code>predicate</code> 返回假值结束部分下标<code>start</code>，调用<code>array.slice(start)</code>即可。</p>
+<h3 id="lodash的实现是："><a href="#lodash的实现是：" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">dropWhile</span>(<span class="params">array, predicate</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (array &amp;&amp; array.length)</span><br><span class="line">    ? baseWhile(array, baseIteratee(predicate, <span class="number">3</span>), <span class="literal">true</span>)</span><br><span class="line">    : [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>lodash先验证参数，主要逻辑在<code>baseWhile()</code>函数里。等会再说此函数。</p>
+<h2 id="dropRightWhile"><a href="#dropRightWhile" class="headerlink" title="dropRightWhile()"></a>dropRightWhile()</h2><p>创建一个切片数组，去除<code>array</code>中从 <code>predicate</code> 返回假值开始到尾部的部分。<code>predicate</code> 会传入3个参数： <code>(value, index, array)</code>。</p>
+<h3 id="我的实现是-1"><a href="#我的实现是-1" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">dropRightWhile</span>(<span class="params">array,predicate</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> tmpArray=array.slice();</span><br><span class="line">  <span class="keyword">return</span> dropWhile(tmpArray.reverse(),predicate).reverse();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只是翻转一下<code>array</code>,直接调用<code>dropWhile()</code>,返回时候在翻转下就可以。</p>
+<h3 id="lodash的实现是：-1"><a href="#lodash的实现是：-1" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">dropRightWhile</span>(<span class="params">array, predicate</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (array &amp;&amp; array.length)</span><br><span class="line">    ? baseWhile(array, baseIteratee(predicate, <span class="number">3</span>), <span class="literal">true</span>, <span class="literal">true</span>)</span><br><span class="line">    : [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看书与<code>dropWhile()</code>不同的是调用<code>baseWhile()</code>传的参数多了一个，猜测也是翻转数组的意思吧。请看<code>baseWhile()</code>:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseWhile</span>(<span class="params">array, predicate, isDrop, fromRight</span>) </span>&#123;</span><br><span class="line">      <span class="comment">//数组长度</span></span><br><span class="line">  <span class="keyword">var</span> length = array.length,</span><br><span class="line">      <span class="comment">//开始位置，如果不传fromRight，就是-1，从前从后，如果传fromRight就是length，从后往前。</span></span><br><span class="line">      index = fromRight ? length : <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">//如果从前往后，就加1，直到length。如果从后往前，就减1，直到0。同时符合predicate(array[index], index, array)</span></span><br><span class="line">  <span class="keyword">while</span> ((fromRight ? index-- : ++index &lt; length) &amp;&amp;</span><br><span class="line">    predicate(array[index], index, array)) &#123;&#125;</span><br><span class="line">  <span class="comment">//调用baseSlice()函数，相当于array.slice()。</span></span><br><span class="line">  <span class="keyword">return</span> isDrop</span><br><span class="line">    ? baseSlice(array, (fromRight ? <span class="number">0</span> : index), (fromRight ? index + <span class="number">1</span> : length))</span><br><span class="line">    : baseSlice(array, (fromRight ? index + <span class="number">1</span> : <span class="number">0</span>), (fromRight ? length : index));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>predicate()</code>函数是传进来的<code>baseIteratee()</code>,这个函数就是根据传入不同的参数封装<code>predicate</code><br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseIteratee</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> value == <span class="string">'function'</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (value == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> identity;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> value == <span class="string">'object'</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> isArray(value)</span><br><span class="line">      ? baseMatchesProperty(value[<span class="number">0</span>], value[<span class="number">1</span>])</span><br><span class="line">      : baseMatches(value);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> property(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/03/17/lodash/2018-3-17-lodash-array-dropWhile函数实现/" data-id="cjp10jdfy000ydrcpkd8y9jcf" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lodash/">lodash</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/03/18/lodash/2018-3-18-lodash-array-drop函数实现/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          lodash-array-drop函数实现
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/16/lodash/2018-3-16-lodash-array-difference函数实现/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">lodash-array-difference函数实现</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

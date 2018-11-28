@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="website">
+<meta property="og:title" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:url" content="http://yacen.github.io/page/4/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:locale" content="Zh">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="蓦然回首，bug依然在灯火阑珊处">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-nginx/2015-06-16-Nginx重写rewrite" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/16/nginx/2015-06-16-Nginx重写rewrite/" class="article-date">
+  <time datetime="2015-06-15T16:00:00.000Z" itemprop="datePublished">2015-06-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/16/nginx/2015-06-16-Nginx重写rewrite/">Nginx重写rewrite</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="rewrite"><a href="#rewrite" class="headerlink" title="rewrite"></a>rewrite</h2><p>rewrite 用于使用正则表达式更改请求URI，返回重定向，以及有条件地选择配置。参见<a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html" target="_blank" rel="noopener">文档</a></p>
+<p>有多个配置命令：</p>
+<ul>
+<li>if</li>
+<li>break</li>
+<li>return</li>
+<li>rewrite</li>
+<li>set </li>
+</ul>
+<h2 id="if"><a href="#if" class="headerlink" title="if"></a>if</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if (condition) &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<p>条件可以是以下任何一种：</p>
+<ol>
+<li>变量名; 如果变量的值为空字符串或“ 0”，则为false ;</li>
+<li>使用“=”和“ !=”运算符比较变量和字符串;</li>
+<li>使用“~”对于区分大小写的正则匹配</li>
+<li>使用“~*”对于不区分大小写的正则匹配<ul>
+<li>将变量与正则表达式进行匹配。正则表达式可以后向应用，$1.. $9变量中重用。</li>
+<li>负操作符“ !~”和“ !~*”也可用。</li>
+<li>如果正则表达式包含“{}”或“ ;”字符，则整个表达式应包含在单引号或双引号中。</li>
+</ul>
+</li>
+<li>使用“ -f”和“ !-f”运算符检查文件是否存在;</li>
+<li>使用“ -d”和“ !-d”运算符检查目录是否存在;</li>
+<li>使用“ -e”和“ !-e”运算符检查文件，目录或符号链接是否存在;</li>
+<li>使用“ -x”和“ !-x”运算符检查可执行文件。</li>
+</ol>
+<p>比如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">if ($http_user_agent ~ MSIE) &#123;</span><br><span class="line">    rewrite ^(.*)$ /msie/$1 break;</span><br><span class="line">&#125;</span><br><span class="line">if ($http_cookie ~* &quot;id=([^;]+)(?:;|$)&quot;) &#123;</span><br><span class="line">    set $id $1;</span><br><span class="line">&#125;</span><br><span class="line">if ($request_method = POST) &#123;</span><br><span class="line">    return 405;</span><br><span class="line">&#125;</span><br><span class="line">if ($slow) &#123;</span><br><span class="line">    limit_rate 10k;</span><br><span class="line">&#125;</span><br><span class="line">if ($invalid_referer) &#123;</span><br><span class="line">    return 403;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="break"><a href="#break" class="headerlink" title="break"></a>break</h2><p>停止处理当前的重写指令 。因为会发生循环重写</p>
+<p>如果在该位置内指定了指令，则在该 位置继续进一步处理该请求。</p>
+<p>例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if ($http_user_agent ~ MSIE) &#123;</span><br><span class="line">    rewrite ^(.*)$ /msie/$1 break;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果ie浏览器，单独拿出来处理，不加break就会循环在这里。</p>
+<h2 id="return"><a href="#return" class="headerlink" title="return"></a>return</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">return code [text];</span><br><span class="line">return code URL;</span><br><span class="line">return URL;</span><br></pre></td></tr></table></figure>
+<p>停止处理并将指定的内容返回code给客户端。</p>
+<p>可以指定重定向URL（对于代码301,302,303,307和308）或响应正文text（对于其他代码）</p>
+<p>一般配合if使用</p>
+<h2 id="rewrite-1"><a href="#rewrite-1" class="headerlink" title="rewrite"></a>rewrite</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rewrite regex replacement [flag];</span><br></pre></td></tr></table></figure>
+<p>如果指定的正则表达式与请求URI匹配，则URI将根据replacement字符串中的指定进行更改。该rewrite指令在其在配置文件中出现的顺序顺序地执行。可以使用标志终止对指令的进一步处理。如果替换字符串以“ http://”，“ https://”或“ $scheme” 开头，则处理停止并将重定向返回给客户端。</p>
+<p>可选flag参数可以是以下之一：</p>
+<ul>
+<li>last<ul>
+<li>停止处理当前的ngx_http_rewrite_module指令集 并开始搜索与更改的URI匹配的新位置;</li>
+</ul>
+</li>
+<li>break<ul>
+<li>ngx_http_rewrite_module与break指令一样， 停止处理当前的指令集 ;</li>
+</ul>
+</li>
+<li>redirect<ul>
+<li>返回带有302代码的临时重定向; 如果替换字符串不以“ http://”，“ https://”或“ $scheme” 开头，则使用;</li>
+</ul>
+</li>
+<li>permanent<ul>
+<li>返回301代码的永久重定向。</li>
+</ul>
+</li>
+</ul>
+<p>完整重定向URL根据请求scheme（$scheme）和 server_name_in_redirect以及 port_in_redirect指令形成。</p>
+<p>例：像/download/language/en/audio/class1/less1.ogg  路径变成  /download/language/en/mp3/class1/less1.ra<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    ...</span><br><span class="line">    rewrite ^(/download/.*)/media/(.*)\..*$ $1/mp3/$2.mp3 last;</span><br><span class="line">    rewrite ^(/download/.*)/audio/(.*)\..*$ $1/mp3/$2.ra  last;</span><br><span class="line">    return  403;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是如果将这些指令放在“ /download/”位置内，则该last标志应替换为 break，否则nginx将进行10次循环并返回500错误：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">location /download/ &#123;</span><br><span class="line">    rewrite ^(/download/.*)/media/(.*)\..*$ $1/mp3/$2.mp3 break;</span><br><span class="line">    rewrite ^(/download/.*)/audio/(.*)\..*$ $1/mp3/$2.ra  break;</span><br><span class="line">    return  403;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果replacement字符串包含新的请求参数，则先前的请求参数将附加在它们之后。如果这是不希望的，在替换字符串的末尾加上一个问号可以避免附加它们，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rewrite ^/users/(.*)$ /show?user=$1? last;</span><br></pre></td></tr></table></figure></p>
+<h2 id="set"><a href="#set" class="headerlink" title="set"></a>set</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set $variable value;</span><br></pre></td></tr></table></figure>
+<p>set 是设置变量用的, 可以用来达到多条件判断时作标志用.<br>例如：判断IE并重写,且不用break; 我们用set变量来达到目的<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">if ($http_user_agent ~* msie) &#123;</span><br><span class="line">  set $isie 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if ($fastcgi_script_name = ie.html) &#123;</span><br><span class="line">  set $isie 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if ($isie 1) &#123;</span><br><span class="line">  rewrite ^.*$ ie.html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/06/16/nginx/2015-06-16-Nginx重写rewrite/" data-id="cjp10jdgz0038drcpfenasaf9" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2015-06-08-Nginx定位location" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/08/nginx/2015-06-08-Nginx定位location/" class="article-date">
+  <time datetime="2015-06-07T16:00:00.000Z" itemprop="datePublished">2015-06-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/08/nginx/2015-06-08-Nginx定位location/">Nginx定位location</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="location"><a href="#location" class="headerlink" title="location"></a>location</h2><p>location 有”定位”的意思, 根据Uri来进行不同的定位.</p>
+<p>在虚拟主机的配置中,是必不可少的,location可以把网站的不同部分,定位到不同的处理方式上.</p>
+<p>比如, 碰到.png, 如何获取到图片?<br>–这时就需要location</p>
+<h2 id="location-语法"><a href="#location-语法" class="headerlink" title="location 语法"></a>location 语法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location [=|~|~*|^~] pattern &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>中括号可以不写任何参数,此时称为一般匹配, 则路径被视为前缀，其后可以跟随任何东西。</li>
+<li>也可以写参数</li>
+</ol>
+<p>因此,大类型可以分为3种:</p>
+<ol>
+<li><code>location = patt {}</code> 精准匹配</li>
+<li><code>location patt {}</code>  一般匹配</li>
+<li><code>location ~ patt{}</code> 正则匹配</li>
+</ol>
+<h2 id="精准匹配"><a href="#精准匹配" class="headerlink" title="精准匹配"></a>精准匹配</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">location</span> = /login.html &#123;</span><br><span class="line">  root /var/account;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样当访问<code>curl localhost/login.html</code>时，会找<code>/var/account/login.html</code>这个文件</p>
+<h2 id="一般匹配"><a href="#一般匹配" class="headerlink" title="一般匹配"></a>一般匹配</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location /images &#123;</span><br><span class="line">  root /var;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当url路径是/images开头的都会访问/var/images目录</p>
+<p>以上栗子将匹配<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hostname:port/images/logo.jpg</span><br><span class="line">hostname:port/images/home/home.png</span><br><span class="line">hostname:port/imagesdir</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<h2 id="正则匹配"><a href="#正则匹配" class="headerlink" title="正则匹配"></a>正则匹配</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">location ~ ^/(javascript|js)/  &#123;</span><br><span class="line">  root   /var/js;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当url路径是 /javascript 或者 /js 开头的都会访问/var/js目录</p>
+<h2 id="如果混用，该怎么办？"><a href="#如果混用，该怎么办？" class="headerlink" title="如果混用，该怎么办？"></a>如果混用，该怎么办？</h2><p>匹配过程是按照配置文件从上而下进行的</p>
+<ol>
+<li>如果被精准匹配到,则停止匹配，不管之前是否有一般或者正则匹配</li>
+<li>如果整个匹配过程走完没有被精准匹配到，而被正则匹配到，就用第一个匹配的</li>
+<li>如果既没有被精准匹配到，也没有被正则匹配到，而被一般匹配到了，看谁匹配的最长，用最长的</li>
+<li>都没有匹配上，404</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/06/08/nginx/2015-06-08-Nginx定位location/" data-id="cjp10jdgy0035drcpdrrhnj07" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2015-05-28-Nginx日志管理" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/28/nginx/2015-05-28-Nginx日志管理/" class="article-date">
+  <time datetime="2015-05-27T16:00:00.000Z" itemprop="datePublished">2015-05-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/28/nginx/2015-05-28-Nginx日志管理/">Nginx日志管理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="日志配置"><a href="#日志配置" class="headerlink" title="日志配置"></a>日志配置</h2><p>Nginx的日在配置在http块和server块中：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    access_log  logs/access.log  main;</span><br><span class="line">    ...</span><br><span class="line">    server &#123;</span><br><span class="line">        access_log  logs/host.access.log  main;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>表明Nginx的访问日志在Nginx安装目录下的logs文件夹下，使用main格式</p>
+<p>http块是全局的，server块的日志是此虚拟主机专用的</p>
+<h2 id="日志格式"><a href="#日志格式" class="headerlink" title="日志格式"></a>日志格式</h2><p>日志默认格式定义在http块下<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"';</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这些都Nginx内置定义的一些正则表达式，定义在conf/fastcgi.conf文件中<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;</span><br><span class="line">fastcgi_param  QUERY_STRING       $query_string;</span><br><span class="line">fastcgi_param  REQUEST_METHOD     $request_method;</span><br><span class="line">fastcgi_param  CONTENT_TYPE       $content_type;</span><br><span class="line">fastcgi_param  CONTENT_LENGTH     $content_length;</span><br><span class="line">...</span><br><span class="line">fastcgi_param  REMOTE_ADDR        $remote_addr;</span><br><span class="line">fastcgi_param  REMOTE_PORT        $remote_port;</span><br><span class="line">fastcgi_param  SERVER_ADDR        $server_addr;</span><br><span class="line">fastcgi_param  SERVER_PORT        $server_port;</span><br><span class="line">fastcgi_param  SERVER_NAME        $server_name;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>log格式可以自定义，包括可以定义成json的形式。需要一个<a href="https://github.com/jiaz/nginx-http-json-log" target="_blank" rel="noopener">nginx-http-json-log插件</a></p>
+<h2 id="日志按天分割"><a href="#日志按天分割" class="headerlink" title="日志按天分割"></a>日志按天分割</h2><p>实际上，日志是要按时间这样分割的，易于管理。之前讲到Nginx有重新载入日志的信号<code>nginx -s reopen</code>，这里可以写歌shell脚本每天定时分割日志：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">logs_path=/usr/<span class="built_in">local</span>/nginx/logs</span><br><span class="line">mounth=$( date -d yesterday +<span class="string">"%Y%m"</span> )</span><br><span class="line">day=$( date -d yesterday +<span class="string">"%d"</span> )</span><br><span class="line">mkdir -p <span class="variable">$logs_path</span>/<span class="variable">$mounth</span></span><br><span class="line">mv <span class="variable">$logs_path</span>/access.log <span class="variable">$logs_path</span>/<span class="variable">$mountth</span>/<span class="variable">$day_access</span>.<span class="built_in">log</span></span><br><span class="line">/usr/<span class="built_in">local</span>/nginx/sbin/nginx -s reopen</span><br></pre></td></tr></table></figure></p>
+<p>Linux系统下的定时任务用 crontab 工具 ， 每天0时1分运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">01 00 * * * /usr/local/nginx/script/log_split.sh</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/05/28/nginx/2015-05-28-Nginx日志管理/" data-id="cjp10jdgx0033drcplzgbrjzr" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2015-05-20-Nginx虚拟主机配置" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/20/nginx/2015-05-20-Nginx虚拟主机配置/" class="article-date">
+  <time datetime="2015-05-19T16:00:00.000Z" itemprop="datePublished">2015-05-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/20/nginx/2015-05-20-Nginx虚拟主机配置/">Nginx虚拟主机配置</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="server"><a href="#server" class="headerlink" title="server"></a>server</h2><ul>
+<li>在 Nginx 内部，你可以指定多个虚拟主机</li>
+<li>每个虚拟主机用 server{} 上下文描述</li>
+</ul>
+<h2 id="基于域名的虚拟主机"><a href="#基于域名的虚拟主机" class="headerlink" title="基于域名的虚拟主机"></a>基于域名的虚拟主机</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name www.test.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root /var/www/test.com;</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">  listen      *:80 default_server;</span><br><span class="line">  server_name test.com;</span><br><span class="line">  return 200 "Hello from test.com";</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">  listen      *:80;</span><br><span class="line">  server_name demo.com;</span><br><span class="line">  return 200 "Hello from demo.com";</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="server-name"><a href="#server-name" class="headerlink" title="server_name"></a>server_name</h2><p>server_name指令接受多个值。它还处理通配符匹配和正则表达式。<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">server_name test.com www.test.com; # exact match</span><br><span class="line">server_name *.test.com;              # wildcard matching</span><br><span class="line">server_name test.*;                 # wildcard matching</span><br><span class="line">server_name  ~^[0-9]*\.netguru\.co$;   # regexp matching</span><br></pre></td></tr></table></figure></p>
+<p>当有歧义时，nginx 将使用下面的命令：</p>
+<ol>
+<li>确切的名字</li>
+<li>最长的通配符名称以星号开始，例如“* .example.org”。</li>
+<li>最长的通配符名称以星号结尾，例如“mail.**”</li>
+<li>首先匹配正则表达式（按照配置文件中的顺序）</li>
+</ol>
+<p>Nginx 会存储 3 个哈希表：确切的名字，以星号开始的通配符，和以星号结尾的通配符。如果结果不在任何表中，则将按顺序进行正则表达式测试。</p>
+<p>值得谨记的是</p>
+<p><code>server_name .test.com;</code></p>
+<p>是一个来自下面的缩写</p>
+<p><code>server_name  test.com  www.test.com  *.test.com;</code></p>
+<p>有一点不同，.test.com 存储在第二张表，这意味着它比显式声明的慢一点。</p>
+<h2 id="listen"><a href="#listen" class="headerlink" title="listen"></a>listen</h2><p>在很多情况下，能够找到 listen 指令，接受IP:端口值<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">listen 127.0.0.1:80;</span><br><span class="line">listen 127.0.0.1;    # by default port :80 is used</span><br><span class="line"></span><br><span class="line">listen *:81;</span><br><span class="line">listen 81;           # by default all ips are used</span><br><span class="line"></span><br><span class="line">listen [::]:80;      # IPv6 addresses</span><br><span class="line">listen [::1];        # IPv6 addresses</span><br></pre></td></tr></table></figure></p>
+<p>然而，还可以指定 UNIX-domain 套接字。</p>
+<p><code>listen unix:/var/run/nginx.sock;</code></p>
+<h2 id="location"><a href="#location" class="headerlink" title="location"></a>location</h2><p>location / 对访问根路径进行特殊处理。详见<a href="./2015-06-08-Nginx定位location">Nginx定位location</a></p>
+<h3 id="location-root"><a href="#location-root" class="headerlink" title="location.root"></a>location.root</h3><ul>
+<li>root 指令设置请求的根目录，允许 nginx 将传入请求映射到文件系统。</li>
+<li>使用相对路径是相对nginx的安装目录.<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 例如</span></span><br><span class="line">www.test.com:80/index.html     # returns /var/www/test.com/index.html</span><br><span class="line">www.test.com:80/foo/index.html # returns /var/www/test.com/foo/index.html</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="location-index"><a href="#location-index" class="headerlink" title="location.index"></a>location.index</h3><p>root文件夹中具体的文件。</p>
+<h2 id="Nginx-将会按照下列顺序选择虚拟主机："><a href="#Nginx-将会按照下列顺序选择虚拟主机：" class="headerlink" title="Nginx 将会按照下列顺序选择虚拟主机："></a>Nginx 将会按照下列顺序选择虚拟主机：</h2><ol>
+<li>匹配sever_name指令的IP-端口主机</li>
+<li>拥有default_server标记的IP-端口主机</li>
+<li>首先定义的IP-端口主机</li>
+<li>如果没有匹配，拒绝连接。</li>
+</ol>
+<h3 id="举个例子："><a href="#举个例子：" class="headerlink" title="举个例子："></a>举个例子：</h3><ol>
+<li><p>先修改/etc/hosts 文件 ，添加一行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10.3.42.1  www.test.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在/tmp 下创建目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost conf]# mkdir -p /tmp/www/test.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建index.html</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>This is www.test.com<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>nginx重新加载配置文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost test.com]# /usr/local/nginx/sbin/nginx -s reload</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>访问</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx]<span class="comment"># curl www.test.com</span></span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="基于端口的虚拟主机配置"><a href="#基于端口的虚拟主机配置" class="headerlink" title="基于端口的虚拟主机配置"></a>基于端口的虚拟主机配置</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 8080;</span><br><span class="line">    server_name 192.168.1.204;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root /var/www/html8080;</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/05/20/nginx/2015-05-20-Nginx虚拟主机配置/" data-id="cjp10jdgw0030drcpnqb09iup" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2015-05-11-Nginx全局配置" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/11/nginx/2015-05-11-Nginx全局配置/" class="article-date">
+  <time datetime="2015-05-10T16:00:00.000Z" itemprop="datePublished">2015-05-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/11/nginx/2015-05-11-Nginx全局配置/">Nginx配置文件</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="nnginx-的配置文件"><a href="#nnginx-的配置文件" class="headerlink" title="nnginx 的配置文件"></a>nnginx 的配置文件</h2><p>默认的位置包括：</p>
+<ul>
+<li>/etc/nginx/nginx.conf</li>
+<li>/usr/local/etc/nginx/nginx.conf</li>
+<li>/usr/local/nginx/conf/nginx.conf</li>
+</ul>
+<p>打开nginx.conf可看到入下结构<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line">worker_processes  1;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">    use epoll;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    server &#123; </span><br><span class="line">        location &#123; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="user-nobody"><a href="#user-nobody" class="headerlink" title="user  nobody"></a>user  nobody</h2><p>nobody在linux中是一个不能登陆的帐号，一些服务进程如apache，aquid等都采用一些特殊的帐号来运行，这是就可以防止程序本身有安全问题的时候，不会被黑客获得root权限</p>
+<p>这个选项一定程度上保证了服务器安全性，</p>
+<h2 id="worker-processes-1"><a href="#worker-processes-1" class="headerlink" title="worker_processes 1"></a>worker_processes 1</h2><p>定义工作的子进程数量,可以自行修改,但太大无益,因为要争夺CPU,一般设置为 CPU数*核数</p>
+<h2 id="error-log"><a href="#error-log" class="headerlink" title="error_log"></a>error_log</h2><p>错误日志的存放路径，默认是在安装目录的logs下, 可以根据日志级别存放不同文件中。</p>
+<p>error_log 级别分为 debug, info, notice, warn, error, crit  默认为crit</p>
+<h2 id="pid"><a href="#pid" class="headerlink" title="pid"></a>pid</h2><p>存放Nginx运行时的pid信息的文件，默认也是放在logs下</p>
+<h2 id="events"><a href="#events" class="headerlink" title="events"></a>events</h2><p>events块中的 worker_connections定义一个子进程最大允许连接数量，按需定义。定义 4096 能应付大部分公司需求。<br>use kqueue;定义连接处理方法有：[ kqueue | rtsig | epoll | /dev/poll | select | poll ] 详见<a href="http://nginx.org/en/docs/events.html" target="_blank" rel="noopener">Connection processing methods</a></p>
+<h2 id="http"><a href="#http" class="headerlink" title="http"></a>http</h2><p>http块是用来配置http服务器信息的。http.server是定义这是虚拟主机段<br>http.server.location是用来处理特殊路径的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/05/11/nginx/2015-05-11-Nginx全局配置/" data-id="cjp10jdgv002ydrcp5y1fyy32" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2015-4-15-Nginx不停机升级" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/04/15/nginx/2015-4-15-Nginx不停机升级/" class="article-date">
+  <time datetime="2015-04-14T16:00:00.000Z" itemprop="datePublished">2015-04-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/04/15/nginx/2015-4-15-Nginx不停机升级/">Nginx不停机升级</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Nginx的不停机升级，也是使用信号来实现的<br><a href="https://nginx.org/en/docs/control.html" target="_blank" rel="noopener">Upgrading Executable on the Fly</a></p>
+<h2 id="当前版本"><a href="#当前版本" class="headerlink" title="当前版本"></a>当前版本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx]# sbin/nginx -v</span><br><span class="line">nginx version: nginx/1.4.7</span><br><span class="line">[root@localhost nginx]# curl localhost -i</span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.4.7</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>当前运行的Nginx版本是1.4.7,并且没有关闭Nginx</p>
+<h2 id="新版本"><a href="#新版本" class="headerlink" title="新版本"></a>新版本</h2><p>删掉1.4.7sbin/nginx可执行程序，替换成1.6.3可执行程序<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx-1.6.3]<span class="comment"># rm /usr/local/nginx/sbin/nginx </span></span><br><span class="line">rm：是否删除普通文件 <span class="string">"/usr/local/nginx/sbin/nginx"</span>？y</span><br><span class="line">[root@localhost nginx-1.6.3]<span class="comment"># ls /usr/local/nginx/sbin/nginx </span></span><br><span class="line">ls: 无法访问/usr/<span class="built_in">local</span>/nginx/sbin/nginx: 没有那个文件或目录</span><br><span class="line">[root@localhost sbin]<span class="comment"># curl localhost -i</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.4.7</span><br><span class="line">...</span><br><span class="line">[root@localhost sbin]<span class="comment"># mv nginx /usr/local/nginx/sbin/ &amp;&amp; /usr/local/nginx/sbin/nginx -v</span></span><br><span class="line">nginx version: nginx/1.6.3</span><br><span class="line">[root@localhost sbin]<span class="comment"># curl localhost -i</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.4.7</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>现在运行的还是1.4.7的nginx</p>
+<h2 id="升级并运行新的Nginx"><a href="#升级并运行新的Nginx" class="headerlink" title="升级并运行新的Nginx"></a>升级并运行新的Nginx</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost logs]<span class="comment"># cat nginx.pid.oldbin </span></span><br><span class="line">9797</span><br><span class="line">[root@localhost logs]<span class="comment"># kill -USR2 9797</span></span><br><span class="line">[root@localhost logs]<span class="comment"># curl localhost -i</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: nginx/1.6.3</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>已经运行新1.6.3版本的Nginx了</p>
+<h2 id="关闭老的Nginx"><a href="#关闭老的Nginx" class="headerlink" title="关闭老的Nginx"></a>关闭老的Nginx</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost logs]<span class="comment"># kill -WINCH 9797</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/04/15/nginx/2015-4-15-Nginx不停机升级/" data-id="cjp10jdh7003ndrcpnjyzs3fr" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2015-4-10-Nginx信号" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/04/10/nginx/2015-4-10-Nginx信号/" class="article-date">
+  <time datetime="2015-04-09T16:00:00.000Z" itemprop="datePublished">2015-04-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/04/10/nginx/2015-4-10-Nginx信号/">Nginx信号</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>信号signal是Linux进程通信的一种常用的机制, Nginx也充分的使用和此机制。</p>
+<p>关于信号见<a href="https://www.cnblogs.com/taobataoma/archive/2007/08/30/875743.html" target="_blank" rel="noopener">Linux 信号signal处理机制</a></p>
+<p>关于Nginx信号相关见<a href="https://nginx.org/en/docs/beginners_guide.html" target="_blank" rel="noopener">官方文档</a></p>
+<h2 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h2><p><code>nginx -s SIGNAL</code></p>
+<h2 id="SIGNAL"><a href="#SIGNAL" class="headerlink" title="SIGNAL"></a>SIGNAL</h2><p>此值主要有以下几个值：</p>
+<pre><code>stop — 快速关闭Nginx
+quit — 优雅关闭Nginx
+reload — 重新加载配置文件
+reopen — 重新打开日志文件
+</code></pre><h2 id="stop"><a href="#stop" class="headerlink" title="stop"></a>stop</h2><p>详细分析参考<a href="https://blog.csdn.net/benbendy1984/article/details/6025323" target="_blank" rel="noopener">nginx signal 之 stop</a></p>
+<p>简单来说就是Nginx自己来快速的关闭, 而非<code>pkill -9 nginx</code>那样暴力停止Nginx。</p>
+<p><code>nginx -s stop</code>等同于：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -TERM `cat logs/nginx.pid`</span><br></pre></td></tr></table></figure></p>
+<p>或<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -INT `cat logs/nginx.pid`</span><br></pre></td></tr></table></figure></p>
+<h2 id="quit"><a href="#quit" class="headerlink" title="quit"></a>quit</h2><p>详细分析参考<a href="https://blog.csdn.net/benbendy1984/article/details/6025663" target="_blank" rel="noopener">nginx signal 之 quit</a></p>
+<p>简单来说就是先拒绝新的请求，当前正在处理的请求处理完了才关闭。</p>
+<p><code>nginx -s quit</code>等同于：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -QUIT `cat logs/nginx.pid`</span><br></pre></td></tr></table></figure></p>
+<h2 id="reload"><a href="#reload" class="headerlink" title="reload"></a>reload</h2><p>详细分析参考<a href="https://blog.csdn.net/benbendy1984/article/details/6030623" target="_blank" rel="noopener">nginx signal 之 reload</a></p>
+<p>简单来说就是重新加载配置文件，重新创建子进程，优雅关闭旧进程。</p>
+<p><code>nginx -s reload</code>等同于：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -HUP `cat logs/nginx.pid`</span><br></pre></td></tr></table></figure></p>
+<h2 id="reopen"><a href="#reopen" class="headerlink" title="reopen"></a>reopen</h2><p>这是用来重读日志的,在日志按月/日分割时有用。<br>因为nginx的访问日志access.log默认是只在这一个文件里写日至的，<br>一直往这一个文件里写，会导致这个文件越来越大，不好管理与查阅。</p>
+<p>在linux下不能仅仅改变文件名来达到这个目的,可以做个实验：<br>现在access.log日至大小是：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx]<span class="comment"># ll logs/access.log </span></span><br><span class="line">-rw-r--r--. 1 root root 774 11月  5 18:11 logs/access.log</span><br></pre></td></tr></table></figure></p>
+<p>我们把access.log按照日期改名，并创建一个新的access.log文件<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx]<span class="comment"># mv logs/access.log logs/2015-4-8-access.log</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># touch logs/access.log</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># ll logs/*access.log</span></span><br><span class="line">-rw-r--r--. 1 root root 774 11月  5 18:11 logs/2015-4-8-access.log</span><br><span class="line">-rw-r--r--. 1 root root   0 11月  5 18:15 logs/access.log</span><br></pre></td></tr></table></figure></p>
+<p>接着我们访问多次Nginx，并查看日至大小<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx]<span class="comment"># curl localhost</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># curl localhost</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># curl localhost</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># curl localhost</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># ll logs/*access.log</span></span><br><span class="line">-rw-r--r--. 1 root root 1204 11月  5 18:18 logs/2015-4-8-access.log</span><br><span class="line">-rw-r--r--. 1 root root    0 11月  5 18:15 logs/access.log</span><br></pre></td></tr></table></figure></p>
+<p>看，logs/access.log文件并没有变化，反而logs/2015-4-8-access.log却越来越大。<br>这是因为linux文件管理机制导致，(<a href="https://zh.wikipedia.org/wiki/Inode" target="_blank" rel="noopener">wiki-inode</a>)<br>只修改文件名，但Nginx使用的access.log文件inode还是原来的，导致日志写不到新文件中</p>
+<p>当使用<code>nginx -s reopen</code>,在访问Nginx，并查看日至大小<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost nginx]<span class="comment"># sbin/nginx -s reopen</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># curl localhost</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># curl localhost</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># curl localhost</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># curl localhost</span></span><br><span class="line">[root@localhost nginx]<span class="comment"># ll logs/*access.log</span></span><br><span class="line">-rw-r--r--. 1 root   root 1204 11月  5 18:18 logs/2015-4-8-access.log</span><br><span class="line">-rw-r--r--. 1 nobody root  430 11月  5 18:30 logs/access.log</span><br></pre></td></tr></table></figure></p>
+<p>这下成功写道新文件中。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/04/10/nginx/2015-4-10-Nginx信号/" data-id="cjp10jdh6003ldrcpkhe91pt2" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2015-03-06-Nginx安装" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/03/06/nginx/2015-03-06-Nginx安装/" class="article-date">
+  <time datetime="2015-03-05T16:00:00.000Z" itemprop="datePublished">2015-03-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/03/06/nginx/2015-03-06-Nginx安装/">Nginx安装</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Nginx安装有好几种方式："><a href="#Nginx安装有好几种方式：" class="headerlink" title="Nginx安装有好几种方式："></a>Nginx安装有好几种方式：</h2><h3 id="Debian-Ubuntu"><a href="#Debian-Ubuntu" class="headerlink" title="Debian/Ubuntu"></a>Debian/Ubuntu</h3><p><code>apt install nginx</code></p>
+<h3 id="Red-CentOS"><a href="#Red-CentOS" class="headerlink" title="Red/CentOS"></a>Red/CentOS</h3><p><code>yum install nginx</code></p>
+<h3 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h3><ol>
+<li>从官网下载源码<br> 最好下 stable 稳定版本<code>wget https://nginx.org/download/nginx-1.4.7.tar.gz</code></li>
+<li><p>解压<br> <code>tar -xzf nginx-1.4.7.tar.gz &amp;&amp; cd nginx-1.4.7</code></p>
+<p> nginx源码目录是这样：</p>
+<p> <code>auto  CHANGES  CHANGES.ru  conf  configure  contrib  html  LICENSE  man  README  src</code><br> CHANGES  CHANGES.ru 是nginx英文俄文写的版本历史<br> conf 是nginx的配置文件目录<br> html 是nginx默认的页面<br> man 是nginx手册<br> src 就是源码<br> configure和auto 是编译nginx所用到的文件</p>
+</li>
+<li><p>配置<br> <code>./configure --prefix=/usr/local/nginx</code><br> 中间可能需要安装 zlib pcre 等库</p>
+</li>
+<li>安装<br> <code>make &amp;&amp; make install &amp;&amp; cd /usr/local/nginx</code><br> nginx比较小，编译的很快</li>
+<li>运行<br> <code>./sbin/nginx</code><br> <code>curl &#39;localhost&#39;</code><br> 如果能请求成公，则代表安装成功了</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/03/06/nginx/2015-03-06-Nginx安装/" data-id="cjp10jdgu002wdrcp0ocw9bqv" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2015-03-00-Nginx介绍" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/02/28/nginx/2015-03-00-Nginx介绍/" class="article-date">
+  <time datetime="2015-02-27T16:00:00.000Z" itemprop="datePublished">2015-02-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/02/28/nginx/2015-03-00-Nginx介绍/">Nginx介绍</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Nginx安装有好几种方式："><a href="#Nginx安装有好几种方式：" class="headerlink" title="Nginx安装有好几种方式："></a>Nginx安装有好几种方式：</h2><p>Nginx 最初是作为一个 Web 服务器创建的，用于解决 C10k 的问题。</p>
+<p>作为一个 Web 服务器，它可以以惊人的速度为您的数据服务。</p>
+<p>但 Nginx 不仅仅是一个 Web 服务器，你还可以将其用作反向代理，与较慢的上游服务器（如：Unicorn 或 Puma）轻松集成。</p>
+<p>你可以适当地分配流量（负载均衡器）、流媒体、动态调整图像大小、缓存内容等等。</p>
+<p>基本的 nginx 体系结构由 master 进程和其 worker 进程组成。master 读取配置文件，并维护 worker 进程，而 worker 则会对请求进行实际处理。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/02/28/nginx/2015-03-00-Nginx介绍/" data-id="cjp10jdgt002tdrcpro7fayz4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-12-10-Redis持久化" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/10/redis/2014-12-10-Redis持久化/" class="article-date">
+  <time datetime="2014-12-09T16:00:00.000Z" itemprop="datePublished">2014-12-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/10/redis/2014-12-10-Redis持久化/">Redis持久化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Redis有两种持久化策略：</p>
+<h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2><p>redis的默认持久化机制</p>
+<p>RDB相当于照快照。保存的是一种状态<br>  20G数据…-&gt;几kb快照</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>快照保存数据极快，还原数据速度极快</li>
+<li>适用于灾难备份</li>
+</ol>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>RDB机制符合要求就会照快照。(随时随地启动)，会占用一部分资源，内存小的机器就不适合用<ul>
+<li>服务器正常关闭时，照快照</li>
+<li>key满足一定条件，照快照</li>
+</ul>
+</li>
+</ol>
+<h3 id="适用于大内存机器"><a href="#适用于大内存机器" class="headerlink" title="适用于大内存机器"></a>适用于大内存机器</h3><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    # after 900 sec (15 min) if at least 1 key changed</span><br><span class="line">save 300 10   # after 300 sec (5 min) if at least 10 keys changed</span><br><span class="line">save 60 10000 # after 60 sec if at least 10000 keys changed</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line">rdbcompression yes</span><br><span class="line">rdbchecksum yes</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir ./</span><br></pre></td></tr></table></figure>
+<h2 id="AOF-append-of-mode"><a href="#AOF-append-of-mode" class="headerlink" title="AOF(append of mode)"></a>AOF(append of mode)</h2><p>使用日志功能保存数据操作，默认AOF机制关闭</p>
+<p>三种模式：</p>
+<ul>
+<li>每秒同步(everysec)：每秒进行一次AOF保存数据。</li>
+<li>每次改同步(always)：只要有key变化语句，就进行AOF保存数据</li>
+<li>不同步(no)：不进行任何持久化操作</li>
+</ul>
+<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>持续性占用极少量的内存资源</li>
+</ol>
+<h3 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>日志文件会特别大，不适用于灾难恢复</li>
+<li>恢复效率远远低于RDB</li>
+</ol>
+<h3 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">appendonly no</span><br><span class="line"></span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># appendfsync always</span><br><span class="line">appendfsync everysec</span><br><span class="line"># appendfsync no</span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no</span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">aof-use-rdb-preamble no</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjp10jdhh004ddrcpfoddrjdf" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

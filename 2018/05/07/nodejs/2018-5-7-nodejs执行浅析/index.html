@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>nodejs执行浅析 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content=".js脚本可以在许多平台上运行，我们最熟知的莫过于浏览器和Node.js了，这里我们来分析下Node.js运行.js脚本背后做了哪些事情。 Node.js 怎么运行 .js脚本我们来写一个最简单的hello world程序：12// app.jsconsole.log(&quot;hello world&quot;); 要用Node.js运行的话，确保机器装了Node.js 运行环境。在命令行敲一下命令：1node">
+<meta name="keywords" content="nodejs">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nodejs执行浅析">
+<meta property="og:url" content="http://yacen.github.io/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content=".js脚本可以在许多平台上运行，我们最熟知的莫过于浏览器和Node.js了，这里我们来分析下Node.js运行.js脚本背后做了哪些事情。 Node.js 怎么运行 .js脚本我们来写一个最简单的hello world程序：12// app.jsconsole.log(&quot;hello world&quot;); 要用Node.js运行的话，确保机器装了Node.js 运行环境。在命令行敲一下命令：1node">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.703Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nodejs执行浅析">
+<meta name="twitter:description" content=".js脚本可以在许多平台上运行，我们最熟知的莫过于浏览器和Node.js了，这里我们来分析下Node.js运行.js脚本背后做了哪些事情。 Node.js 怎么运行 .js脚本我们来写一个最简单的hello world程序：12// app.jsconsole.log(&quot;hello world&quot;); 要用Node.js运行的话，确保机器装了Node.js 运行环境。在命令行敲一下命令：1node">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nodejs/2018-5-7-nodejs执行浅析" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/" class="article-date">
+  <time datetime="2018-05-06T16:00:00.000Z" itemprop="datePublished">2018-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      nodejs执行浅析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>.js</code>脚本可以在许多平台上运行，我们最熟知的莫过于浏览器和Node.js了，这里我们来分析下Node.js运行<code>.js</code>脚本背后做了哪些事情。</p>
+<h2 id="Node-js-怎么运行-js脚本"><a href="#Node-js-怎么运行-js脚本" class="headerlink" title="Node.js 怎么运行 .js脚本"></a><code>Node.js</code> 怎么运行 <code>.js</code>脚本</h2><p>我们来写一个最简单的hello world程序：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// app.js</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"hello world"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>要用<code>Node.js</code>运行的话，确保机器装了<a href="https://nodejs.org/en/" target="_blank" rel="noopener">Node.js</a> 运行环境。在命令行敲一下命令：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node app.js</span><br></pre></td></tr></table></figure></p>
+<p>接着就会打印出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello world</span><br></pre></td></tr></table></figure></p>
+<p>从命令可以看出是有个名为<code>node</code>可执行程序来运行<code>app.js</code>的，那就来看看这是可执行程序是什么。感谢<code>Node.js</code>的作者 Ryan Dahl，把<code>Node.js</code>开源，我们来看看<a href="https://github.com/nodejs/node" target="_blank" rel="noopener">Node Source Code</a>。</p>
+<h2 id="Node-Source-Code"><a href="#Node-Source-Code" class="headerlink" title="Node Source Code"></a>Node Source Code</h2><p>大家都应该知道，一个可执行程序都有一个<code>main()</code>方法,果然在<a href="https://github.com/nodejs/node/blob/master/src/node_main.cc" target="_blank" rel="noopener">node_main.cc</a>找到了。</p>
+<h3 id="node-main-cc"><a href="#node-main-cc" class="headerlink" title="node_main.cc"></a>node_main.cc</h3><p>这里的主要逻辑是<code>node::Start(argc, argv);</code>。在<a href="https://github.com/nodejs/node/blob/master/src/node.cc" target="_blank" rel="noopener">node.cc</a>里定义了<code>Start()</code>方法。<br><figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Start</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  ... init ...</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> exit_code =</span><br><span class="line">      Start(uv_default_loop(), argc, argv, exec_argc, exec_argv);</span><br><span class="line">  ... release ...</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里一开始都是初始化的工作，比如<code>platform</code>、<code>openssl</code>、<code>V8引擎</code>、<code>libuv</code>等，<code>libuv</code>就是<code>Node.js</code>的异步I/O与事件循环的实现。关键代码就是这句，调用的开始。</p>
+<figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">Start</span><span class="params">(<span class="keyword">uv_loop_t</span>* event_loop,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* argv,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> exec_argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* exec_argv)</span> </span>&#123;</span><br><span class="line">  ... init <span class="keyword">and</span> <span class="built_in">set</span> isolate ...</span><br><span class="line">  <span class="keyword">int</span> exit_code = Start(isolate, &amp;isolate_data, argc, argv, exec_argc, exec_argv);</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>isolate翻译成中文是 隔离 意思，在这里可以理解为一个独立V8引擎实例或者一个沙盒。这里设置了一些事件回调和错误处理的handler、Isolate的Scope、微任务原则和WebAssemblyd的回调。最后再执行内联函数<code>Start</code>。<br><figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">Start</span><span class="params">(Isolate* isolate, IsolateData* isolate_data,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* argv,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> exec_argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* exec_argv)</span> </span>&#123;</span><br><span class="line">  ······</span><br><span class="line">  env.Start(argc, argv, exec_argc, exec_argv, v8_is_profiling);</span><br><span class="line">  ······</span><br><span class="line">  StartInspector(&amp;env, path, debug_options);</span><br><span class="line">  ······</span><br><span class="line">  Environment::<span class="function">AsyncCallbackScope <span class="title">callback_scope</span><span class="params">(&amp;env)</span></span>;</span><br><span class="line">  env.async_hooks()-&gt;push_async_ids(<span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  LoadEnvironment(&amp;env);</span><br><span class="line">  env.async_hooks()-&gt;pop_async_id(<span class="number">1</span>);</span><br><span class="line">  ······</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    uv_run(env.event_loop(), UV_RUN_DEFAULT);</span><br><span class="line">    ······</span><br><span class="line">    more = uv_loop_alive(env.event_loop());</span><br><span class="line">  &#125; <span class="keyword">while</span> (more == <span class="literal">true</span>);</span><br><span class="line">  ······</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个内联函数<code>Start</code>实现了Node.js具体的工作，一开始初始化上下文<code>context</code>,<code>env</code>启动，启动<code>Inspector</code>调试器,配置异步钩子等，最主要的就是调用<code>LoadEnvironment()</code>函数，此函数执行了首个js文件<code>lib/internal/bootstrap/loaders.js</code>和<code>lib/internal/bootstrap/node.js</code>。接着就是运行一个很重要的循环，这个循环就是事件循环，如果循环退出了，就会执行下面销毁、释放等代码。</p>
+<figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">LoadEnvironment</span><span class="params">(Environment* env)</span> </span>&#123;</span><br><span class="line">  ......</span><br><span class="line">  Local&lt;String&gt; loaders_name =</span><br><span class="line">      FIXED_ONE_BYTE_STRING(env-&gt;isolate(), <span class="string">"internal/bootstrap/loaders.js"</span>);</span><br><span class="line">  Local&lt;Function&gt; loaders_bootstrapper =</span><br><span class="line">      GetBootstrapper(env, LoadersBootstrapperSource(env), loaders_name);</span><br><span class="line">  Local&lt;String&gt; node_name =</span><br><span class="line">      FIXED_ONE_BYTE_STRING(env-&gt;isolate(), <span class="string">"internal/bootstrap/node.js"</span>);</span><br><span class="line">  Local&lt;Function&gt; node_bootstrapper =</span><br><span class="line">      GetBootstrapper(env, NodeBootstrapperSource(env), node_name);</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">if</span> (!ExecuteBootstrapper(env, loaders_bootstrapper,</span><br><span class="line">                           arraysize(loaders_bootstrapper_args),</span><br><span class="line">                           loaders_bootstrapper_args,</span><br><span class="line">                           &amp;bootstrapped_loaders)) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">if</span> (!ExecuteBootstrapper(env, node_bootstrapper,</span><br><span class="line">                           arraysize(node_bootstrapper_args),</span><br><span class="line">                           node_bootstrapper_args,</span><br><span class="line">                           &amp;bootstrapped_node)) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="internal-bootstrap-loaders-js"><a href="#internal-bootstrap-loaders-js" class="headerlink" title="internal/bootstrap/loaders.js"></a>internal/bootstrap/loaders.js</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> <span class="title">bootstrapInternalLoaders</span>(<span class="params">process, getBinding, getLinkedBinding,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   getInternalBinding</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  ... Set up process.moduleLoadList ...</span><br><span class="line">  ... Set up process.binding() and process._linkedBinding() ...</span><br><span class="line"></span><br><span class="line">  ... Set up internalBinding() <span class="keyword">in</span> the closure ...</span><br><span class="line">  ... Set up NativeModule ...</span><br><span class="line">  ... written <span class="keyword">in</span> CommonJS style. ...</span><br><span class="line">  NativeModule.require = <span class="function"><span class="keyword">function</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line">  ... This will be passed to the bootstrapNodeJSCore <span class="function"><span class="keyword">function</span> <span class="title">in</span> <span class="title">bootstrap</span>/<span class="title">node</span>.<span class="title">js</span>. ...</span></span><br><span class="line"><span class="function">  <span class="title">return</span> <span class="title">loaderExports</span>;</span></span><br><span class="line"><span class="function">&#125;);</span></span><br></pre></td></tr></table></figure>
+<p>代码已经有很好的注释了，所以就不用多说什么。</p>
+<h3 id="internal-bootstrap-node-js"><a href="#internal-bootstrap-node-js" class="headerlink" title="internal/bootstrap/node.js"></a>internal/bootstrap/node.js</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> <span class="title">bootstrapNodeJSCore</span>(<span class="params">process, &#123; internalBinding, NativeModule &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> exceptionHandlerState = &#123; <span class="attr">captureFn</span>: <span class="literal">null</span> &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">startup</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    setupProcessObject();</span><br><span class="line">    ......</span><br><span class="line">    setupProcessFatal();</span><br><span class="line">    setupV8();</span><br><span class="line">    setupProcessICUVersions();</span><br><span class="line">    setupGlobalVariables();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> _process = NativeModule.require(<span class="string">'internal/process'</span>);</span><br><span class="line">    ......</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/warning'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/next_tick'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/stdio'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/methods'</span>).setup();</span><br><span class="line">    ......</span><br><span class="line">    _process.setup_hrtime();</span><br><span class="line">    _process.setup_performance();</span><br><span class="line">    _process.setup_cpuUsage();</span><br><span class="line">    _process.setupMemoryUsage();</span><br><span class="line">    _process.setupKillAndExit();</span><br><span class="line">    <span class="keyword">if</span> (global.__coverage__)</span><br><span class="line">      NativeModule.require(<span class="string">'internal/process/write-coverage'</span>).setup();</span><br><span class="line"></span><br><span class="line">    NativeModule.require(<span class="string">'internal/trace_events_async_hooks'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/inspector_async_hook'</span>).setup();</span><br><span class="line"></span><br><span class="line">    _process.setupChannel();</span><br><span class="line">    _process.setupRawDebug();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> browserGlobals = !process._noBrowserGlobals;</span><br><span class="line">    <span class="keyword">if</span> (browserGlobals) &#123;</span><br><span class="line">      setupGlobalTimeouts();</span><br><span class="line">      setupGlobalConsole();</span><br><span class="line">      setupGlobalURL();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Ensure setURLConstructor() is called before the native</span></span><br><span class="line">    <span class="comment">// URL::ToObject() method is used.</span></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line">    <span class="comment">// On OpenBSD process.execPath will be relative unless we</span></span><br><span class="line">    <span class="comment">// get the full path before process.execPath is used.</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">// Handle `--debug*` deprecation and invalidation</span></span><br><span class="line">    ......</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">// Install legacy getters on the `util` binding for typechecking.</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// There are various modes that Node can run in. The most common two</span></span><br><span class="line">    <span class="comment">// are running from a script and running the REPL - but there are a few</span></span><br><span class="line">    <span class="comment">// others like the debugger or running --eval arguments. Here we decide</span></span><br><span class="line">    <span class="comment">// which mode we run in.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (NativeModule.exists(<span class="string">'_third_party_main'</span>)) &#123;</span><br><span class="line">      <span class="comment">// To allow people to extend Node in different ways, this hook allows</span></span><br><span class="line">      <span class="comment">// one to drop a file lib/_third_party_main.js into the build</span></span><br><span class="line">      <span class="comment">// directory which will be executed instead of Node's normal loading.</span></span><br><span class="line">      ......</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (process.argv[<span class="number">1</span>] === <span class="string">'inspect'</span> || process.argv[<span class="number">1</span>] === <span class="string">'debug'</span>) &#123;</span><br><span class="line">      <span class="comment">// Start the debugger agent</span></span><br><span class="line">      ......</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// There is user code to be run</span></span><br><span class="line">    &#125;</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupProcessObject</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalVariables</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalTimeouts</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalConsole</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalURL</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupInspector</span>(<span class="params">originalConsole, wrappedConsole, CJSModule</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">noop</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupProcessFatal</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupV8</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">tryGetCwd</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">wrapForBreakOnFirstLine</span>(<span class="params">source</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Load preload modules</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">preloadModules</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">checkScriptSyntax</span>(<span class="params">source, filename</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  startup();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>直接调用<code>startup()</code>发放来启动，它会调用一系列的<code>setupX()</code>方法来做一些必要的事情，比如进程<code>process</code>对象、全局对象、定时器对象、console对象、url对象、V8、检查js语法等等，最重要的就是运行用户也就是程序员写的js代码。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Node.js浅显的调用流程就是这样子的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OS =&gt; Node.cc::Start() =&gt; internal/bootstrap/loaders.js =&gt; internal/bootstrap/node.js =&gt; app.js</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/" data-id="cjp10jdh9003rdrcp10ve0bqf" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          egg-core源码解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">nodejs卸载模块</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

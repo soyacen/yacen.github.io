@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>MySql面试题 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="51、mysql支持事务吗？支持 52、mysql里记录货币用什么字段类型好？decimal 53、mysql数据表在什么情况下容易损坏？ 服务器突然断电导致数据文件损坏。 强制关机，没有先关闭mysql 服务等。  54、数据表损坏后的主要现象是什么？从表中选择数据之时，得到如下错误：Incorrect key file for table: ‘…’. Try to repair it查询不能在">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySql面试题">
+<meta property="og:url" content="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="51、mysql支持事务吗？支持 52、mysql里记录货币用什么字段类型好？decimal 53、mysql数据表在什么情况下容易损坏？ 服务器突然断电导致数据文件损坏。 强制关机，没有先关闭mysql 服务等。  54、数据表损坏后的主要现象是什么？从表中选择数据之时，得到如下错误：Incorrect key file for table: ‘…’. Try to repair it查询不能在">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.690Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySql面试题">
+<meta name="twitter:description" content="51、mysql支持事务吗？支持 52、mysql里记录货币用什么字段类型好？decimal 53、mysql数据表在什么情况下容易损坏？ 服务器突然断电导致数据文件损坏。 强制关机，没有先关闭mysql 服务等。  54、数据表损坏后的主要现象是什么？从表中选择数据之时，得到如下错误：Incorrect key file for table: ‘…’. Try to repair it查询不能在">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-mysql/2014-7-25-MySql面试题-6" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/25/mysql/2014-7-25-MySql面试题-6/" class="article-date">
+  <time datetime="2014-07-24T16:00:00.000Z" itemprop="datePublished">2014-07-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MySql面试题
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="51、mysql支持事务吗？"><a href="#51、mysql支持事务吗？" class="headerlink" title="51、mysql支持事务吗？"></a>51、mysql支持事务吗？</h2><p>支持</p>
+<h2 id="52、mysql里记录货币用什么字段类型好？"><a href="#52、mysql里记录货币用什么字段类型好？" class="headerlink" title="52、mysql里记录货币用什么字段类型好？"></a>52、mysql里记录货币用什么字段类型好？</h2><p>decimal</p>
+<h2 id="53、mysql数据表在什么情况下容易损坏？"><a href="#53、mysql数据表在什么情况下容易损坏？" class="headerlink" title="53、mysql数据表在什么情况下容易损坏？"></a>53、mysql数据表在什么情况下容易损坏？</h2><ol>
+<li>服务器突然断电导致数据文件损坏。</li>
+<li>强制关机，没有先关闭mysql 服务等。</li>
+</ol>
+<h2 id="54、数据表损坏后的主要现象是什么？"><a href="#54、数据表损坏后的主要现象是什么？" class="headerlink" title="54、数据表损坏后的主要现象是什么？"></a>54、数据表损坏后的主要现象是什么？</h2><p>从表中选择数据之时，得到如下错误：Incorrect key file for table: ‘…’. Try to repair it<br>查询不能在表中找到行或返回不完全的数据。<br>Error: Table ‘p’ is marked as crashed and should be repaired 。<br>打开表失败： Can’t open file: ‘×××.MYI’ (errno: 145) 。</p>
+<h2 id="55、数据表损坏的修复方式有哪些？"><a href="#55、数据表损坏的修复方式有哪些？" class="headerlink" title="55、数据表损坏的修复方式有哪些？"></a>55、数据表损坏的修复方式有哪些？</h2><p>使用 myisamchk 来修复，具体步骤： </p>
+<ol>
+<li>修复前将mysql服务停止。 </li>
+<li>打开命令行方式，然后进入到mysql的/bin目录。</li>
+<li>执行myisamchk –recover  数据库所在路径/*.MYI</li>
+</ol>
+<p>使用repair table 或者 OPTIMIZE  table命令来修复，REPAIR TABLE <code>table_name</code> 修复表 OPTIMIZE TABLE <code>table_name</code> 优化表 REPAIR TABLE 用于修复被破坏的表。<br>OPTIMIZE TABLE 用于回收闲置的数据库空间，当表上的数据行被删除时，所占据的磁盘空间并没有立即被回收，使用了OPTIMIZE TABLE命令后这些空间将被回收，并且对磁盘上的数据行进行重排（注意：是磁盘上，而非数据库）</p>
+<h2 id="56、mysql有关权限的表都有哪几个？"><a href="#56、mysql有关权限的表都有哪几个？" class="headerlink" title="56、mysql有关权限的表都有哪几个？"></a>56、mysql有关权限的表都有哪几个？</h2><p>MySQL服务器通过权限表来控制用户对数据库的访问，权限表存放在mysql数据库里，由mysql_install_db脚本初始化。这些权限表分别user，db，table_priv，columns_priv和host。下面分别介绍一下这些表的结构和内容：</p>
+<ul>
+<li>user权限表：记录允许连接到服务器的用户帐号信息，里面的权限是全局级的。</li>
+<li>db权限表：记录各个帐号在各个数据库上的操作权限。</li>
+<li>table_priv权限表：记录数据表级的操作权限。</li>
+<li>columns_priv权限表：记录数据列级的操作权限。</li>
+<li>host权限表：配合db权限表对给定主机上数据库级操作权限作更细致的控制。这个权限表不受GRANT和REVOKE语句的影响。<h2 id="57、mysql中有哪几种锁？"><a href="#57、mysql中有哪几种锁？" class="headerlink" title="57、mysql中有哪几种锁？"></a>57、mysql中有哪几种锁？</h2>相对其他数据库而言，MySQL的锁机制比较简单，其最显著的特点是不同的存储引擎支持不同的锁机制。比如，MyISAM和MEMORY存储引擎采用的是表级锁（table-level locking）；BDB存储引擎采用的是页面锁（page-level locking），但也支持表级锁；InnoDB存储引擎既支持行级锁（row-level locking），也支持表级锁，但默认情况下是采用行级锁。<br>MySQL这3种锁的特性可大致归纳如下。<br>开销、加锁速度、死锁、粒度、并发性能</li>
+<li>表级锁：开销小，加锁快；不会出现死锁；锁定粒度大，发生锁冲突的概率最高,并发度最低。</li>
+<li>行级锁：开销大，加锁慢；会出现死锁；锁定粒度最小，发生锁冲突的概率最低,并发度也最高。</li>
+<li>页面锁：开销和加锁时间界于表锁和行锁之间；会出现死锁；锁定粒度界于表锁和行锁之间，并发度一般。 </li>
+</ul>
+<p>从上述特点可见，很难笼统地说哪种锁更好，只能就具体应用的特点来说哪种锁更合适！仅从锁的角度来说：表级锁更适合于以查询为主，只有少量按索引条件更新数据的应用，如Web应用；而行级锁则更适合于有大量按索引条件并发更新少量不同数据，同时又有并发查询的应用，如一些在线事务处理（OLTP）系统。这一点在本书的“开发篇”介绍表类型的选择时，也曾提到过。下面几节我们重点介绍MySQL表锁和 InnoDB行锁的问题，由于BDB已经被InnoDB取代，即将成为历史，在此就不做进一步的讨论了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/" data-id="cjp10jdgb001xdrcpuk32va6g" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/07/26/mysql/2014-7-26-索引面试题/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          索引面试题
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/07/24/mysql/2014-7-24-MySql面试题-5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">MySql面试题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>request-分析1 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="request 是node.js用的最多的http客户端，本着学习源码的目的，来学习这个package。 module.exports = request12345678910111213function request (uri, options, callback) &amp;#123;  if (typeof uri === &apos;undefined&apos;) &amp;#123;    throw new Erro">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="request-分析1">
+<meta property="og:url" content="http://yacen.github.io/2016/07/05/request/2016-07-05-request-分析1/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="request 是node.js用的最多的http客户端，本着学习源码的目的，来学习这个package。 module.exports = request12345678910111213function request (uri, options, callback) &amp;#123;  if (typeof uri === &apos;undefined&apos;) &amp;#123;    throw new Erro">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.704Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="request-分析1">
+<meta name="twitter:description" content="request 是node.js用的最多的http客户端，本着学习源码的目的，来学习这个package。 module.exports = request12345678910111213function request (uri, options, callback) &amp;#123;  if (typeof uri === &apos;undefined&apos;) &amp;#123;    throw new Erro">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-request/2016-07-05-request-分析1" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/05/request/2016-07-05-request-分析1/" class="article-date">
+  <time datetime="2016-07-04T16:00:00.000Z" itemprop="datePublished">2016-07-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/request/">request</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      request-分析1
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>request 是node.js用的最多的http客户端，本着学习源码的目的，来学习这个package。</p>
+<h2 id="module-exports-request"><a href="#module-exports-request" class="headerlink" title="module.exports = request"></a>module.exports = request</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">request</span> (<span class="params">uri, options, callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> uri === <span class="string">'undefined'</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'undefined is not a valid uri or options object.'</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> params = initParams(uri, options, callback)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (params.method === <span class="string">'HEAD'</span> &amp;&amp; paramsHaveRequestBody(params)) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'HTTP HEAD requests MUST NOT include a request body.'</span>)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> request.Request(params)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>request 导出这个方法，接受三个参数：</p>
+<ul>
+<li>第一个参数为uri，当为 undefined 时候就会抛；</li>
+<li>第二个参数options是一些可选的配置；</li>
+<li>第三个参数是callback 请求的回调。<br>initParams 方法是整理一下传入的参数。<br>当时 HEAD 请求，并且请求有 body ,就抛出一个 HEAD 请求不能有 body 的错误。<br>最后初始化Request。</li>
+</ul>
+<h2 id="request-initParams"><a href="#request-initParams" class="headerlink" title="request.initParams"></a>request.initParams</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// organize params for patch, post, put, head, del</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initParams</span> (<span class="params">uri, options, callback</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> options === <span class="string">'function'</span>) &#123;</span><br><span class="line">    callback = options</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> params = &#123;&#125;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> options === <span class="string">'object'</span>) &#123;</span><br><span class="line">    extend(params, options, &#123;<span class="attr">uri</span>: uri&#125;)</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> uri === <span class="string">'string'</span>) &#123;</span><br><span class="line">    extend(params, &#123;<span class="attr">uri</span>: uri&#125;)</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    extend(params, uri)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  params.callback = callback || params.callback</span><br><span class="line">  <span class="keyword">return</span> params</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>initParams 方法是整理传入uri, options, callback 参数用的，把所有的参数整理成一个对象 params 。 为 patch、post、put、head、del 请求做准备。</p>
+<p>这里有个extend函数，它是实现继承的库，后面所有 obj 都 merge 到第一个 obj 上，对应于原生的 Object.assign() 方法</p>
+<ol>
+<li>如果options是一个方法，那把它赋给 callback。例如<code>request(&#39;http://www.qq.com&#39;, ()=&gt;{})</code></li>
+<li>如果options是一个对象，把options和{uri} 合并到 params 上。例如<code>request(&#39;http://www.qq.com&#39;,{method:&#39;post&#39;},()=&gt;{})</code></li>
+<li>如果 uri 是一个字符串，就合并{ uri }合并到 params 上。例如<code>request(&#39;http://www.qq.com&#39;,()=&gt;{})</code></li>
+<li>其他情况：就直接把uri合并到params，例如<code>request({method:&#39;post&#39;,uri:&#39;http://www.qq.com&#39;},()=&gt;{})</code></li>
+</ol>
+<p>最后在params上挂载callback，返回params。</p>
+<h2 id="paramsHaveRequestBody"><a href="#paramsHaveRequestBody" class="headerlink" title="paramsHaveRequestBody()"></a>paramsHaveRequestBody()</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">paramsHaveRequestBody</span> (<span class="params">params</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    params.body ||</span><br><span class="line">    params.requestBodyStream ||</span><br><span class="line">    (params.json &amp;&amp; <span class="keyword">typeof</span> params.json !== <span class="string">'boolean'</span>) ||</span><br><span class="line">    params.multipart</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果params 上有 body、 requestBodtStream、 json、 或 multipart 时都返回true，代表有body。</p>
+<h2 id="request-Request-require-‘-request’"><a href="#request-Request-require-‘-request’" class="headerlink" title="request.Request = require(‘./request’)"></a>request.Request = require(‘./request’)</h2><p>Request 构造函数篇幅较大，下篇在分析。</p>
+<h2 id="request-get-post-delete-del-put-patch-head-options"><a href="#request-get-post-delete-del-put-patch-head-options" class="headerlink" title="request.get\post\delete\del\put\patch\head\options"></a>request.get\post\delete\del\put\patch\head\options</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// define like this to please codeintel/intellisense IDEs</span></span><br><span class="line">request.get = verbFunc(<span class="string">'get'</span>)</span><br><span class="line">request.head = verbFunc(<span class="string">'head'</span>)</span><br><span class="line">request.options = verbFunc(<span class="string">'options'</span>)</span><br><span class="line">request.post = verbFunc(<span class="string">'post'</span>)</span><br><span class="line">request.put = verbFunc(<span class="string">'put'</span>)</span><br><span class="line">request.patch = verbFunc(<span class="string">'patch'</span>)</span><br><span class="line">request.del = verbFunc(<span class="string">'delete'</span>)</span><br><span class="line">request[<span class="string">'delete'</span>] = verbFunc(<span class="string">'delete'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">verbFunc</span> (<span class="params">verb</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> method = verb.toUpperCase()</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">uri, options, callback</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> params = initParams(uri, options, callback)</span><br><span class="line">    params.method = method</span><br><span class="line">    <span class="keyword">return</span> request(params, params.callback)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>request 的简便方法，直接发出不同method 的请求，其实相当于<code>request(&#39;http://www.qq.com&#39;,{method:&#39;post&#39;},()=&gt;{})</code> 或者 <code>request({method:&#39;post&#39;,uri:&#39;http://www.qq.com&#39;},()=&gt;{})</code>形式。</p>
+<h2 id="request-default"><a href="#request-default" class="headerlink" title="request.default()"></a>request.default()</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">request.defaults = <span class="function"><span class="keyword">function</span> (<span class="params">options, requester</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> self = <span class="keyword">this</span></span><br><span class="line"></span><br><span class="line">  options = options || &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> options === <span class="string">'function'</span>) &#123;</span><br><span class="line">    requester = options</span><br><span class="line">    options = &#123;&#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> defaults = wrapRequestMethod(self, options, requester)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> verbs = [<span class="string">'get'</span>, <span class="string">'head'</span>, <span class="string">'post'</span>, <span class="string">'put'</span>, <span class="string">'patch'</span>, <span class="string">'del'</span>, <span class="string">'delete'</span>]</span><br><span class="line">  verbs.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">verb</span>) </span>&#123;</span><br><span class="line">    defaults[verb] = wrapRequestMethod(self[verb], options, requester, verb)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  defaults.cookie = wrapRequestMethod(self.cookie, options, requester)</span><br><span class="line">  defaults.jar = self.jar</span><br><span class="line">  defaults.defaults = self.defaults</span><br><span class="line">  <span class="keyword">return</span> defaults</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">wrapRequestMethod</span> (<span class="params">method, options, requester, verb</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">uri, opts, callback</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> params = initParams(uri, opts, callback)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> target = &#123;&#125;</span><br><span class="line">    extend(<span class="literal">true</span>, target, options, params)</span><br><span class="line"></span><br><span class="line">    target.pool = params.pool || options.pool</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (verb) &#123;</span><br><span class="line">      target.method = verb.toUpperCase()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> requester === <span class="string">'function'</span>) &#123;</span><br><span class="line">      method = requester</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> method(target, target.callback)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>default 方法的作用是自定义一些默认行为。比如：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> rp=request.defaults(&#123;</span><br><span class="line">    headers: &#123; <span class="attr">foo</span>: <span class="string">'bar'</span> &#125;</span><br><span class="line">&#125;);</span><br><span class="line">rp(<span class="string">'http://localhost:7000'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">e, r, b</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>每次请求，都会带上 { foo: ‘bar’ } header。</p>
+<h2 id="request-forever"><a href="#request-forever" class="headerlink" title="request.forever()"></a>request.forever()</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">request.forever = <span class="function"><span class="keyword">function</span> (<span class="params">agentOptions, optionsArg</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> options = &#123;&#125;</span><br><span class="line">  <span class="keyword">if</span> (optionsArg) &#123;</span><br><span class="line">    extend(options, optionsArg)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (agentOptions) &#123;</span><br><span class="line">    options.agentOptions = agentOptions</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  options.forever = <span class="literal">true</span></span><br><span class="line">  <span class="keyword">return</span> request.defaults(options)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>建立永久链接，底层以后在分析。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2016/07/05/request/2016-07-05-request-分析1/" data-id="cjp10jdhi004gdrcprf64xdf8" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/07/15/request/2016-07-15-request-分析2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          request-分析2
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/08/14/nginx/2015-08-14-Nginx优化/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Nginx优化</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

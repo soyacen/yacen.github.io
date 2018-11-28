@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>koa-Context | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Contextcontext对象是我们使用koa十分重要的一个环节，在Application中的createContext(req, res)方法里，在context对象上挂在了很多对象，koa的request和response对象、node原生的req和res对象、app对象、originalUrl、cookies、accept、state`。它提供了处理请求与响应的所有接口，下面来看看它的源码">
+<meta name="keywords" content="koa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="koa-Context">
+<meta property="og:url" content="http://yacen.github.io/2017/10/28/koa/2017-10-28-koa-Context/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="Contextcontext对象是我们使用koa十分重要的一个环节，在Application中的createContext(req, res)方法里，在context对象上挂在了很多对象，koa的request和response对象、node原生的req和res对象、app对象、originalUrl、cookies、accept、state`。它提供了处理请求与响应的所有接口，下面来看看它的源码">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-28T08:50:25.688Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="koa-Context">
+<meta name="twitter:description" content="Contextcontext对象是我们使用koa十分重要的一个环节，在Application中的createContext(req, res)方法里，在context对象上挂在了很多对象，koa的request和response对象、node原生的req和res对象、app对象、originalUrl、cookies、accept、state`。它提供了处理请求与响应的所有接口，下面来看看它的源码">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-koa/2017-10-28-koa-Context" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/28/koa/2017-10-28-koa-Context/" class="article-date">
+  <time datetime="2017-10-27T16:00:00.000Z" itemprop="datePublished">2017-10-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      koa-Context
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2><p><code>context</code>对象是我们使用koa十分重要的一个环节，在<a href="2018-4-27-koa-Application.md">Application</a>中的<code>createContext(req, res)</code>方法里，在<code>context</code>对象上挂在了很多对象，koa的<code>request</code>和<code>response</code>对象、node原生的<code>req</code>和<code>res</code>对象、<code>app</code>对象、<code>originalUrl</code>、<code>cookies</code>、<code></code>accept<code>、</code>state`。它提供了处理请求与响应的所有接口，下面来看看它的源码。</p>
+<h2 id="Context-prototype"><a href="#Context-prototype" class="headerlink" title="Context prototype"></a>Context prototype</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Context prototype.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> proto = <span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>首先，它的注释写的是<code>Context prototype</code>,这个文件导出的是一个原型对象，<code>context</code>是通过<code>Object.create(context)</code>创建出来的。（<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create" target="_blank" rel="noopener">Object.create()</a>）</p>
+<h2 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h2><p>其他方法比较简单，比如<code>throw()</code>、<code>onerror()</code>等，这里就不再多说。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">throw</span>(...args) &#123;</span><br><span class="line">  <span class="keyword">throw</span> createError(...args);</span><br><span class="line">&#125;,</span><br><span class="line">onerror(err) &#123;</span><br><span class="line">  <span class="comment">// don't do anything if there is no error.</span></span><br><span class="line">  <span class="comment">// this allows you to pass `this.onerror`</span></span><br><span class="line">  <span class="comment">// to node-style callbacks.s allows you to pass `this.onerror`</span></span><br><span class="line">  <span class="comment">// to node-style callbacks.</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="literal">null</span> == err) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!(err <span class="keyword">instanceof</span> <span class="built_in">Error</span>)) err = <span class="keyword">new</span> <span class="built_in">Error</span>(util.format(<span class="string">'non-error thrown: %j'</span>, err));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> headerSent = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.headerSent || !<span class="keyword">this</span>.writable) &#123;</span><br><span class="line">    headerSent = err.headerSent = <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// delegate</span></span><br><span class="line">  <span class="keyword">this</span>.app.emit(<span class="string">'error'</span>, err, <span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// nothing we can do here other</span></span><br><span class="line">  <span class="comment">// than delegate to the app-level</span></span><br><span class="line">  <span class="comment">// handler and log.</span></span><br><span class="line">  <span class="keyword">if</span> (headerSent) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> &#123; res &#125; = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// first unset all headers</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> res.getHeaderNames === <span class="string">'function'</span>) &#123;</span><br><span class="line">    res.getHeaderNames().forEach(<span class="function"><span class="params">name</span> =&gt;</span> res.removeHeader(name));</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    res._headers = &#123;&#125;; <span class="comment">// Node &lt; 7.7</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// then set those specified</span></span><br><span class="line">  <span class="keyword">this</span>.set(err.headers);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// force text/plain</span></span><br><span class="line">  <span class="keyword">this</span>.type = <span class="string">'text'</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ENOENT support</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="string">'ENOENT'</span> == err.code) err.status = <span class="number">404</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// default to 500</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="string">'number'</span> != <span class="keyword">typeof</span> err.status || !statuses[err.status]) err.status = <span class="number">500</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// respond</span></span><br><span class="line">  <span class="keyword">const</span> code = statuses[err.status];</span><br><span class="line">  <span class="keyword">const</span> msg = err.expose ? err.message : code;</span><br><span class="line">  <span class="keyword">this</span>.status = err.status;</span><br><span class="line">  <span class="keyword">this</span>.length = Buffer.byteLength(msg);</span><br><span class="line">  <span class="keyword">this</span>.res.end(msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="delegate"><a href="#delegate" class="headerlink" title="delegate"></a>delegate</h2><p>context的精髓主要在于代理了request和response的一些常用方法，看代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> delegate = <span class="built_in">require</span>(<span class="string">'delegates'</span>);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Response delegation.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">delegate(proto, <span class="string">'response'</span>)</span><br><span class="line">  .method(<span class="string">'attachment'</span>)</span><br><span class="line">  .method(<span class="string">'redirect'</span>)</span><br><span class="line">  .method(<span class="string">'remove'</span>)</span><br><span class="line">  .method(<span class="string">'vary'</span>)</span><br><span class="line">  .method(<span class="string">'set'</span>)</span><br><span class="line">  .method(<span class="string">'append'</span>)</span><br><span class="line">  .method(<span class="string">'flushHeaders'</span>)</span><br><span class="line">  .access(<span class="string">'status'</span>)</span><br><span class="line">  .access(<span class="string">'message'</span>)</span><br><span class="line">  .access(<span class="string">'body'</span>)</span><br><span class="line">  .access(<span class="string">'length'</span>)</span><br><span class="line">  .access(<span class="string">'type'</span>)</span><br><span class="line">  .access(<span class="string">'lastModified'</span>)</span><br><span class="line">  .access(<span class="string">'etag'</span>)</span><br><span class="line">  .getter(<span class="string">'headerSent'</span>)</span><br><span class="line">  .getter(<span class="string">'writable'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Request delegation.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">delegate(proto, <span class="string">'request'</span>)</span><br><span class="line">  .method(<span class="string">'acceptsLanguages'</span>)</span><br><span class="line">  .method(<span class="string">'acceptsEncodings'</span>)</span><br><span class="line">  .method(<span class="string">'acceptsCharsets'</span>)</span><br><span class="line">  .method(<span class="string">'accepts'</span>)</span><br><span class="line">  .method(<span class="string">'get'</span>)</span><br><span class="line">  .method(<span class="string">'is'</span>)</span><br><span class="line">  .access(<span class="string">'querystring'</span>)</span><br><span class="line">  .access(<span class="string">'idempotent'</span>)</span><br><span class="line">  .access(<span class="string">'socket'</span>)</span><br><span class="line">  .access(<span class="string">'search'</span>)</span><br><span class="line">  .access(<span class="string">'method'</span>)</span><br><span class="line">  .access(<span class="string">'query'</span>)</span><br><span class="line">  .access(<span class="string">'path'</span>)</span><br><span class="line">  .access(<span class="string">'url'</span>)</span><br><span class="line">  .getter(<span class="string">'origin'</span>)</span><br><span class="line">  .getter(<span class="string">'href'</span>)</span><br><span class="line">  .getter(<span class="string">'subdomains'</span>)</span><br><span class="line">  .getter(<span class="string">'protocol'</span>)</span><br><span class="line">  .getter(<span class="string">'host'</span>)</span><br><span class="line">  .getter(<span class="string">'hostname'</span>)</span><br><span class="line">  .getter(<span class="string">'URL'</span>)</span><br><span class="line">  .getter(<span class="string">'header'</span>)</span><br><span class="line">  .getter(<span class="string">'headers'</span>)</span><br><span class="line">  .getter(<span class="string">'secure'</span>)</span><br><span class="line">  .getter(<span class="string">'stale'</span>)</span><br><span class="line">  .getter(<span class="string">'fresh'</span>)</span><br><span class="line">  .getter(<span class="string">'ips'</span>)</span><br><span class="line">  .getter(<span class="string">'ip'</span>);</span><br></pre></td></tr></table></figure></p>
+<p>这样就为程序员提供了更简洁的调用方式。主要实现方法在<code>delegates</code>库里，咱们来瞅瞅。</p>
+<h3 id="delegates"><a href="#delegates" class="headerlink" title="delegates"></a>delegates</h3><p>这是一个Nodejs 方法和属性 代理工具库。</p>
+<h4 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = Delegator;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Delegator</span>(<span class="params">proto, target</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!(<span class="keyword">this</span> <span class="keyword">instanceof</span> Delegator)) <span class="keyword">return</span> <span class="keyword">new</span> Delegator(proto, target);</span><br><span class="line">  <span class="keyword">this</span>.proto = proto;</span><br><span class="line">  <span class="keyword">this</span>.target = target;</span><br><span class="line">  <span class="keyword">this</span>.methods = [];</span><br><span class="line">  <span class="keyword">this</span>.getters = [];</span><br><span class="line">  <span class="keyword">this</span>.setters = [];</span><br><span class="line">  <span class="keyword">this</span>.fluents = [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种构造函数相当于一个工厂方法，快速创建一个<code>Delegator</code>对象。有一个成员属性，<code>proto</code>是代理对象，<code>target</code>是被代理的对象，<code>methods</code>数组用来存放方法名，<code>getters</code>和<code>setters</code>数组用来存放属性的accessors，<code>fluents</code>数组用来存放属性。<br>（<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/__defineGetter__" target="_blank" rel="noopener"><strong>defineGetter</strong></a>和<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/__defineSetter__" target="_blank" rel="noopener"><strong>defineSetter</strong></a>）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">Delegator.prototype.method = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> proto = <span class="keyword">this</span>.proto;</span><br><span class="line">  <span class="keyword">var</span> target = <span class="keyword">this</span>.target;</span><br><span class="line">  <span class="keyword">this</span>.methods.push(name);</span><br><span class="line"></span><br><span class="line">  proto[name] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[target][name].apply(<span class="keyword">this</span>[target], <span class="built_in">arguments</span>);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Delegator.prototype.access = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.getter(name).setter(name);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Delegator.prototype.getter = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> proto = <span class="keyword">this</span>.proto;</span><br><span class="line">  <span class="keyword">var</span> target = <span class="keyword">this</span>.target;</span><br><span class="line">  <span class="keyword">this</span>.getters.push(name);</span><br><span class="line"></span><br><span class="line">  proto.__defineGetter__(name, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[target][name];</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Delegator.prototype.setter = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> proto = <span class="keyword">this</span>.proto;</span><br><span class="line">  <span class="keyword">var</span> target = <span class="keyword">this</span>.target;</span><br><span class="line">  <span class="keyword">this</span>.setters.push(name);</span><br><span class="line"></span><br><span class="line">  proto.__defineSetter__(name, <span class="function"><span class="keyword">function</span>(<span class="params">val</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[target][name] = val;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Delegator.prototype.fluent = <span class="function"><span class="keyword">function</span> (<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> proto = <span class="keyword">this</span>.proto;</span><br><span class="line">  <span class="keyword">var</span> target = <span class="keyword">this</span>.target;</span><br><span class="line">  <span class="keyword">this</span>.fluents.push(name);</span><br><span class="line"></span><br><span class="line">  proto[name] = <span class="function"><span class="keyword">function</span>(<span class="params">val</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">'undefined'</span> != <span class="keyword">typeof</span> val) &#123;</span><br><span class="line">      <span class="keyword">this</span>[target][name] = val;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>[target][name];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2017/10/28/koa/2017-10-28-koa-Context/" data-id="cjp10jdfr000edrcpbmi95unj" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/10/29/koa/2017-10-29-koa-Request/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          koa-Request
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/10/17/koa/2017-10-17-koa-Application/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">koa-Application</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+          </li>
+        
+          <li>
+            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
