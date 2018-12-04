@@ -7,14 +7,17 @@
   
   <title>蓦然回首，bug依然在灯火阑珊处</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="后端 Node.js go golang">
+  <meta name="description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
+<meta name="keywords" content="后端 Node.js go golang">
 <meta property="og:type" content="website">
 <meta property="og:title" content="蓦然回首，bug依然在灯火阑珊处">
 <meta property="og:url" content="http://yacen.github.io/page/6/index.html">
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
 <meta property="og:locale" content="Zh">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="蓦然回首，bug依然在灯火阑珊处">
+<meta name="twitter:description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
   
     <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
   
@@ -67,14 +70,14 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-mysql/2014-7-30-MySQL优化" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-redis/2014-12-10-Redis持久化" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/30/mysql/2014-7-30-MySQL优化/" class="article-date">
-  <time datetime="2014-07-29T16:00:00.000Z" itemprop="datePublished">2014-07-30</time>
+    <a href="/2014/12/10/redis/2014-12-10-Redis持久化/" class="article-date">
+  <time datetime="2014-12-09T16:00:00.000Z" itemprop="datePublished">2014-12-10</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+    <a class="article-category-link" href="/categories/redis/">redis</a>
   </div>
 
   </div>
@@ -85,7 +88,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/30/mysql/2014-7-30-MySQL优化/">MySQL优化</a>
+      <a class="article-title" href="/2014/12/10/redis/2014-12-10-Redis持久化/">Redis持久化</a>
     </h1>
   
 
@@ -93,29 +96,46 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="MySQL优化"><a href="#MySQL优化" class="headerlink" title="MySQL优化"></a>MySQL优化</h2><ol>
-<li><p>开启查询缓存，优化查询</p>
-</li>
-<li><p>explain你的select查询，这可以帮你分析你的查询语句或是表结构的性能瓶颈。EXPLAIN 的查询结果还会告诉你你的索引主键被如何利用的，你的数据表是如何被搜索和排序的</p>
-</li>
-<li><p>当只要一行数据时使用limit 1，MySQL数据库引擎会在找到一条数据后停止搜索，而不是继续往后查少下一条符合记录的数据</p>
-</li>
-<li><p>为搜索字段建索引</p>
-</li>
-<li><p>使用 ENUM 而不是 VARCHAR，如果你有一个字段，比如“性别”，“国家”，“民族”，“状态”或“部门”，你知道这些字段的取值是有限而且固定的，那么，你应该使用 ENUM 而不是VARCHAR。</p>
-</li>
-<li><p>Prepared StatementsPrepared Statements很像存储过程，是一种运行在后台的SQL语句集合，我们可以从使用 prepared statements 获得很多好处，无论是性能问题还是安全问题。Prepared Statements 可以检查一些你绑定好的变量，这样可以保护你的程序不会受到“SQL注入式”攻击</p>
-</li>
-<li><p>垂直分表</p>
-</li>
-<li><p>选择正确的存储引擎</p>
+        <p>Redis有两种持久化策略：</p>
+<h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2><p>redis的默认持久化机制</p>
+<p>RDB相当于照快照。保存的是一种状态<br>  20G数据…-&gt;几kb快照</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>快照保存数据极快，还原数据速度极快</li>
+<li>适用于灾难备份</li>
+</ol>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>RDB机制符合要求就会照快照。(随时随地启动)，会占用一部分资源，内存小的机器就不适合用<ul>
+<li>服务器正常关闭时，照快照</li>
+<li>key满足一定条件，照快照</li>
+</ul>
 </li>
 </ol>
+<h3 id="适用于大内存机器"><a href="#适用于大内存机器" class="headerlink" title="适用于大内存机器"></a>适用于大内存机器</h3><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    # 900秒内,有1条写入,则产生快照 </span><br><span class="line">save 300 10   # 300秒内有1000次写入,则产生快照</span><br><span class="line">save 60 10000 # 60秒内有10000次写入,则产生快照</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes # 后台备份进程出错时,主进程停不停止写入?</span><br><span class="line">rdbcompression yes  # 导出的rdb文件是否压缩</span><br><span class="line">rdbchecksum yes   # 导入rbd恢复时数据时,要不要检验rdb的完整性</span><br><span class="line">dbfilename dump.rdb   # 导出来的rdb文件名</span><br><span class="line">dir ./   # rdb的放置路径</span><br></pre></td></tr></table></figure>
+<h2 id="AOF-append-of-mode"><a href="#AOF-append-of-mode" class="headerlink" title="AOF(append of mode)"></a>AOF(append of mode)</h2><p>使用日志功能保存数据操作，默认AOF机制关闭</p>
+<p>三种模式：</p>
+<ul>
+<li>每秒同步(everysec)：每秒进行一次AOF保存数据。</li>
+<li>每次改同步(always)：只要有key变化语句，就进行AOF保存数据</li>
+<li>不同步(no)：不进行任何持久化操作</li>
+</ul>
+<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>持续性占用极少量的内存资源</li>
+</ol>
+<h3 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>日志文件会特别大，不适用于灾难恢复</li>
+<li>恢复效率远远低于RDB</li>
+</ol>
+<h3 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">appendonly no   # 是否打开 aof日志功能</span><br><span class="line"></span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># appendfsync always  # 每1个命令,都立即同步到aof. 安全,速度慢</span><br><span class="line">appendfsync everysec  # 折衷方案,每秒写1次</span><br><span class="line"># appendfsync no # # 写入工作交给操作系统,由操作系统判断缓冲区大小,统一写入到aof. 同步频率低,速度快,</span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no # 正在导出rdb快照的过程中,要不要停止同步aof</span><br><span class="line">auto-aof-rewrite-percentage 100 # aof文件大小比起上次重写时的大小,增长率100%时,重写</span><br><span class="line">auto-aof-rewrite-min-size 64mb # aof文件,至少超过64M时,重写</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">aof-use-rdb-preamble no</span><br></pre></td></tr></table></figure>
+<h3 id="注-在dump-rdb过程中-aof如果停止同步-会不会丢失"><a href="#注-在dump-rdb过程中-aof如果停止同步-会不会丢失" class="headerlink" title="注: 在dump rdb过程中,aof如果停止同步,会不会丢失?"></a>注: 在dump rdb过程中,aof如果停止同步,会不会丢失?</h3><p>答: 不会,所有的操作缓存在内存的队列里, dump完成后,统一操作.</p>
+<h3 id="注-aof重写是指什么"><a href="#注-aof重写是指什么" class="headerlink" title="注: aof重写是指什么?"></a>注: aof重写是指什么?</h3><p>答: aof重写是指把内存中的数据,逆化成命令,写入到.aof日志里.<br>以解决 aof日志过大的问题.</p>
+<h3 id="问-如果rdb文件-和aof文件都存在-优先用谁来恢复数据"><a href="#问-如果rdb文件-和aof文件都存在-优先用谁来恢复数据" class="headerlink" title="问: 如果rdb文件,和aof文件都存在,优先用谁来恢复数据?"></a>问: 如果rdb文件,和aof文件都存在,优先用谁来恢复数据?</h3><p>答: aof</p>
+<h3 id="问-2种是否可以同时用"><a href="#问-2种是否可以同时用" class="headerlink" title="问: 2种是否可以同时用?"></a>问: 2种是否可以同时用?</h3><p>答: 可以,而且推荐这么做</p>
+<h3 id="问-恢复时rdb和aof哪个恢复的快"><a href="#问-恢复时rdb和aof哪个恢复的快" class="headerlink" title="问: 恢复时rdb和aof哪个恢复的快"></a>问: 恢复时rdb和aof哪个恢复的快</h3><p>答: rdb快,因为其是数据的内存映射,直接载入到内存,而aof是命令,需要逐条执行</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/30/mysql/2014-7-30-MySQL优化/" data-id="cjp10jdgg0027drcpu7xcl5oc" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjp9i0zgo00585ucpo73yqplh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -125,10 +145,10 @@
 
 
   
-    <article id="post-mysql/2014-7-29-行级锁定" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-mysql/2014-8-9-读写分离的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/29/mysql/2014-7-29-行级锁定/" class="article-date">
-  <time datetime="2014-07-28T16:00:00.000Z" itemprop="datePublished">2014-07-29</time>
+    <a href="/2014/08/09/mysql/2014-8-9-读写分离的原理/" class="article-date">
+  <time datetime="2014-08-08T16:00:00.000Z" itemprop="datePublished">2014-08-09</time>
 </a>
     
   <div class="article-category">
@@ -143,7 +163,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/29/mysql/2014-7-29-行级锁定/">行级锁定</a>
+      <a class="article-title" href="/2014/08/09/mysql/2014-8-9-读写分离的原理/">读写分离的原理</a>
     </h1>
   
 
@@ -151,29 +171,20 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="行级锁定的优点："><a href="#行级锁定的优点：" class="headerlink" title="行级锁定的优点："></a>行级锁定的优点：</h2><ol>
-<li><p>当在许多线程中访问不同的行时只存在少量锁定冲突。</p>
-</li>
-<li><p>回滚时只有少量的更改</p>
-</li>
-<li><p>可以长时间锁定单一的行。</p>
-</li>
-</ol>
-<h2 id="行级锁定的缺点："><a href="#行级锁定的缺点：" class="headerlink" title="行级锁定的缺点："></a>行级锁定的缺点：</h2><ol>
-<li><p>比页级或表级锁定占用更多的内存。</p>
-</li>
-<li><p>当在表的大部分中使用时，比页级或表级锁定速度慢，因为你必须获取更多的锁。</p>
-</li>
-<li><p>如果你在大部分数据上经常进行GROUP BY操作或者必须经常扫描整个表，比其它锁定明显慢很多。</p>
-</li>
-<li><p>用高级别锁定，通过支持不同的类型锁定，你也可以很容易地调节应用程序，因为其锁成本小于行级锁定。</p>
-</li>
-</ol>
+        <p>数据库往往写少读多，所以性能优化的第一步就是读写分离。</p>
+<p><img src="mysql7.png" alt="mysql7"></p>
+<p>主从复制基于主节点上的服务层的日志实现的，而从节点上有一个IO线程读取这个日志，然后写入本地。另有一个线程从本地日志读取后在从节点重新执行。</p>
+<p><img src="mysql8.png" alt="mysql8"></p>
+<p>如图是主从异步复制的流程图。在主实例写入引擎后就返回成功，然后将事件发给从实例，在从实例上执行。这种同步方式速度较快，但是在主挂了的时候，如果还没有复制，则可能存在数据丢失问题。</p>
+<p><img src="mysql9.png" alt="mysql9"></p>
+<p>数据库同步复制也不同，是当从节点落盘后再返回客户端，当然这样会使得性能有所降低，网易数据库团队是通过组提交，并行复制等技术将性能提上来。</p>
+<p>有了主从复制，在数据库DAO层可以设置读写分离策略，也有通过数据库中间件做这个事情的。</p>
+<p>其实数据库日志还有很多其他用处，如使用canal(阿里巴巴开源项目: 基于mysql数据库binlog的增量订阅 &amp;消费)订阅数据库的binlog ，可以用于更新缓存等。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/29/mysql/2014-7-29-行级锁定/" data-id="cjp10jdgf0025drcprt3r2yha" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjp9i0zfo002m5ucpckwzpghp" class="article-share-link">Share</a>
       
       
     </footer>
@@ -183,10 +194,10 @@
 
 
   
-    <article id="post-mysql/2014-7-28-MVCC" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-mysql/2014-8-8-查询优化的方法论" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/28/mysql/2014-7-28-MVCC/" class="article-date">
-  <time datetime="2014-07-27T16:00:00.000Z" itemprop="datePublished">2014-07-28</time>
+    <a href="/2014/08/08/mysql/2014-8-8-查询优化的方法论/" class="article-date">
+  <time datetime="2014-08-07T16:00:00.000Z" itemprop="datePublished">2014-08-08</time>
 </a>
     
   <div class="article-category">
@@ -201,7 +212,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/28/mysql/2014-7-28-MVCC/">MVCC</a>
+      <a class="article-title" href="/2014/08/08/mysql/2014-8-8-查询优化的方法论/">查询优化的方法论</a>
     </h1>
   
 
@@ -209,24 +220,197 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="关于MVCC"><a href="#关于MVCC" class="headerlink" title="关于MVCC"></a>关于MVCC</h2><p>MySQL InnoDB存储引擎，实现的是基于多版本的并发控制协议——MVCC (Multi-Version Concurrency Control) (注：与MVCC相对的，是基于锁的并发控制，Lock-Based Concurrency Control)。MVCC最大的好处：读不加锁，读写不冲突。在读多写少的OLTP应用中，读写不冲突是非常重要的，极大的增加了系统的并发性能，现阶段几乎所有的RDBMS，都支持了MVCC。</p>
+        <p>要找到需要优化的SQL语句，首先要收集有问题的SQL语句。</p>
+<p>MySQL 数据库提供了慢SQL日志功能，通过参数slow_query_log，获取执行时间超过一定阈值的SQL语录列表。</p>
+<p>没有使用索引的SQL语句，可以通过long_queries_not_using_indexes参数开启。</p>
+<p>min_examined_row_limit，扫描记录数大于该值的SQL语句才会被记入慢SQL日志。</p>
+<p>找到有问题的语句，接下来就是通过explainSQL，获取SQL的执行计划，是否通过索引扫描记录，可以通过创建索引来优化执行效率。是否扫描记录数过多。是否持锁时间过长，是否存在锁冲突。返回的记录数是否较多。</p>
+<p>接下来可以定制化的优化。没有被索引覆盖的过滤条件涉及的字段，在区分度较大的字段上创建索引，如果涉及多个字段，尽量创建联合索引。</p>
+<p>扫描记录数非常多，返回记录数不多，区分度较差，重新评估SQL语句涉及的字段，选择区分度高的多个字段创建索引</p>
+<p>扫描记录数非常多，返回记录数也非常多，过滤条件不强，增加SQL过滤条件</p>
+<p>schema_redundant_indexes查看有哪些冗余索引。 </p>
+<p>如果多个索引涉及字段顺序一致，则可以组成一个联合索引schema_unused_indexes查看哪些索引从没有被使用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjp9i0zfo002k5ucpxl6d0bqy" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-8-7-解读数据库军规背后的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" class="article-date">
+  <time datetime="2014-08-06T16:00:00.000Z" itemprop="datePublished">2014-08-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/">解读数据库军规背后的原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>了解了这两种索引的原理，我们就能够解释为什么很多所谓的数据库的军规长这个样子了。下面我们来一一解释。</p>
+<h2 id="什么情况下应该使用组合索引而非单独索引呢？"><a href="#什么情况下应该使用组合索引而非单独索引呢？" class="headerlink" title="什么情况下应该使用组合索引而非单独索引呢？"></a>什么情况下应该使用组合索引而非单独索引呢？</h2><p>假设有条件语句A=a AND B=b，如果A和B是两个单独的索引，在AND条件下只有一个索引起作用，对于B则要逐个判断，而如果使用组合索引(A, B)，只要遍历一棵树就可以了，大大增加了效率。但是对于A=a OR B=b，由于是或的关系，因而组合索引是不起作用的，因而可以使用单独索引，这个时候，两个索引可以同时起作用。</p>
+<h2 id="为什么索引要有区分度，组合索引中应该讲有区分度的放在前面？"><a href="#为什么索引要有区分度，组合索引中应该讲有区分度的放在前面？" class="headerlink" title="为什么索引要有区分度，组合索引中应该讲有区分度的放在前面？"></a>为什么索引要有区分度，组合索引中应该讲有区分度的放在前面？</h2><p>如果没有区分度，例如用性别，相当于把整个大表分成两部分，查找数据还是需要遍历半个表才能找到，使得索引失去了意义。 </p>
+<h2 id="如果有组合索引，还需要单列索引吗？"><a href="#如果有组合索引，还需要单列索引吗？" class="headerlink" title="如果有组合索引，还需要单列索引吗？"></a>如果有组合索引，还需要单列索引吗？</h2><p>如果组合索引是(A, B)，则对于条件A=a，是可以用上这个组合索引的，因为组合索引是先按照第一列进行排序的，所以没必要对于A单独建立一个索引，但是对于B=b就用不上了，因为只有在第一列相同的情况下，才比较第二列，因而第二列相同的，可以分布在不同的节点上，没办法快速定位。</p>
+<h2 id="索引是越多越好吗？"><a href="#索引是越多越好吗？" class="headerlink" title="索引是越多越好吗？"></a>索引是越多越好吗？</h2><p>当然不是，只有在必要的地方添加索引，索引不但会使得插入和修改的效率降低，而且在查询的时候，有一个查询优化器，太多的索引会让优化器困惑，可能没有办法找到正确的查询路径，从而选择了慢的索引。</p>
+<h2 id="为什么要使用自增主键"><a href="#为什么要使用自增主键" class="headerlink" title="为什么要使用自增主键"></a>为什么要使用自增主键</h2><p>因为字符串主键和随机主键会使得数据随机插入，效率比较差，主键应该少更新，避免B+树和频繁合并和分裂。</p>
+<h2 id="为什么尽量不使用NULL"><a href="#为什么尽量不使用NULL" class="headerlink" title="为什么尽量不使用NULL"></a>为什么尽量不使用NULL</h2><p>NULL在B+树里面比较难以处理，往往需要特殊的逻辑进行处理，反而降低了效率。</p>
+<h2 id="为什么不要在更新频繁的字段上建立索引"><a href="#为什么不要在更新频繁的字段上建立索引" class="headerlink" title="为什么不要在更新频繁的字段上建立索引"></a>为什么不要在更新频繁的字段上建立索引</h2><p>更新一个字段意味着相应的索引也要更新，更新往往意味着删除然后再插入，索引本来是一种事先在写的阶段形成一定的数据结构，从而使得在读的阶段效率较高的方式，但是如果一个字段是写多读少，则不建议使用索引。</p>
+<h2 id="为什么在查询条件里面不要使用函数"><a href="#为什么在查询条件里面不要使用函数" class="headerlink" title="为什么在查询条件里面不要使用函数"></a>为什么在查询条件里面不要使用函数</h2><p>例如ID+1=10这种条件，索引是事先写入的时候生成好的，ID+1这种操作在查询阶段，索引无能为例，没办法把所有的索引都先做一个计算，然后再比较吧，代价太大了，因而应该使用ID=10-1。</p>
+<h2 id="为什么不要使用NOT等负向查询条件"><a href="#为什么不要使用NOT等负向查询条件" class="headerlink" title="为什么不要使用NOT等负向查询条件"></a>为什么不要使用NOT等负向查询条件</h2><p>你可以想象一下，对于一棵B+树，跟节点是40，如果你的条件是等于20，就去左面查，你的条件等于50，就去右面查，但是你的条件是不等于66，索引应该咋办？还不是遍历一遍才知道。</p>
+<h2 id="为什么模糊查询不要以通配符开头"><a href="#为什么模糊查询不要以通配符开头" class="headerlink" title="为什么模糊查询不要以通配符开头"></a>为什么模糊查询不要以通配符开头</h2><p>对于一棵B+树来讲，如果根是字符def，如果通配符在后面，例如abc%，则应该搜索左面，例如efg%，则应该搜索右面，如果通配符在前面%abc，则不知道应该走哪一面，还是都扫描一遍吧。</p>
+<h2 id="为什么OR要改成IN，或者使用Union"><a href="#为什么OR要改成IN，或者使用Union" class="headerlink" title="为什么OR要改成IN，或者使用Union"></a>为什么OR要改成IN，或者使用Union</h2><p>OR查询条件的优化往往比较难找到最佳的路径，尤其是OR的条件比较多的时候，尤其如此，对于同一个字段，使用IN就好一些，数据库会对IN里面的条件进行排序，并统一通过二分搜索的方法处理。对于不同的字段，使用Union，则可以让每一个子查询都使用索引。</p>
+<h2 id="为什么数据类型应该尽量小，常用整型来代替字符型，长字符类型可以考虑使用前缀索引？"><a href="#为什么数据类型应该尽量小，常用整型来代替字符型，长字符类型可以考虑使用前缀索引？" class="headerlink" title="为什么数据类型应该尽量小，常用整型来代替字符型，长字符类型可以考虑使用前缀索引？"></a>为什么数据类型应该尽量小，常用整型来代替字符型，长字符类型可以考虑使用前缀索引？</h2><p>因为数据库是按照页存放的，每一页的大小是一样的，如果数据类型比较大，则页数会比较多，每一页放的数据会比较少，树的高度会比较高，因而搜索数据要读取的I/O数目会比较多，插入的时候节点也容易分裂，效率会降低。使用整型来代替字符型多是这个考虑，整型对于索引有更高的效率，例如IP地址等。如果有长字符类型需要使用索引进行查询，为了不要使得索引太大，可以考虑将字段的前缀进行索引，而非整个字段。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjp9i0zfn002i5ucp10hrn05u" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-8-6-MySql数据库索引的优缺点" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" class="article-date">
+  <time datetime="2014-08-05T16:00:00.000Z" itemprop="datePublished">2014-08-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/">MySql数据库索引的优缺点</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>数据库索引的优势最明显的就是减少I/O，下面分析几种场景。</p>
+<p>对于=条件的字段，可以直接通过查找B+树的方式，通过很少的硬盘读取次数(相当于B+树层高)，就能够到达叶子节点，然后直接定位到数据的位置。</p>
+<p>对于范围的字段，由于B+树里面都是排好序的，范围可以很快的通过树进行定位。</p>
+<p>同理对于orderby/group by/distinct/max/min，由于B+树是排好序的，也是能够很快的得到结果的。</p>
+<p>还有一个常见的场景称为索引覆盖数据。例如A, B两个字段作为条件字段，常出现A=a AND B=b，同时select C, D时候，往往会建联合索引(A, B)，是一个二级索引，所以搜索的时候，通过二级索引的B+树能够很快的找到相应的叶子节点和记录，但是记录中有的是聚簇索引的ID，所以还需要查找一次聚簇索引的B+树，找到真正的表中的记录，然后在记录中，将C,D读取出来。如果建立联合索引的时候为(A, B, C, D)，则在二级索引的B+树中就有了所有的数据，可以直接返回了，减少了一次搜索树的过程。</p>
+<p>当然索引肯定是有代价的，天下没有免费的午餐。</p>
+<p>索引带来的好处多是读的效率的提高，而索引带来的代价就是写的效率的降低。</p>
+<p>插入和修改数据，都有可能意味着索引的改变。</p>
+<p>插入的时候，往往会在主键上建设聚簇索引，因而主键最好使用自增长，这样插入的数据就总是在最后，而且是顺序的，效率比较高。主键不要使用UUID，这样顺序比较随机，会带来随机的写入，效率比较差。主键不要使用和业务有关，因为与业务相关意味着会被更新，将面临着一次删除和重新插入，效率会比较差。</p>
+<p>通过上面对于B+树的原理的介绍，我们可以看出B+树的分裂代价还是比较大的，而分裂往往就产生于插入的过程中。</p>
+<p>而对于数据的修改，则基本相当于删除再插入，代价也比较大。</p>
+<p>对于一些字符串的列的二级索引，往往会造成随机的写入和读取，对I/O的压力也比较大。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjp9i0zfm002g5ucpk9nf7m1r" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-8-5-MySql数据库索引的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" class="article-date">
+  <time datetime="2014-08-04T16:00:00.000Z" itemprop="datePublished">2014-08-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/">MySql数据库索引的原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在整个过程中，最容易称为瓶颈点的是数据的读写，往往意味着要顺序或者随机读写磁盘，而读写磁盘的速度往往是比较慢的。</p>
+<p>如果加快这个过程呢？相信大家都猜到了就是建立索引。</p>
+<p>为什么索引能够加快这个过程呢？</p>
+<p>相信大家都逛过美食城，里面众多家餐馆琳琅满目，如果你不着急呢，肚子不饿，对搜索的性能没有要求，就可以在商场里面慢慢逛，逛一家看一家，知道找到自己想吃的餐馆。但是当你饿了，或者你们约好了餐馆，你一定想直奔那个餐馆，这个时候，你往往会去看楼层的索引图，快速的查找你目标餐馆的位置，找到后，直奔主题，就会大大节约时间，这就是索引的作用。</p>
+<p>所以索引就是通过值，快速的找到它的位置，从而可以快速的访问。</p>
+<p>索引的另外一个作用就是不用真正的查看数据，就能够做一些判断，例如商场里面有没有某个餐馆，你看一下索引就知道了，不必真的到商场里面逛一圈，再如找出所有的川菜馆，也是只要看索引就可以了，不用一家一家川菜馆跑。</p>
+<p>那么在Mysql中，索引是如何工作的呢？</p>
+<p>Mysql的索引结构，往往是一棵B+树。</p>
+<p>一棵m阶B+树具有如下的性质：</p>
 <ol>
-<li><p>LBCC：Lock-Based Concurrency Control，基于锁的并发控制。</p>
+<li><p>节点分索引节点和数据节点。索引节点相当于B树的内部节点，所有的索引节点组成一棵B树，具有B树的所有的特性。在索引节点中，存放着Key和指针，并不存放具体的元素。数据节点相当与B树的外部节点，B树的外部节点为空，在B+树中被利用了起来，用于存放真正的数据元素，里面包含了Key和元素的其他信息，但是没有指针。</p>
 </li>
-<li><p>MVCC：Multi-Version Concurrency Control，基于多版本的并发控制协议。纯粹基于锁的并发机制并发量低，MVCC是在基于锁的并发控制上的改进，主要是在读操作上提高了并发量。</p>
+<li><p>整棵索引节点组成的B树仅仅用来查找具有某个Key的数据元素位于哪个外部节点。在索引节点中找到了Key，事情没有结束，要继续找到数据节点，然后将数据节点中的元素读出来，或者二分查找，或者顺序扫描来寻找真正的数据元素。</p>
 </li>
-</ol>
-<h2 id="在MVCC并发控制中，读操作可以分成两类："><a href="#在MVCC并发控制中，读操作可以分成两类：" class="headerlink" title="在MVCC并发控制中，读操作可以分成两类："></a>在MVCC并发控制中，读操作可以分成两类：</h2><ol>
-<li><p>快照读 (snapshot read)：读取的是记录的可见版本 (有可能是历史版本)，不用加锁（共享读锁s锁也不加，所以不会阻塞其他事务的写）。</p>
+<li><p>M这个阶数仅仅用来控制索引节点部分的度，至于每个数据节点包含多少元素，与m无关。</p>
 </li>
-<li><p>当前读 (current read)：读取的是记录的最新版本，并且，当前读返回的记录，都会加上锁，保证其他事务不会再并发修改这条记录。</p>
+<li><p>另外有一个链表，将所有的数据节点串起来，可以顺序访问。</p>
 </li>
 </ol>
+<p>这个定义的比较抽象，我们来看一个具体的例子。</p>
+<p><img src="mysql4.png" alt="mysql4"></p>
+<p>从图中我们可以看出，这是一个3阶B+树，而一个外部数据节点最多包含5项。如果插入的数据在数据节点，如果不引起分裂和合并，则索引节点组成的B树就不会变。</p>
+<p>如果在71到75的外部节点插入一项76，则引起分裂，71,72,73成为一个数据节点，74,75,76成为一个数据节点，而对于索引节点来讲相当于插入一个Key为74的过程。</p>
+<p>如果在41到43的外部节点中删除43，则引起合并，41,42,61,62,63合并成一个节点，对于索引节点来讲，相当于删除Key为60的过程。</p>
+<p>查找的时候，由于B+树层高很小，所以能够比较快速的定位，例如我们要查找值62，在根节点发现大于40则访问右面，小于70则访问左面，大于60则访问右面，在叶子节点的第二个，就找到了62，成功定位。</p>
+<p>在Mysql的InnoDB中，有两种类型的B+树索引，一种称为聚簇索引，一种称为二级索引。</p>
+<p>聚簇索引的叶子节点就是数据节点，往往是主键作为聚簇索引，二级索引的叶子节点存放的是KEY字段加主键值。因而通过二级索引访问数据，要访问两次索引。</p>
+<p><img src="mysql5.png" alt="mysql5"></p>
+<p>还有一种索引的形式称为组合索引，或者复合索引，可以在多个列上建立索引。</p>
+<p><img src="mysql6.png" alt="mysql6"></p>
+<p>这种索引的排序规则为，先比较第一列，在第一列相等的情况下，比较第二列，以此类推。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/28/mysql/2014-7-28-MVCC/" data-id="cjp10jdge0023drcptcce5zbs" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjp9i0zfl002e5ucpk1dt9lav" class="article-share-link">Share</a>
       
       
     </footer>
@@ -236,10 +420,10 @@
 
 
   
-    <article id="post-mysql/2014-7-27-表分区" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-mysql/2014-8-4-MySql数据库的工作流程" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/27/mysql/2014-7-27-表分区/" class="article-date">
-  <time datetime="2014-07-26T16:00:00.000Z" itemprop="datePublished">2014-07-27</time>
+    <a href="/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" class="article-date">
+  <time datetime="2014-08-03T16:00:00.000Z" itemprop="datePublished">2014-08-04</time>
 </a>
     
   <div class="article-category">
@@ -254,7 +438,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/27/mysql/2014-7-27-表分区/">表分区</a>
+      <a class="article-title" href="/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/">MySql数据库的工作流程</a>
     </h1>
   
 
@@ -262,48 +446,22 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="什么是表分区？"><a href="#什么是表分区？" class="headerlink" title="什么是表分区？"></a>什么是表分区？</h2><p>表分区，是指根据一定规则，将数据库中的一张表分解成多个更小的，容易管理的部分。从逻辑上看，只有一张表，但是底层却是由多个物理分区组成。</p>
-<h2 id="表分区与分表的区别"><a href="#表分区与分表的区别" class="headerlink" title="表分区与分表的区别"></a>表分区与分表的区别</h2><p>分表：指的是通过一定规则，将一张表分解成多张不同的表。比如将用户订单记录根据时间成多个表。</p>
-<p>分表与分区的区别在于：分区从逻辑上来讲只有一张表，而分表则是将一张表分解成多张表。</p>
-<h2 id="表分区有什么好处？"><a href="#表分区有什么好处？" class="headerlink" title="表分区有什么好处？"></a>表分区有什么好处？</h2><ol>
-<li><p>分区表的数据可以分布在不同的物理设备上，从而高效地利用多个硬件设备。 和单个磁盘或者文件系统相比，可以存储更多数据</p>
-</li>
-<li><p>优化查询。在where语句中包含分区条件时，可以只扫描一个或多个分区表来提高查询效率；涉及sum和count语句时，也可以在多个分区上并行处理，最后汇总结果。</p>
-</li>
-<li><p>分区表更容易维护。例如：想批量删除大量数据可以清除整个分区。</p>
-</li>
-<li><p>可以使用分区表来避免某些特殊的瓶颈，例如InnoDB的单个索引的互斥访问，ext3问价你系统的inode锁竞争等。</p>
-</li>
-</ol>
-<h2 id="分区表的限制因素"><a href="#分区表的限制因素" class="headerlink" title="分区表的限制因素"></a>分区表的限制因素</h2><ol>
-<li><p>一个表最多只能有1024个分区</p>
-</li>
-<li><p>MySQL5.1中，分区表达式必须是整数，或者返回整数的表达式。在MySQL5.5中提供了非整数表达式分区的支持。</p>
-</li>
-<li><p>如果分区字段中有主键或者唯一索引的列，那么多有主键列和唯一索引列都必须包含进来。即：分区字段要么不包含主键或者索引列，要么包含全部主键和索引列。</p>
-</li>
-<li><p>分区表中无法使用外键约束</p>
-</li>
-<li><p>MySQL的分区适用于一个表的所有数据和索引，不能只对表数据分区而不对索引分区，也不能只对索引分区而不对表分区，也不能只对表的一部分数据分区。</p>
-</li>
-</ol>
-<h2 id="如何判断当前MySQL是否支持分区？"><a href="#如何判断当前MySQL是否支持分区？" class="headerlink" title="如何判断当前MySQL是否支持分区？"></a>如何判断当前MySQL是否支持分区？</h2><p>命令：show variables like ‘%partition%’ 运行结果:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like '%partition%';</span><br><span class="line">+<span class="comment">-------------------+-------+| Variable_name | Value |+-------------------+-------+| have_partitioning | YES |+-------------------+-------+1 row in set (0.00 sec)</span></span><br></pre></td></tr></table></figure></p>
-<p>have_partintioning 的值为YES，表示支持分区。</p>
-<h2 id="MySQL支持的分区类型有哪些？"><a href="#MySQL支持的分区类型有哪些？" class="headerlink" title="MySQL支持的分区类型有哪些？"></a>MySQL支持的分区类型有哪些？</h2><ol>
-<li><p>RANGE分区： 这种模式允许将数据划分不同范围。例如可以将一个表通过年份划分成若干个分区</p>
-</li>
-<li><p>LIST分区： 这种模式允许系统通过预定义的列表的值来对数据进行分割。按照List中的值分区，与RANGE的区别是，range分区的区间范围值是连续的。</p>
-</li>
-<li><p>HASH分区 ：这中模式允许通过对表的一个或多个列的Hash Key进行计算，最后通过这个Hash码不同数值对应的数据区域进行分区。例如可以建立一个对表主键进行分区的表。</p>
-</li>
-<li><p>KEY分区 ：上面Hash模式的一种延伸，这里的Hash Key是MySQL系统产生的。</p>
-</li>
-</ol>
+        <p>在收到一个查询的时候，Mysql的架构中的各个组件是如此工作的：<br><img src="mysql3.png" alt="mysql3"></p>
+<p>客户端同数据库服务层建立TCP连接，连接管理模块会建立连接，并请求一个连接线程。如果连接池中有空闲的连接线程，则分配给这个连接，如果没有，在没有超过最大连接数的情况下，创建新的连接线程负责这个客户端。</p>
+<p>在真正的操作之前，还需要调用用户模块进行授权检查，来验证用户是否有权限。通过后，方才提供服务，连接线程开始接收并处理来自客户端的SQL语句。</p>
+<p>连接线程接收到SQL语句之后，将语句交给SQL语句解析模块进行语法分析和语义分析。</p>
+<p>如果是一个查询语句，则可以先看查询缓存中是否有结果，如果有结果可以直接返回给客户端。</p>
+<p>如果查询缓存中没有结果，就需要真的查询数据库引擎层了，于是发给SQL优化器，进行查询的优化。如果是表变更，则分别交给insert, update, delete, create，alter处理模块进行处理。</p>
+<p>接下来就是请求数据库引擎层，打开表，如果需要的话获取相应的锁。</p>
+<p>接下来的处理过程就到了数据库引擎层，例如InnoDB。</p>
+<p>在数据库引擎层，要先查询缓存页中有没有相应的数据，如果有则可以直接返回，如果没有就要从磁盘上去读取。</p>
+<p>当在磁盘中找到相应的数据之后，则会加载到缓存中来，从而使得后面的查询更加高效，由于内存有限，多采用变通的LRU表来管理缓存页，保证缓存的都是经常访问的数据。</p>
+<p>获取数据后返回给客户端，关闭连接，释放连接线程，过程结束。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/27/mysql/2014-7-27-表分区/" data-id="cjp10jdge0021drcp07j33lw0" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" data-id="cjp9i0zfk002c5ucpkzhw78h6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -313,10 +471,10 @@
 
 
   
-    <article id="post-mysql/2014-7-26-索引面试题" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-mysql/2014-8-3-MySql数据库的总体架构" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/26/mysql/2014-7-26-索引面试题/" class="article-date">
-  <time datetime="2014-07-25T16:00:00.000Z" itemprop="datePublished">2014-07-26</time>
+    <a href="/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" class="article-date">
+  <time datetime="2014-08-02T16:00:00.000Z" itemprop="datePublished">2014-08-03</time>
 </a>
     
   <div class="article-category">
@@ -331,7 +489,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/26/mysql/2014-7-26-索引面试题/">索引面试题</a>
+      <a class="article-title" href="/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/">MySql数据库的总体架构</a>
     </h1>
   
 
@@ -339,77 +497,25 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="为什么用自增列作为主键"><a href="#为什么用自增列作为主键" class="headerlink" title="为什么用自增列作为主键"></a>为什么用自增列作为主键</h2><ol>
-<li><p>如果我们定义了主键(PRIMARY KEY)，那么InnoDB会选择主键作为聚集索引、如果没有显式定义主键，则InnoDB会选择第一个不包含有NULL值的唯一索引作为主键索引、如果也没有这样的唯一索引，则InnoDB会选择内置6字节长的ROWID作为隐含的聚集索引(ROWID随着行记录的写入而主键递增，这个ROWID不像ORACLE的ROWID那样可引用，是隐含的)。</p>
-</li>
-<li><p>数据记录本身被存于主索引（一颗B+Tree）的叶子节点上。这就要求同一个叶子节点内（大小为一个内存页或磁盘页）的各条数据记录按主键顺序存放，因此每当有一条新的记录插入时，MySQL会根据其主键将其插入适当的节点和位置，如果页面达到装载因子（InnoDB默认为15/16），则开辟一个新的页（节点）</p>
-</li>
-<li><p>如果表使用自增主键，那么每次插入新的记录，记录就会顺序添加到当前索引节点的后续位置，当一页写满，就会自动开辟一个新的页</p>
-</li>
-<li><p>如果使用非自增主键（如果身份证号或学号等），由于每次插入主键的值近似于随机，因此每次新纪录都要被插到现有索引页得中间某个位置，此时MySQL不得不为了将新记录插到合适位置而移动数据，甚至目标页面可能已经被回写到磁盘上而从缓存中清掉，此时又要从磁盘上读回来，这增加了很多开销，同时频繁的移动、分页操作造成了大量的碎片，得到了不够紧凑的索引结构，后续不得不通过OPTIMIZE TABLE来重建表并优化填充页面。</p>
-</li>
-</ol>
-<h2 id="为什么使用数据索引能提高效率"><a href="#为什么使用数据索引能提高效率" class="headerlink" title="为什么使用数据索引能提高效率"></a>为什么使用数据索引能提高效率</h2><ol>
-<li><p>数据索引的存储是有序的</p>
-</li>
-<li><p>在有序的情况下，通过索引查询一个数据是无需遍历索引记录的</p>
-</li>
-<li><p>极端情况下，数据索引的查询效率为二分法查询效率，趋近于 log2(N)</p>
-</li>
-</ol>
-<h2 id="B-树索引和哈希索引的区别"><a href="#B-树索引和哈希索引的区别" class="headerlink" title="B+树索引和哈希索引的区别"></a>B+树索引和哈希索引的区别</h2><p>B+树是一个平衡的多叉树，从根节点到每个叶子节点的高度差值不超过1，而且同层级的节点间有指针相互链接，是有序的</p>
-<p><img src="index1.webp" alt="mysql1"></p>
-<p>哈希索引就是采用一定的哈希算法，把键值换算成新的哈希值，检索时不需要类似B+树那样从根节点到叶子节点逐级查找，只需一次哈希算法即可,是无序的</p>
-<p><img src="index2.webp" alt="mysql1"></p>
-<h2 id="哈希索引的优势"><a href="#哈希索引的优势" class="headerlink" title="哈希索引的优势"></a>哈希索引的优势</h2><p>等值查询。哈希索引具有绝对优势（前提是：没有大量重复键值，如果大量重复键值时，哈希索引的效率很低，因为存在所谓的哈希碰撞问题。）</p>
-<h2 id="哈希索引不适用的场景"><a href="#哈希索引不适用的场景" class="headerlink" title="哈希索引不适用的场景"></a>哈希索引不适用的场景</h2><ol>
-<li><p>不支持范围查询</p>
-</li>
-<li><p>不支持索引完成排序</p>
-</li>
-<li><p>不支持联合索引的最左前缀匹配规则</p>
-</li>
-</ol>
-<p>通常，B+树索引结构适用于绝大多数场景，像下面这种场景用哈希索引才更有优势：</p>
-<p>在HEAP表中，如果存储的数据重复度很低（也就是说基数很大），对该列数据以等值查询为主，没有范围查询、没有排序的时候，特别适合采用哈希索引，例如这种SQL：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">name</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">'李明'</span>; — 仅等值查询</span><br></pre></td></tr></table></figure>
-<p>而常用的InnoDB引擎中默认使用的是B+树索引，它会实时监控表上索引的使用情况，如果认为建立哈希索引可以提高查询效率，则自动在内存中的“自适应哈希索引缓冲区”建立哈希索引（在InnoDB中默认开启自适应哈希索引），通过观察搜索模式，MySQL会利用index key的前缀建立哈希索引，如果一个表几乎大部分都在缓冲池中，那么建立一个哈希索引能够加快等值查询。</p>
-<p>注意：在某些工作负载下，通过哈希索引查找带来的性能提升远大于额外的监控索引搜索情况和保持这个哈希表结构所带来的开销。但某些时候，在负载高的情况下，自适应哈希索引中添加的read/write锁也会带来竞争，比如高并发的join操作。like操作和%的通配符操作也不适用于自适应哈希索引，可能要关闭自适应哈希索引。</p>
-<h2 id="B树和B-树的区别"><a href="#B树和B-树的区别" class="headerlink" title="B树和B+树的区别"></a>B树和B+树的区别</h2><ol>
-<li>B树，每个节点都存储key和data，所有节点组成这棵树，并且叶子节点指针为nul，叶子结点不包含任何关键字信息。</li>
-</ol>
-<p><img src="index3.webp" alt="mysql1"></p>
-<ol start="2">
-<li>B+树，所有的叶子结点中包含了全部关键字的信息，及指向含有这些关键字记录的指针，且叶子结点本身依关键字的大小自小而大的顺序链接，所有的非终端结点可以看成是索引部分，结点中仅含有其子树根结点中最大（或最小）关键字。 (而B 树的非终节点也包含需要查找的有效信息)</li>
-</ol>
-<p><img src="index4.webp" alt="mysql1"></p>
-<h2 id="为什么说B-比B树更适合实际应用中操作系统的文件索引和数据库索引？"><a href="#为什么说B-比B树更适合实际应用中操作系统的文件索引和数据库索引？" class="headerlink" title="为什么说B+比B树更适合实际应用中操作系统的文件索引和数据库索引？"></a>为什么说B+比B树更适合实际应用中操作系统的文件索引和数据库索引？</h2><ol>
-<li><p>B+的磁盘读写代价更低。B+的内部结点并没有指向关键字具体信息的指针。因此其内部结点相对B树更小。如果把所有同一内部结点的关键字存放在同一盘块中，那么盘块所能容纳的关键字数量也越多。一次性读入内存中的需要查找的关键字也就越多。相对来说IO读写次数也就降低了。</p>
-</li>
-<li><p>B+-tree的查询效率更加稳定。由于非终结点并不是最终指向文件内容的结点，而只是叶子结点中关键字的索引。所以任何关键字的查找必须走一条从根结点到叶子结点的路。所有关键字查询的路径长度相同，导致每一个数据的查询效率相当。</p>
-</li>
-</ol>
-<h2 id="MySQL联合索引"><a href="#MySQL联合索引" class="headerlink" title="MySQL联合索引"></a>MySQL联合索引</h2><ol>
-<li><p>联合索引是两个或更多个列上的索引。对于联合索引:Mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index (a,b,c). 可以支持a 、 a,b 、 a,b,c 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分有效。</p>
-</li>
-<li><p>利用索引中的附加列，您可以缩小搜索的范围，但使用一个具有两列的索引 不同于使用两个单独的索引。复合索引的结构与电话簿类似，人名由姓和名构成，电话簿首先按姓氏对进行排序，然后按名字对有相同姓氏的人进行排序。如果您知 道姓，电话簿将非常有用；如果您知道姓和名，电话簿则更为有用，但如果您只知道名不姓，电话簿将没有用处。</p>
-</li>
-</ol>
-<h2 id="什么情况下应不建或少建索引"><a href="#什么情况下应不建或少建索引" class="headerlink" title="什么情况下应不建或少建索引"></a>什么情况下应不建或少建索引</h2><ol>
-<li><p>表记录太少</p>
-</li>
-<li><p>经常插入、删除、修改的表</p>
-</li>
-<li><p>数据重复且分布平均的表字段，假如一个表有10万行记录，有一个字段A只有T和F两种值，且每个值的分布概率大约为50%，那么对这种表A字段建索引一般不会提高数据库的查询速度。</p>
-</li>
-<li><p>经常和主字段一块查询但主字段索引值比较多的表字段</p>
-</li>
-</ol>
+        <p><img src="mysql1.png" alt="mysql1"></p>
+<p>这是一张非常经典的Mysql的系统架构图，通过这个图可以看出Mysql各个部分的功能。</p>
+<p>当客户端连接数据库的时候，首先面对的是连接池，用于管理用户的连接，并会做一定的认证和鉴权。</p>
+<p>连接了数据库之后，客户端会发送SQL语句，而SQL接口这个模块就是来接受用户的SQL语句的。</p>
+<p>SQL语句往往需要符合严格的语法规则，因而要有语法解析器对语句进行语法解析，解析语法的原理如同编译原理中的学到的那样，从语句变成语法树。</p>
+<p>对于用户属于的查询可以进行优化，从而可以选择最快的查询路径，这就是优化器的作用。</p>
+<p>为了加快查询速度，会有查询缓存模块，如果查询缓存有命中的查询结果，查询语句就可以直接去查询缓存中取数据。</p>
+<p>上面的所有的组件都是数据库服务层，接下来是数据库引擎层，当前主流的数据库引擎就是InnoDB。</p>
+<p>对于数据库有任何的修改，数据库服务层会有binary log记录下来，这是主备复制的基础。</p>
+<p>对于数据库引擎层，一个著名的图如下：</p>
+<p><img src="mysql2.png" alt="mysql2"><br>在存储引擎层，也有缓存，也有日志，最终数据是落到盘上的。</p>
+<p>存储引擎层的缓存也是用于提高性能的，但是同数据库服务层的缓存不同，数据库服务层的缓存是查询缓存，而数据库引擎层的缓存读写都缓存。数据库服务层的缓存是基于查询逻辑的，而数据库引擎引擎的缓存是基于数据页的，可以说是物理的。</p>
+<p>哪怕是数据的写入仅仅写入到了数据库引擎层中的缓存，对于数据库服务层来讲，就算是已经持久化了，当然这个时候会造成缓存页和硬盘上的页的数据的不一致，这种不一致由数据库引擎层的日志来保证完整性。</p>
+<p>所以数据库引擎层的日志和数据库服务层的也不同，服务层的日志记录的是一个个的修改逻辑，而引擎层的日志记录的是缓存页和数据页的物理差异。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/26/mysql/2014-7-26-索引面试题/" data-id="cjp10jdgc001ydrcpygwpq825" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" data-id="cjp9i0zfj002a5ucpqshn9jp9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -419,10 +525,10 @@
 
 
   
-    <article id="post-mysql/2014-7-25-MySql面试题-6" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-mysql/2014-8-2-数据库表创建注意事项" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/25/mysql/2014-7-25-MySql面试题-6/" class="article-date">
-  <time datetime="2014-07-24T16:00:00.000Z" itemprop="datePublished">2014-07-25</time>
+    <a href="/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" class="article-date">
+  <time datetime="2014-08-01T16:00:00.000Z" itemprop="datePublished">2014-08-02</time>
 </a>
     
   <div class="article-category">
@@ -437,7 +543,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/25/mysql/2014-7-25-MySql面试题-6/">MySql面试题</a>
+      <a class="article-title" href="/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/">MySQL优化</a>
     </h1>
   
 
@@ -445,332 +551,127 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="51、mysql支持事务吗？"><a href="#51、mysql支持事务吗？" class="headerlink" title="51、mysql支持事务吗？"></a>51、mysql支持事务吗？</h2><p>支持</p>
-<h2 id="52、mysql里记录货币用什么字段类型好？"><a href="#52、mysql里记录货币用什么字段类型好？" class="headerlink" title="52、mysql里记录货币用什么字段类型好？"></a>52、mysql里记录货币用什么字段类型好？</h2><p>decimal</p>
-<h2 id="53、mysql数据表在什么情况下容易损坏？"><a href="#53、mysql数据表在什么情况下容易损坏？" class="headerlink" title="53、mysql数据表在什么情况下容易损坏？"></a>53、mysql数据表在什么情况下容易损坏？</h2><ol>
-<li>服务器突然断电导致数据文件损坏。</li>
-<li>强制关机，没有先关闭mysql 服务等。</li>
+        <h2 id="M数据库表创建注意事项"><a href="#M数据库表创建注意事项" class="headerlink" title="M数据库表创建注意事项"></a>M数据库表创建注意事项</h2><ol>
+<li><p>字段名及字段配制合理性</p>
+<ul>
+<li><p>剔除关系不密切的字段；</p>
+</li>
+<li><p>字段命名要有规则及相对应的含义（不要一部分英文，一部分拼音，还有类似a.b.c这样不明含义的字段）；</p>
+</li>
+<li><p>字段命名尽量不要使用缩写（大多数缩写都不能明确字段含义）；</p>
+</li>
+<li><p>字段不要大小写混用（想要具有可读性，多个英文单词可使用下划线形式连接）；</p>
+</li>
+<li><p>字段名不要使用保留字或者关键字；</p>
+</li>
+<li><p>保持字段名和类型的一致性；</p>
+</li>
+<li><p>慎重选择数字类型；</p>
+</li>
+<li><p>给文本字段留足余量；</p>
+</li>
+</ul>
+</li>
+<li><p>系统特殊字段处理及建成后建议</p>
+<ul>
+<li><p>添加删除标记（例如操作人. 删除时间）；</p>
+</li>
+<li><p>建立版本机制；</p>
+</li>
+</ul>
+</li>
+<li><p>表结构合理性配置</p>
+<ul>
+<li><p>多型字段的处理，就是表中是否存在字段能够分解成更小独立的几部分（例如：人可以分为男人和女人）；</p>
+</li>
+<li><p>多值字段的处理，可以将表分为三张表，这样使得检索和排序更加有调理，且保证数据的完整性！</p>
+</li>
+</ul>
+</li>
+<li><p>其它建议</p>
+<ul>
+<li><p>对于大数据字段，独立表进行存储，以便影响性能（例如：简介字段）；</p>
+</li>
+<li><p>使用varchar类型代替char，因为varchar会动态分配长度，char指定长度是固定的；</p>
+</li>
+<li><p>给表创建主键，对于没有主键的表，在查询和索引定义上有一定的影响；</p>
+</li>
+<li><p>避免表字段运行为null，建议设置默认值（例如：int类型设置默认值为0）在索引查询上，效率立显；</p>
+</li>
+<li><p>建立索引，最好建立在唯一和非空的字段上，建立太多的索引对后期插入. 更新都存在一定的影响（考虑实际情况来创建）；</p>
+</li>
+</ul>
+</li>
 </ol>
-<h2 id="54、数据表损坏后的主要现象是什么？"><a href="#54、数据表损坏后的主要现象是什么？" class="headerlink" title="54、数据表损坏后的主要现象是什么？"></a>54、数据表损坏后的主要现象是什么？</h2><p>从表中选择数据之时，得到如下错误：Incorrect key file for table: ‘…’. Try to repair it<br>查询不能在表中找到行或返回不完全的数据。<br>Error: Table ‘p’ is marked as crashed and should be repaired 。<br>打开表失败： Can’t open file: ‘×××.MYI’ (errno: 145) 。</p>
-<h2 id="55、数据表损坏的修复方式有哪些？"><a href="#55、数据表损坏的修复方式有哪些？" class="headerlink" title="55、数据表损坏的修复方式有哪些？"></a>55、数据表损坏的修复方式有哪些？</h2><p>使用 myisamchk 来修复，具体步骤： </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" data-id="cjp9i0zgh004s5ucpz2xf0sgy" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" class="article-date">
+  <time datetime="2014-07-31T16:00:00.000Z" itemprop="datePublished">2014-08-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/">MySQL优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Mysql-中-MyISAM-和-InnoDB-的区别有哪些？"><a href="#Mysql-中-MyISAM-和-InnoDB-的区别有哪些？" class="headerlink" title="Mysql 中 MyISAM 和 InnoDB 的区别有哪些？"></a>Mysql 中 MyISAM 和 InnoDB 的区别有哪些？</h2><p>区别：</p>
 <ol>
-<li>修复前将mysql服务停止。 </li>
-<li>打开命令行方式，然后进入到mysql的/bin目录。</li>
-<li>执行myisamchk –recover  数据库所在路径/*.MYI</li>
+<li><p>InnoDB支持事务，MyISAM不支持，对于InnoDB每一条SQL语言都默认封装成事务，自动提交，这样会影响速度，所以最好把多条SQL语言放在begin和commit之间，组成一个事务；</p>
+</li>
+<li><p>InnoDB支持外键，而MyISAM不支持。对一个包含外键的InnoDB表转为MYISAM会失败；</p>
+</li>
+<li><p>InnoDB是聚集索引，数据文件是和索引绑在一起的，必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而MyISAM是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。</p>
+</li>
+<li><p>InnoDB不保存表的具体行数，执行select count(*) from table时需要全表扫描。而MyISAM用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快；</p>
+</li>
+<li><p>Innodb不支持全文索引，而MyISAM支持全文索引，查询效率上MyISAM要高；</p>
+</li>
 </ol>
-<p>使用repair table 或者 OPTIMIZE  table命令来修复，REPAIR TABLE <code>table_name</code> 修复表 OPTIMIZE TABLE <code>table_name</code> 优化表 REPAIR TABLE 用于修复被破坏的表。<br>OPTIMIZE TABLE 用于回收闲置的数据库空间，当表上的数据行被删除时，所占据的磁盘空间并没有立即被回收，使用了OPTIMIZE TABLE命令后这些空间将被回收，并且对磁盘上的数据行进行重排（注意：是磁盘上，而非数据库）</p>
-<h2 id="56、mysql有关权限的表都有哪几个？"><a href="#56、mysql有关权限的表都有哪几个？" class="headerlink" title="56、mysql有关权限的表都有哪几个？"></a>56、mysql有关权限的表都有哪几个？</h2><p>MySQL服务器通过权限表来控制用户对数据库的访问，权限表存放在mysql数据库里，由mysql_install_db脚本初始化。这些权限表分别user，db，table_priv，columns_priv和host。下面分别介绍一下这些表的结构和内容：</p>
-<ul>
-<li>user权限表：记录允许连接到服务器的用户帐号信息，里面的权限是全局级的。</li>
-<li>db权限表：记录各个帐号在各个数据库上的操作权限。</li>
-<li>table_priv权限表：记录数据表级的操作权限。</li>
-<li>columns_priv权限表：记录数据列级的操作权限。</li>
-<li>host权限表：配合db权限表对给定主机上数据库级操作权限作更细致的控制。这个权限表不受GRANT和REVOKE语句的影响。<h2 id="57、mysql中有哪几种锁？"><a href="#57、mysql中有哪几种锁？" class="headerlink" title="57、mysql中有哪几种锁？"></a>57、mysql中有哪几种锁？</h2>相对其他数据库而言，MySQL的锁机制比较简单，其最显著的特点是不同的存储引擎支持不同的锁机制。比如，MyISAM和MEMORY存储引擎采用的是表级锁（table-level locking）；BDB存储引擎采用的是页面锁（page-level locking），但也支持表级锁；InnoDB存储引擎既支持行级锁（row-level locking），也支持表级锁，但默认情况下是采用行级锁。<br>MySQL这3种锁的特性可大致归纳如下。<br>开销、加锁速度、死锁、粒度、并发性能</li>
-<li>表级锁：开销小，加锁快；不会出现死锁；锁定粒度大，发生锁冲突的概率最高,并发度最低。</li>
-<li>行级锁：开销大，加锁慢；会出现死锁；锁定粒度最小，发生锁冲突的概率最低,并发度也最高。</li>
-<li>页面锁：开销和加锁时间界于表锁和行锁之间；会出现死锁；锁定粒度界于表锁和行锁之间，并发度一般。 </li>
-</ul>
-<p>从上述特点可见，很难笼统地说哪种锁更好，只能就具体应用的特点来说哪种锁更合适！仅从锁的角度来说：表级锁更适合于以查询为主，只有少量按索引条件更新数据的应用，如Web应用；而行级锁则更适合于有大量按索引条件并发更新少量不同数据，同时又有并发查询的应用，如一些在线事务处理（OLTP）系统。这一点在本书的“开发篇”介绍表类型的选择时，也曾提到过。下面几节我们重点介绍MySQL表锁和 InnoDB行锁的问题，由于BDB已经被InnoDB取代，即将成为历史，在此就不做进一步的讨论了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/" data-id="cjp10jdgb001xdrcpuk32va6g" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-7-24-MySql面试题-5" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/24/mysql/2014-7-24-MySql面试题-5/" class="article-date">
-  <time datetime="2014-07-23T16:00:00.000Z" itemprop="datePublished">2014-07-24</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/24/mysql/2014-7-24-MySql面试题-5/">MySql面试题</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="41、mysql如何优化DISTINCT？"><a href="#41、mysql如何优化DISTINCT？" class="headerlink" title="41、mysql如何优化DISTINCT？"></a>41、mysql如何优化DISTINCT？</h2><p>DISTINCT在所有列上转换为GROUP BY，并与ORDER BY子句结合使用。</p>
-<h2 id="42、如何输入字符为十六进制数字？"><a href="#42、如何输入字符为十六进制数字？" class="headerlink" title="42、如何输入字符为十六进制数字？"></a>42、如何输入字符为十六进制数字？</h2><p>如果想输入字符为十六进制数字，可以输入带有单引号的十六进制数字和前缀(X)，或者只用(Ox)前缀输入十六进制数字。</p>
-<p>如果表达式上下文是字符串，则十六进制数字串将自动转换为字符串。</p>
-<h2 id="43、如何显示前50行？"><a href="#43、如何显示前50行？" class="headerlink" title="43、如何显示前50行？"></a>43、如何显示前50行？</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span>*<span class="keyword">FROM</span></span><br><span class="line">　　<span class="keyword">LIMIT</span> <span class="number">0</span>,<span class="number">50</span>;</span><br></pre></td></tr></table></figure>
-<h2 id="44、可以使用多少列创建索引？"><a href="#44、可以使用多少列创建索引？" class="headerlink" title="44、可以使用多少列创建索引？"></a>44、可以使用多少列创建索引？</h2><p>任何标准表最多可以创建16个索引列。</p>
-<h2 id="45、NOW（）和CURRENT-DATE（）有什么区别？"><a href="#45、NOW（）和CURRENT-DATE（）有什么区别？" class="headerlink" title="45、NOW（）和CURRENT_DATE（）有什么区别？"></a>45、NOW（）和CURRENT_DATE（）有什么区别？</h2><ul>
-<li>NOW()命令用于显示当前年份，月份，日期，小时，分钟和秒。</li>
-<li>CURRENT_DATE()仅显示当前年份，月份和日期。</li>
-</ul>
-<h2 id="46、什么样的对象可以使用CREATE语句创建？"><a href="#46、什么样的对象可以使用CREATE语句创建？" class="headerlink" title="46、什么样的对象可以使用CREATE语句创建？"></a>46、什么样的对象可以使用CREATE语句创建？</h2><p>以下对象是使用CREATE语句创建的：</p>
-<ul>
-<li>DATABASE</li>
-<li>EVENT</li>
-<li>FUNCTION</li>
-<li>INDEX</li>
-<li>PROCEDURE</li>
-<li>TABLE</li>
-<li>TRIGGER</li>
-<li>USER</li>
-<li>VIEW</li>
-</ul>
-<h2 id="47、mysql表中允许有多少个TRIGGERS？"><a href="#47、mysql表中允许有多少个TRIGGERS？" class="headerlink" title="47、mysql表中允许有多少个TRIGGERS？"></a>47、mysql表中允许有多少个TRIGGERS？</h2><p>在MySql表中允许有六个触发器，如下：</p>
-<ul>
-<li>BEFORE INSERT</li>
-<li>AFTER INSERT</li>
-<li>BEFORE UPDATE</li>
-<li>AFTER UPDATE</li>
-<li>BEFORE DELETE and</li>
-<li>AFTER DELETE</li>
-</ul>
-<h2 id="48、什么是非标准字符串类型？"><a href="#48、什么是非标准字符串类型？" class="headerlink" title="48、什么是非标准字符串类型？"></a>48、什么是非标准字符串类型？</h2><p>以下是非标准字符串类型：</p>
-<ul>
-<li>TINYTEXT</li>
-<li>TEXT</li>
-<li>MEDIUMTEXT</li>
-<li>LONGTEXT</li>
-</ul>
-<h2 id="49、什么是通用SQL函数？"><a href="#49、什么是通用SQL函数？" class="headerlink" title="49、什么是通用SQL函数？"></a>49、什么是通用SQL函数？</h2><ul>
-<li>CONCAT(A, B) - 连接两个字符串值以创建单个字符串输出。通常用于将两个或多个字段合并为一个字段。</li>
-<li>FORMAT(X, D)- 格式化数字X到D有效数字。</li>
-<li>CURRDATE(), CURRTIME()- 返回当前日期或时间。</li>
-<li>NOW() - 将当前日期和时间作为一个值返回。</li>
-<li>MONTH()，DAY()，YEAR()，WEEK()，WEEKDAY() - 从日期值中提取给定数据。</li>
-<li>HOUR()，MINUTE()，SECOND() - 从时间值中提取给定数据。</li>
-<li>DATEDIFF(A，B) - 确定两个日期之间的差异，通常用于计算年龄</li>
-<li>SUBTIMES(A，B) - 确定两次之间的差异。</li>
-<li>FROMDAYS(INT) - 将整数天数转换为日期值。</li>
-</ul>
-<h2 id="50、解释访问控制列表"><a href="#50、解释访问控制列表" class="headerlink" title="50、解释访问控制列表"></a>50、解释访问控制列表</h2><p>ACL(访问控制列表)是与对象关联的权限列表。这个列表是MySQL服务器安全模型的基础，它有助于排除用户无法连接的问题。</p>
-<p>MySQL将ACL(也称为授权表)缓存在内存中。当用户尝试认证或运行命令时，MySQL会按照预定的顺序检查ACL的认证信息和权限。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/24/mysql/2014-7-24-MySql面试题-5/" data-id="cjp10jdga001vdrcpn52g8k7y" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-7-23-MySql面试题-4" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/23/mysql/2014-7-23-MySql面试题-4/" class="article-date">
-  <time datetime="2014-07-22T16:00:00.000Z" itemprop="datePublished">2014-07-23</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/23/mysql/2014-7-23-MySql面试题-4/">MySql面试题</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="31、我们如何得到受查询影响的行数？"><a href="#31、我们如何得到受查询影响的行数？" class="headerlink" title="31、我们如何得到受查询影响的行数？"></a>31、我们如何得到受查询影响的行数？</h2><p>行数可以通过以下代码获得：<br>SELECT ROW_COUNT();  </p>
-<h2 id="32、mysql查询是否区分大小写？"><a href="#32、mysql查询是否区分大小写？" class="headerlink" title="32、mysql查询是否区分大小写？"></a>32、mysql查询是否区分大小写？</h2><p>不区分</p>
-<ul>
-<li>SELECT VERSION(), CURRENT_DATE;</li>
-<li>SeLect version(), current_date;</li>
-<li>seleCt vErSiOn(), current_DATE;</li>
-</ul>
-<p>所有这些例子都是一样的，MySQL不区分大小写。</p>
-<h2 id="33、LIKE和REGEXP操作有什么区别？"><a href="#33、LIKE和REGEXP操作有什么区别？" class="headerlink" title="33、LIKE和REGEXP操作有什么区别？"></a>33、LIKE和REGEXP操作有什么区别？</h2><h2 id="34、BLOB和TEXT有什么区别？"><a href="#34、BLOB和TEXT有什么区别？" class="headerlink" title="34、BLOB和TEXT有什么区别？"></a>34、BLOB和TEXT有什么区别？</h2><p>TEXT与BLOB的主要差别就是BLOB保存二进制数据，TEXT保存字符数据</p>
-<h2 id="35、mysql-fetch-array和mysql-fetch-object的区别是什么？"><a href="#35、mysql-fetch-array和mysql-fetch-object的区别是什么？" class="headerlink" title="35、mysql_fetch_array和mysql_fetch_object的区别是什么？"></a>35、mysql_fetch_array和mysql_fetch_object的区别是什么？</h2><p>以下是mysql_fetch_array和mysql_fetch_object的区别：</p>
-<ul>
-<li>mysql_fetch_array() - 将结果行作为关联数组或来自数据库的常规数组返回。</li>
-<li>mysql_fetch_object - 从数据库返回结果行作为对象。</li>
-</ul>
-<h2 id="36、我们如何在mysql中运行批处理模式？"><a href="#36、我们如何在mysql中运行批处理模式？" class="headerlink" title="36、我们如何在mysql中运行批处理模式？"></a>36、我们如何在mysql中运行批处理模式？</h2><p>以下命令用于在批处理模式下运行：<br>mysql;<br>mysql mysql.out</p>
-<h2 id="37、MyISAM表格将在哪里存储，并且还提供其存储格式？"><a href="#37、MyISAM表格将在哪里存储，并且还提供其存储格式？" class="headerlink" title="37、MyISAM表格将在哪里存储，并且还提供其存储格式？"></a>37、MyISAM表格将在哪里存储，并且还提供其存储格式？</h2><p>每个MyISAM表格以三种格式存储在磁盘上：</p>
-<ul>
-<li>“.frm”文件存储表定义</li>
-<li>数据文件具有“.MYD”(MYData)扩展名</li>
-<li>索引文件具有“.MYI”(MYIndex)扩展名</li>
-</ul>
-<h2 id="38、mysql中有哪些不同的表格？"><a href="#38、mysql中有哪些不同的表格？" class="headerlink" title="38、mysql中有哪些不同的表格？"></a>38、mysql中有哪些不同的表格？</h2><p>共有5种类型的表格：</p>
-<ul>
-<li>MyISAM</li>
-<li>Heap</li>
-<li>Merge</li>
-<li>INNODB</li>
-<li>ISAM<br>MyISAM是MySQL的默认存储引擎。</li>
-</ul>
-<h2 id="39、ISAM是什么？"><a href="#39、ISAM是什么？" class="headerlink" title="39、ISAM是什么？"></a>39、ISAM是什么？</h2><p>ISAM简称为索引顺序访问方法。它是由IBM开发的，用于在磁带等辅助存储系统上存储和检索数据。</p>
-<h2 id="40、InnoDB是什么？"><a href="#40、InnoDB是什么？" class="headerlink" title="40、InnoDB是什么？"></a>40、InnoDB是什么？</h2><p>lnnoDB是一个由Oracle公司开发的Innobase Oy事务安全存储引擎。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/23/mysql/2014-7-23-MySql面试题-4/" data-id="cjp10jdg9001sdrcps9l4nxco" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-7-22-MySql面试题-3" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/22/mysql/2014-7-22-MySql面试题-3/" class="article-date">
-  <time datetime="2014-07-21T16:00:00.000Z" itemprop="datePublished">2014-07-22</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/22/mysql/2014-7-22-MySql面试题-3/">MySql面试题</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="21、mysql服务器默认端口是什么？"><a href="#21、mysql服务器默认端口是什么？" class="headerlink" title="21、mysql服务器默认端口是什么？"></a>21、mysql服务器默认端口是什么？</h2><p>3306</p>
-<h2 id="22、MyISAM-Static和MyISAM-Dynamic有什么区别？"><a href="#22、MyISAM-Static和MyISAM-Dynamic有什么区别？" class="headerlink" title="22、MyISAM Static和MyISAM Dynamic有什么区别？"></a>22、MyISAM Static和MyISAM Dynamic有什么区别？</h2><p>在MyISAM Static上的所有字段有固定宽度。</p>
-<p>MyISAM Dynamic 表将具有像TEXT，BLOB等字段，以适应不同长度的数据类型。</p>
-<p>MyISAM Static在受损情况下更容易恢复</p>
-<h2 id="23、federated表是什么？"><a href="#23、federated表是什么？" class="headerlink" title="23、federated表是什么？"></a>23、federated表是什么？</h2><p>federated表，允许访问位于其他服务器数据库上的表。</p>
-<h2 id="24、如果一个表有一列定义为TIMESTAMP，将发生什么？"><a href="#24、如果一个表有一列定义为TIMESTAMP，将发生什么？" class="headerlink" title="24、如果一个表有一列定义为TIMESTAMP，将发生什么？"></a>24、如果一个表有一列定义为TIMESTAMP，将发生什么？</h2><p>每当行被更改时，时间戳字段将获取当前时间戳。</p>
-<h2 id="25、列设置为AUTO-INCREMENT时，如果在表中达到最大值，会发生什么情况？"><a href="#25、列设置为AUTO-INCREMENT时，如果在表中达到最大值，会发生什么情况？" class="headerlink" title="25、列设置为AUTO　INCREMENT时，如果在表中达到最大值，会发生什么情况？"></a>25、列设置为AUTO　INCREMENT时，如果在表中达到最大值，会发生什么情况？</h2><p>它会停止递增，任何进一步的插入都将产生错误，因为密钥已被使用。</p>
-<h2 id="26、怎样才能找出最后一次插入时分配了哪个自动增量？"><a href="#26、怎样才能找出最后一次插入时分配了哪个自动增量？" class="headerlink" title="26、怎样才能找出最后一次插入时分配了哪个自动增量？"></a>26、怎样才能找出最后一次插入时分配了哪个自动增量？</h2><p>LAST_INSERT_ID将返回由Auto_increment分配的最后一个值，并且不需要指定表名称。</p>
-<h2 id="27、你怎么看到为表格定义的所有索引？"><a href="#27、你怎么看到为表格定义的所有索引？" class="headerlink" title="27、你怎么看到为表格定义的所有索引？"></a>27、你怎么看到为表格定义的所有索引？</h2><p>索引是通过以下方式为表格定义的：<br>SHOW INDEX FROM <tablename>;</tablename></p>
-<h2 id="28、LIKE声明中的％和-是什么意思？"><a href="#28、LIKE声明中的％和-是什么意思？" class="headerlink" title="28、LIKE声明中的％和_是什么意思？"></a>28、LIKE声明中的％和_是什么意思？</h2><p>%对应于0个或更多字符，_只是LIKE语句中的一个字符。</p>
-<h2 id="29、如何在Unix和mysql时间戳之间进行转换？"><a href="#29、如何在Unix和mysql时间戳之间进行转换？" class="headerlink" title="29、如何在Unix和mysql时间戳之间进行转换？"></a>29、如何在Unix和mysql时间戳之间进行转换？</h2><p>UNIX_TIMESTAMP是从MySQL时间戳转换为Unix时间戳的命令</p>
-<p>FROM_UNIXTIME是从Unix时间戳转换为MySQL时间戳的命令</p>
-<p>30、列对比运算符是什么？<br>在SELECT语句的列比较中使用=，&lt;&gt;，&lt;=，&lt;，&gt; =，&gt;，&lt;&lt;，&gt;&gt;，&lt;=&gt;，AND，OR或LIKE运算符。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/22/mysql/2014-7-22-MySql面试题-3/" data-id="cjp10jdg8001pdrcpr6rc4gp3" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-7-21-MySql面试题-2" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/21/mysql/2014-7-21-MySql面试题-2/" class="article-date">
-  <time datetime="2014-07-20T16:00:00.000Z" itemprop="datePublished">2014-07-21</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/21/mysql/2014-7-21-MySql面试题-2/">MySql面试题</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="11、CHAR和VARCHAR的区别？"><a href="#11、CHAR和VARCHAR的区别？" class="headerlink" title="11、CHAR和VARCHAR的区别？"></a>11、CHAR和VARCHAR的区别？</h2><ul>
-<li>char：定长，效率高，一般用于固定长度的表单提交数据存储；例如：身份证号，手机号，电话，密码等</li>
-<li><p>varchar：不定长，效率偏低</p>
+<p>如何选择：</p>
+<ol>
+<li><p>是否要支持事务，如果要请选择innodb，如果不需要可以考虑MyISAM；</p>
 </li>
-<li><p>长度的区别，char范围是0～255，varchar最长是64k，但是注意这里的64k是整个row的长度，要考虑到其它的 column，还有如果存在not null的时候也会占用一位，对不同的字符集，有效长度还不一样，比如utf8的，最多21845，还要除去别的column，但是varchar在一般 情况下存储都够用了。如果遇到了大文本，考虑使用text，最大能到4G。</p>
+<li><p>如果表中绝大多数都只是读查询，可以考虑MyISAM，如果既有读写也挺频繁，请使用InnoDB。</p>
 </li>
-<li><p>效率来说基本是char&gt;varchar&gt;text，但是如果使用的是Innodb引擎的话，推荐使用varchar代替char。</p>
+<li><p>系统奔溃后，MyISAM恢复起来更困难，能否接受；</p>
 </li>
-<li>char和varchar可以有默认值，text不能指定默认值。</li>
-</ul>
-<p>数据库选择合适的数据类型存储还是很有必要的，对性能有一定影响。这里在零碎记录两笔，对于int类型的，如果不需要存取负值，最好加上unsigned；对于经常出现在where语句中的字段，考虑加索引，整形的尤其适合加索引。</p>
-<h2 id="12、列的字符串类型可以是什么？"><a href="#12、列的字符串类型可以是什么？" class="headerlink" title="12、列的字符串类型可以是什么？"></a>12、列的字符串类型可以是什么？</h2><p>CHAR、VARCHAR、BINARY、VARBINARY、BLOB、TEXT、ENUM和SET。</p>
-<h2 id="13、如何获取当前的mysql版本？"><a href="#13、如何获取当前的mysql版本？" class="headerlink" title="13、如何获取当前的mysql版本？"></a>13、如何获取当前的mysql版本？</h2><p>mysql -V</p>
-<h2 id="14、mysql中使用什么存储引擎？"><a href="#14、mysql中使用什么存储引擎？" class="headerlink" title="14、mysql中使用什么存储引擎？"></a>14、mysql中使用什么存储引擎？</h2><h3 id="（1）InnoDB存储引擎"><a href="#（1）InnoDB存储引擎" class="headerlink" title="（1）InnoDB存储引擎"></a>（1）InnoDB存储引擎</h3><p>该存储引擎提供了具有提交、回滚和崩溃恢复能力的事务安全。但是对比MyISAM引擎，写的处理效率会差一些，并且会占用更多的磁盘空间以保留数据和索引。<br>InnoDB存储引擎的特点：支持自动增长列，支持外键约束</p>
-<h3 id="（2）MyISAM存储引擎"><a href="#（2）MyISAM存储引擎" class="headerlink" title="（2）MyISAM存储引擎"></a>（2）MyISAM存储引擎</h3><ul>
-<li>不支持事务</li>
-<li>不支持外键，</li>
-<li>访问速度快，</li>
-<li>对事务完整性没有要求或者以select，insert为主的应用基本上可以用这个引擎来创建表</li>
-<li>支持3种不同的存储格式，分别是：静态表；动态表；压缩表<ul>
-<li>静态表：表中的字段都是非变长字段，这样每个记录都是固定长度的，优点存储非常迅速，容易缓存，出现故障容易恢复；缺点是占用的空间通常比动态表多（因为存储时会按照列的宽度定义补足空格）ps：在取数据的时候，默认会把字段后面的空格去掉，如果不注意会把数据本身带的空格也会忽略。</li>
-<li>动态表：记录不是固定长度的，这样存储的优点是占用的空间相对较少；缺点：频繁的更新、删除数据容易产生碎片，需要定期执行OPTIMIZE TABLE或者myisamchk-r命令来改善性能</li>
-<li>压缩表：因为每个记录是被单独压缩的，所以只有非常小的访问开支</li>
-</ul>
+<li><p>MySQL5.5版本开始Innodb已经成为Mysql的默认引擎(之前是MyISAM)，说明其优势是有目共睹的，如果你不知道用什么，那就用InnoDB，至少不会差。</p>
 </li>
-</ul>
-<h3 id="3-MEMORY存储引擎"><a href="#3-MEMORY存储引擎" class="headerlink" title="(3) MEMORY存储引擎"></a>(3) MEMORY存储引擎</h3><p>Memory存储引擎使用存在于内存中的内容来创建表。每个memory表只实际对应一个磁盘文件，格式是.frm。memory类型的表访问非常的快，因为它的数据是放在内存中的，并且默认使用HASH索引，但是一旦服务关闭，表中的数据就会丢失掉。 </p>
-<p>MEMORY存储引擎的表可以选择使用BTREE索引或者HASH索引，两种不同类型的索引有其不同的使用范围 </p>
-<p>Hash索引优点：<br>Hash 索引结构的特殊性，其检索效率非常高，索引的检索可以一次定位，不像B-Tree 索引需要从根节点到枝节点，最后才能访问到页节点这样多次的IO访问，所以 Hash 索引的查询效率要远高于 B-Tree 索引。 </p>
-<p>Hash索引缺点： 那么不精确查找呢，也很明显，因为hash算法是基于等值计算的，所以对于“like”等范围查找hash索引无效，不支持；</p>
-<p>Memory类型的存储引擎主要用于哪些内容变化不频繁的代码表，或者作为统计操作的中间结果表，便于高效地对中间结果进行分析并得到最终的统计结果，。对存储引擎为memory的表进行更新操作要谨慎，因为数据并没有实际写入到磁盘中，所以一定要对下次重新启动服务后如何获得这些修改后的数据有所考虑。</p>
-<h3 id="4-MERGE存储引擎"><a href="#4-MERGE存储引擎" class="headerlink" title="(4) MERGE存储引擎"></a>(4) MERGE存储引擎</h3><p>Merge存储引擎是一组MyISAM表的组合，这些MyISAM表必须结构完全相同，merge表本身并没有数据，对merge类型的表可以进行查询，更新，删除操作，这些操作实际上是对内部的MyISAM表进行的。</p>
-<h2 id="15、mysql驱动程序是什么？"><a href="#15、mysql驱动程序是什么？" class="headerlink" title="15、mysql驱动程序是什么？"></a>15、mysql驱动程序是什么？</h2><p>ODBC</p>
-<h2 id="16、TIMESTAMP在UPDATE-CURRENT-TIMESTAMP数据类型上做什么？"><a href="#16、TIMESTAMP在UPDATE-CURRENT-TIMESTAMP数据类型上做什么？" class="headerlink" title="16、TIMESTAMP在UPDATE　CURRENT_TIMESTAMP数据类型上做什么？"></a>16、TIMESTAMP在UPDATE　CURRENT_TIMESTAMP数据类型上做什么？</h2><h2 id="17、主键和候选键有什么区别？"><a href="#17、主键和候选键有什么区别？" class="headerlink" title="17、主键和候选键有什么区别？"></a>17、主键和候选键有什么区别？</h2><ol>
-<li>超键：在关系模式中，能唯一标识元组的属性集称为超键。</li>
-<li>候选键 :如果一个属性集能唯一标识元组，且有不包含多余属性，那么这个属性集称为候选键；也即：候选键是没有多余属性的超键。<br>那么超键可以看作是带有其他有多余属性的候选键，也即候选键带上任意个其他属性可被视为超键。</li>
-<li>主键：关系模式中用户正在使用的候选键称主键(primary key)。一般，如不加说明，键是指主键。</li>
-<li>外键：在关系模式R中，如果某属性集是其他模式的候选键，那么该属性集对模式R来说就是外键。</li>
 </ol>
-<h2 id="18、如何使用Unix-shell登录mysql？"><a href="#18、如何使用Unix-shell登录mysql？" class="headerlink" title="18、如何使用Unix shell登录mysql？"></a>18、如何使用Unix shell登录mysql？</h2><p>mysql -hlocalhost -uroot -p</p>
-<h2 id="19、-myisamchk是用来做什么的？"><a href="#19、-myisamchk是用来做什么的？" class="headerlink" title="19、 myisamchk是用来做什么的？"></a>19、 myisamchk是用来做什么的？</h2><p>Myisamchk是MyISAM表维护的一个非常实用的工具。可以使用myisamchk实用程序来获得有关数据库表的信息或检查、修复、优化他们。myisamchk适用MyISAM表(对应.MYI和.MYD文件的表)。</p>
-<h2 id="20、mysql数据库服务器性能分析的方法命令有哪些"><a href="#20、mysql数据库服务器性能分析的方法命令有哪些" class="headerlink" title="20、mysql数据库服务器性能分析的方法命令有哪些?"></a>20、mysql数据库服务器性能分析的方法命令有哪些?</h2>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/21/mysql/2014-7-21-MySql面试题-2/" data-id="cjp10jdg7001ldrcptd1rw1e6" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" data-id="cjp9i0zgg004q5ucp84sorcq4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -784,7 +685,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -824,7 +725,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 
@@ -841,19 +742,19 @@
           </li>
         
           <li>
-            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
           <li>
-            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
           </li>
         
           <li>
-            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
           </li>
         
           <li>
-            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

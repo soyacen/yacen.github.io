@@ -7,14 +7,17 @@
   
   <title>蓦然回首，bug依然在灯火阑珊处</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="后端 Node.js go golang">
+  <meta name="description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
+<meta name="keywords" content="后端 Node.js go golang">
 <meta property="og:type" content="website">
 <meta property="og:title" content="蓦然回首，bug依然在灯火阑珊处">
 <meta property="og:url" content="http://yacen.github.io/index.html">
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
 <meta property="og:locale" content="Zh">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="蓦然回首，bug依然在灯火阑珊处">
+<meta name="twitter:description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
   
     <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
   
@@ -83,7 +86,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/11/28/egg/egg-特性/" data-id="cjp10jdex0007drcp7f2evpkd" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/11/28/egg/egg-特性/" data-id="cjp9i0zef00075ucpwmbsm4ab" class="article-share-link">Share</a>
       
       
     </footer>
@@ -93,14 +96,14 @@
 
 
   
-    <article id="post-other/2018-7-26-使用js-yaml在Node.js中开始使用YAML" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-nginx/2018-09-12-Nginx性能优化之Keep-Alive" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/" class="article-date">
-  <time datetime="2018-07-25T16:00:00.000Z" itemprop="datePublished">2018-07-26</time>
+    <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/" class="article-date">
+  <time datetime="2018-09-11T16:00:00.000Z" itemprop="datePublished">2018-09-12</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs-yaml/">nodejs yaml</a>
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
   </div>
 
   </div>
@@ -111,7 +114,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+      <a class="article-title" href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
     </h1>
   
 
@@ -119,288 +122,38 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="http://thisdavej.com/getting-started-with-yaml-in-node-js-using-js-yaml/" target="_blank" rel="noopener">在本教程中，我们利用YAML的强大功能在Node.js中使用。</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/" data-id="cjp10jdhb003wdrcp8z409ups" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-egg/2018-5-17-egg-core源码解析" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/" class="article-date">
-  <time datetime="2018-05-16T16:00:00.000Z" itemprop="datePublished">2018-05-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/egg/">egg</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="egg-js"><a href="#egg-js" class="headerlink" title="egg.js"></a>egg.js</h2><p>egg.js是阿里开源的node.js企业级框架，它在koa上封装一层，使得开发大型应用时候方便。<a href="https://eggjs.org" target="_blank" rel="noopener">egg.js官网</a><br><img src="JFKAMfmPehWfhBPdCjrw.svg" alt="logo"></p>
-<h2 id="egg-core"><a href="#egg-core" class="headerlink" title="egg-core"></a>egg-core</h2><p><a href="https://github.com/eggjs/egg-core" target="_blank" rel="noopener">egg-core</a> 是egg.js的核心代码实现的package，它导出了基于egg开发时常用的四个类：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> EggCore = <span class="built_in">require</span>(<span class="string">'./lib/egg'</span>);</span><br><span class="line"><span class="keyword">const</span> EggLoader = <span class="built_in">require</span>(<span class="string">'./lib/loader/egg_loader'</span>);</span><br><span class="line"><span class="keyword">const</span> BaseContextClass = <span class="built_in">require</span>(<span class="string">'./lib/utils/base_context_class'</span>);</span><br><span class="line"><span class="keyword">const</span> utils = <span class="built_in">require</span>(<span class="string">'./lib/utils'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  EggCore,</span><br><span class="line">  EggLoader,</span><br><span class="line">  BaseContextClass,</span><br><span class="line">  utils,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<h3 id="EggCore"><a href="#EggCore" class="headerlink" title="EggCore"></a>EggCore</h3><p><a href="https://github.com/eggjs/egg-core/blob/master/lib/egg.js" target="_blank" rel="noopener">EggCore</a> 是对koa的一个封装。如代码。它直接继承于koa:<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> KoaApplication = <span class="built_in">require</span>(<span class="string">'koa'</span>);</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EggCore</span> <span class="keyword">extends</span> <span class="title">KoaApplication</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">module</span>.exports = EggCore;</span><br></pre></td></tr></table></figure></p>
-<h4 id="constructor-NaN"><a href="#constructor-NaN" class="headerlink" title="constructor"></a>constructor</h4><p>EggCore的构造函数做了许多初始化的操作，比如:</p>
-<ol>
-<li>确定应用工作目录，一种一个作用是egg自动加载各个<a href="https://eggjs.org/zh-cn/basics/structure.html" target="_blank" rel="noopener">模块</a>的js文件；</li>
-<li>确定工作进程，详情见<a href="https://eggjs.org/zh-cn/core/cluster-and-ipc.html" target="_blank" rel="noopener">多进程模型和进程间通讯</a>；</li>
-<li>注册应用关闭时回调函数集合；</li>
-<li>设置超时时间；</li>
-<li>logger设置；</li>
-<li>ctx、controller、service的基类同为BaseContextClass；</li>
-<li>初始化loader；</li>
-</ol>
-<p>初始化做完后，就会调用<code>[INIT_READY]()</code>方法。这个方法会注册一些回调。</p>
-<h3 id="Eggloader"><a href="#Eggloader" class="headerlink" title="Eggloader"></a>Eggloader</h3><p><a href="https://github.com/eggjs/egg-core/blob/master/lib/loader/egg_loader.js" target="_blank" rel="noopener">Eggloader</a><br>Loader可以说是egg的一个精华所在。详细介绍见<a href="https://eggjs.org/zh-cn/advanced/loader.html" target="_blank" rel="noopener">Loader</a>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.pkg = utility.readJSONSync(path.join(<span class="keyword">this</span>.options.baseDir, <span class="string">'package.json'</span>));</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.eggPaths = <span class="keyword">this</span>.getEggPaths();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.serverEnv = <span class="keyword">this</span>.getServerEnv();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.appInfo = <span class="keyword">this</span>.getAppInfo();</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    <span class="keyword">this</span>.serverScope = options.serverScope !== <span class="literal">undefined</span></span><br><span class="line">      ? options.serverScope</span><br><span class="line">      : <span class="keyword">this</span>.getServerScope();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>Loader的构造函数主要逻辑有</p>
-<ol>
-<li>读取package.json文件</li>
-<li>获取所有继承与egg.Application框架的目录，loader将会加载他们。</li>
-<li>获取服务环境，有test环境、local环境和production环境等。</li>
-<li>获取应用信息，有appName、dir、env、scope、pkg等。</li>
-<li>获取服务作用域</li>
-</ol>
-<p>Loader还有几个方法:</p>
-<h4 id="loadFile"><a href="#loadFile" class="headerlink" title="loadFile"></a>loadFile</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">loadFile(filepath, ...inject) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>加载一个js文件，返回这个js文件的exports对象，如果exports是一个function，就会立即执行。其实底层很简单，就是用require()函数。</p>
-<h4 id="getLoadUnits"><a href="#getLoadUnits" class="headerlink" title="getLoadUnits"></a>getLoadUnits</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">getLoadUnits() &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>获取所有加载的模块，包括：</p>
-<ol>
-<li>plugin</li>
-<li>framework</li>
-<li>app</li>
-</ol>
-<h4 id="loadToApp"><a href="#loadToApp" class="headerlink" title="loadToApp"></a>loadToApp</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">loadToApp(directory, property, opt) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用FileLoader加载文件，挂载到egg.Application对象上。</p>
-<h4 id="loadToContext"><a href="#loadToContext" class="headerlink" title="loadToContext"></a>loadToContext</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">loadToContext(directory, property, opt) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用loadToContext加载文件，挂载到ctx对象上。</p>
-<h3 id="BaseContextClass"><a href="#BaseContextClass" class="headerlink" title="BaseContextClass"></a>BaseContextClass</h3><p><a href="https://github.com/eggjs/egg-core/blob/master/lib/utils/base_context_class.js" target="_blank" rel="noopener">BaseContextClass</a><br>这个类是所有egg的ctx、controller、service的基类，仅仅定义了构造函数，定义了一些公用的属性，有ctx、app、config和service</p>
-<h3 id="utils"><a href="#utils" class="headerlink" title="utils"></a>utils</h3><p><a href="https://github.com/eggjs/egg-core/blob/master/lib/utils/index.js" target="_blank" rel="noopener">utils</a><br>这个类是实现egg基础的工具类，有几个方法：</p>
-<h4 id="loadFile-1"><a href="#loadFile-1" class="headerlink" title="loadFile"></a>loadFile</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">loadFile(filepath) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// if not js module, just return content buffer</span></span><br><span class="line">    <span class="keyword">const</span> extname = path.extname(filepath);</span><br><span class="line">    <span class="keyword">if</span> (extname &amp;&amp; !<span class="built_in">require</span>.extensions[extname]) &#123;</span><br><span class="line">      <span class="keyword">return</span> fs.readFileSync(filepath);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// require js module</span></span><br><span class="line">    <span class="keyword">const</span> obj = <span class="built_in">require</span>(filepath);</span><br><span class="line">    <span class="keyword">if</span> (!obj) <span class="keyword">return</span> obj;</span><br><span class="line">    <span class="comment">// it's es module</span></span><br><span class="line">    <span class="keyword">if</span> (obj.__esModule) <span class="keyword">return</span> <span class="string">'default'</span> <span class="keyword">in</span> obj ? obj.default : obj;</span><br><span class="line">    <span class="keyword">return</span> obj;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">    err.message = <span class="string">`[egg-core] load file: <span class="subst">$&#123;filepath&#125;</span>, error: <span class="subst">$&#123;err.message&#125;</span>`</span>;</span><br><span class="line">    <span class="keyword">throw</span> err;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个方法就是上面loader.loadFile()的底层实现。</p>
-<h4 id="async-callFn"><a href="#async-callFn" class="headerlink" title="async callFn"></a>async callFn</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> callFn(fn, args, ctx) &#123;</span><br><span class="line">  args = args || [];</span><br><span class="line">  <span class="keyword">if</span> (!is.function(fn)) <span class="keyword">return</span>;</span><br><span class="line">  <span class="keyword">if</span> (is.generatorFunction(fn)) fn = co.wrap(fn);</span><br><span class="line">  <span class="keyword">return</span> ctx ? fn.call(ctx, ...args) : fn(...args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个函数就为了方便使用async/await调用方式的。</p>
-<h4 id="middleware"><a href="#middleware" class="headerlink" title="middleware"></a>middleware</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">middleware(fn) &#123;</span><br><span class="line">  <span class="keyword">return</span> is.generatorFunction(fn) ? convert(fn) : fn;</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
-<p>将koa v1.x形式的generator函数转成koa v2.x 的middleware</p>
-<h3 id="FileLoader"><a href="#FileLoader" class="headerlink" title="FileLoader"></a>FileLoader</h3><h4 id="constructor"><a href="#constructor" class="headerlink" title="constructor"></a>constructor</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">  <span class="keyword">this</span>.options = <span class="built_in">Object</span>.assign(&#123;&#125;, defaults, options);</span><br><span class="line">  <span class="comment">// compatible old options _lowercaseFirst_</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.options.lowercaseFirst === <span class="literal">true</span>) &#123;</span><br><span class="line">    deprecate(<span class="string">'lowercaseFirst is deprecated, use caseStyle instead'</span>);</span><br><span class="line">    <span class="keyword">this</span>.options.caseStyle = <span class="string">'lower'</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>fileLoader的构造函数仅仅初始化了options，options包括：</p>
+        <h2 id="Keep-Alive"><a href="#Keep-Alive" class="headerlink" title="Keep-Alive"></a>Keep-Alive</h2><p>HTTP 所依赖的 TCP 协议需要执行三次握手来启动连接。这意味着在服务器可发送数据（例如图像）之前，需要在客户机和服务器之间进行三次完整的往返。</p>
+<p>假设你从 Warsaw 请求的 /image.jpg，并连接到在柏林最近的服务器：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Open connection</span><br><span class="line"></span><br><span class="line">TCP Handshake:</span><br><span class="line">Warsaw  -&gt;------------------ synchronize packet (SYN) -----------------&gt;- Berlin</span><br><span class="line">Warsaw  -&lt;--------- synchronise-acknowledgement packet (SYN-ACK) ------&lt;- Berlin</span><br><span class="line">Warsaw  -&gt;------------------- acknowledgement (ACK) -------------------&gt;- Berlin</span><br><span class="line"></span><br><span class="line">Data transfer:</span><br><span class="line">Warsaw  -&gt;---------------------- /image.jpg ---------------------------&gt;- Berlin</span><br><span class="line">Warsaw  -&lt;--------------------- (image data) --------------------------&lt;- Berlin</span><br><span class="line"></span><br><span class="line">Close connection</span><br></pre></td></tr></table></figure></p>
+<p>对于另一次请求，你将不得不再次执行整个初始化。如果你在短时间内发送多次请求，这可能会快速累积起来。这样的话 keep-alive 使用起来就方便了。在成功响应之后，它保持连接空闲给定的时间段（例如 10 秒）。如果在这段时间内有另一个请求，现有的连接将被重用，空闲时间将被刷新。</p>
+<p>Nginx 提供了几个指令来调整 keepalive 设置。这些可以分为两类：</p>
 <ul>
-<li>options.directory - directories to be loaded</li>
-<li>options.target - attach the target object from loaded files</li>
-<li>options.match - match the files when load, support glob, default to all js files</li>
-<li>options.ignore - ignore the files when load, support glob</li>
-<li>options.initializer - custom file exports, receive two parameters, first is the inject object(if not js file, will be content buffer), second is an <code>options</code> object that contain <code>path</code></li>
-<li>options.call - determine whether invoke when exports is function</li>
-<li>options.override - determine whether override the property when get the same name</li>
-<li>options.inject - an object that be the argument when invoke the function</li>
-<li>options.filter - a function that filter the exports which can be loaded</li>
-<li>options.caseStyle - set property’s case when converting a filepath to property list.</li>
+<li><p>在客户端和 nginx 之间 keep-alive</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">keepalive_disable msie6;        # disable selected browsers.</span><br><span class="line"></span><br><span class="line"># The number of requests a client can make over a single keepalive connection. The default is 100, but a much higher value can be especially useful for testing with a load‑generation tool, which generally sends a large number of requests from a single client.</span><br><span class="line">keepalive_requests 100000;</span><br><span class="line"></span><br><span class="line"># How long an idle keepalive connection remains open.</span><br><span class="line">keepalive_timeout 60;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 nginx 和上游服务器之间 keep-alive</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">upstream backend &#123;</span><br><span class="line">    # The number of idle keepalive connections to an upstream server that remain open for each worker process</span><br><span class="line">    keepalive 16;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">  location /http/ &#123;</span><br><span class="line">    proxy_pass http://http_backend;</span><br><span class="line">    proxy_http_version 1.1;</span><br><span class="line">    proxy_set_header Connection &quot;&quot;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
-<p>fileLoader最主要还是load方法</p>
-<h4 id="load"><a href="#load" class="headerlink" title="load"></a>load</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">load() &#123;</span><br><span class="line">  <span class="comment">// 解析所有exports组成的数组items，每一个item都包含fullpath, properties, exports，properties就是文件路径映射的属性名数组。</span></span><br><span class="line">  <span class="keyword">const</span> items = <span class="keyword">this</span>.parse();</span><br><span class="line">  <span class="comment">// 被挂载的目标对象target</span></span><br><span class="line">  <span class="keyword">const</span> target = <span class="keyword">this</span>.options.target;</span><br><span class="line">  <span class="comment">// 遍历items，以对象属性的形式想target上挂载。</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> item <span class="keyword">of</span> items) &#123;</span><br><span class="line">    debug(<span class="string">'loading item %j'</span>, item);</span><br><span class="line">    <span class="comment">// item &#123; properties: [ 'a', 'b', 'c'], exports &#125;</span></span><br><span class="line">    <span class="comment">// =&gt; target.a.b.c = exports</span></span><br><span class="line">    item.properties.reduce(<span class="function">(<span class="params">target, property, index</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> obj;</span><br><span class="line">      <span class="keyword">const</span> properties = item.properties.slice(<span class="number">0</span>, index + <span class="number">1</span>).join(<span class="string">'.'</span>);</span><br><span class="line">      <span class="keyword">if</span> (index === item.properties.length - <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (property <span class="keyword">in</span> target) &#123;</span><br><span class="line">          <span class="keyword">if</span> (!<span class="keyword">this</span>.options.override) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">`can't overwrite property '<span class="subst">$&#123;properties&#125;</span>' from <span class="subst">$&#123;target[property][FULLPATH]&#125;</span> by <span class="subst">$&#123;item.fullpath&#125;</span>`</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        obj = item.exports;</span><br><span class="line">        <span class="keyword">if</span> (obj &amp;&amp; !is.primitive(obj)) &#123;</span><br><span class="line">          obj[FULLPATH] = item.fullpath;</span><br><span class="line">          obj[EXPORTS] = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        obj = target[property] || &#123;&#125;;</span><br><span class="line">      &#125;</span><br><span class="line">      target[property] = obj;</span><br><span class="line">      debug(<span class="string">'loaded %s'</span>, properties);</span><br><span class="line">      <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;, target);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> target;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>load方法功能就是向目标对象 挂载 文件exports出的对象，同事把文件路径映射成对象属性的形式。比如<code>app/controller/group/repository.js</code> =&gt; <code>target.group.repository</code></p>
-<h3 id="ContextLoader"><a href="#ContextLoader" class="headerlink" title="ContextLoader"></a>ContextLoader</h3><p>看完FileLoader，在看ContextLoader就更简单了，ContextLoader 直接继承 FileLoader，只是构造函数加了些东西：</p>
-<h4 id="constructor-1"><a href="#constructor-1" class="headerlink" title="constructor"></a>constructor</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="keyword">const</span> target = options.target = &#123;&#125;;</span><br><span class="line">    <span class="comment">// options.fieldClass - determine the field name of inject object.</span></span><br><span class="line">    <span class="keyword">if</span> (options.fieldClass) &#123;</span><br><span class="line">      options.inject[options.fieldClass] = target;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">super</span>(options);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> app = <span class="keyword">this</span>.options.inject;</span><br><span class="line">    <span class="keyword">const</span> property = options.property;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(app.context, property, &#123;</span><br><span class="line">      get() &#123;</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>[CLASSLOADER]) &#123;</span><br><span class="line">          <span class="keyword">this</span>[CLASSLOADER] = <span class="keyword">new</span> <span class="built_in">Map</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">const</span> classLoader = <span class="keyword">this</span>[CLASSLOADER];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> instance = classLoader.get(property);</span><br><span class="line">        <span class="keyword">if</span> (!instance) &#123;</span><br><span class="line">          instance = getInstance(target, <span class="keyword">this</span>);</span><br><span class="line">          classLoader.set(property, instance);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getInstance</span>(<span class="params">values, ctx</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> Class = values[EXPORTS] ? values : <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">let</span> instance;</span><br><span class="line">  <span class="keyword">if</span> (Class) &#123;</span><br><span class="line">    <span class="keyword">if</span> (is.class(Class)) &#123;</span><br><span class="line">      instance = <span class="keyword">new</span> Class(ctx);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      instance = Class;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (is.primitive(values)) &#123;</span><br><span class="line">    instance = values;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    instance = <span class="keyword">new</span> ClassLoader(&#123; ctx, <span class="attr">properties</span>: values &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看出，构造函数额外的用<code>Object.defineProperty()</code>方法向<code>app.context</code>上定义了<code>getter</code>,当每次访问时候，就会从缓存中拿到classLoader，再用classLoader获取所需要的对象，这里有懒加载形式。看看classLoader实现：</p>
-<h4 id="ClassLoader"><a href="#ClassLoader" class="headerlink" title="ClassLoader"></a>ClassLoader</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ClassLoader</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">constructor</span>(options) &#123;</span><br><span class="line">    <span class="keyword">const</span> properties = options.properties;</span><br><span class="line">    <span class="keyword">this</span>._cache = <span class="keyword">new</span> <span class="built_in">Map</span>();</span><br><span class="line">    <span class="keyword">this</span>._ctx = options.ctx;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> property <span class="keyword">in</span> properties) &#123;</span><br><span class="line">      <span class="comment">// 定义getter，</span></span><br><span class="line">      <span class="keyword">this</span>.defineProperty(property, properties[property]);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  defineProperty(property, values) &#123;</span><br><span class="line">    <span class="comment">// 定义属性</span></span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(<span class="keyword">this</span>, property, &#123;</span><br><span class="line">      get() &#123;</span><br><span class="line">        <span class="comment">// 从_cache中获取instance</span></span><br><span class="line">        <span class="keyword">let</span> instance = <span class="keyword">this</span>._cache.get(property);</span><br><span class="line">        <span class="comment">// 如果instance为null</span></span><br><span class="line">        <span class="keyword">if</span> (!instance) &#123;</span><br><span class="line">          <span class="comment">// 得到instance</span></span><br><span class="line">          instance = getInstance(values, <span class="keyword">this</span>._ctx);</span><br><span class="line">          <span class="comment">// 把instance放入_cache</span></span><br><span class="line">          <span class="keyword">this</span>._cache.set(property, instance);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>ClassLoader就是相当与一个代理，当访问一个属性时候，其实最终到访问到classloader中。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>egg的精华所在就在loader这里，这里我仅仅粗浅的认识下，还需要更深入的学习。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/05/17/egg/2018-5-17-egg-core源码解析/" data-id="cjp10jdfl0008drcptg37bg0v" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nodejs/2018-5-7-nodejs执行浅析" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/" class="article-date">
-  <time datetime="2018-05-06T16:00:00.000Z" itemprop="datePublished">2018-05-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><code>.js</code>脚本可以在许多平台上运行，我们最熟知的莫过于浏览器和Node.js了，这里我们来分析下Node.js运行<code>.js</code>脚本背后做了哪些事情。</p>
-<h2 id="Node-js-怎么运行-js脚本"><a href="#Node-js-怎么运行-js脚本" class="headerlink" title="Node.js 怎么运行 .js脚本"></a><code>Node.js</code> 怎么运行 <code>.js</code>脚本</h2><p>我们来写一个最简单的hello world程序：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// app.js</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"hello world"</span>);</span><br></pre></td></tr></table></figure></p>
-<p>要用<code>Node.js</code>运行的话，确保机器装了<a href="https://nodejs.org/en/" target="_blank" rel="noopener">Node.js</a> 运行环境。在命令行敲一下命令：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node app.js</span><br></pre></td></tr></table></figure></p>
-<p>接着就会打印出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello world</span><br></pre></td></tr></table></figure></p>
-<p>从命令可以看出是有个名为<code>node</code>可执行程序来运行<code>app.js</code>的，那就来看看这是可执行程序是什么。感谢<code>Node.js</code>的作者 Ryan Dahl，把<code>Node.js</code>开源，我们来看看<a href="https://github.com/nodejs/node" target="_blank" rel="noopener">Node Source Code</a>。</p>
-<h2 id="Node-Source-Code"><a href="#Node-Source-Code" class="headerlink" title="Node Source Code"></a>Node Source Code</h2><p>大家都应该知道，一个可执行程序都有一个<code>main()</code>方法,果然在<a href="https://github.com/nodejs/node/blob/master/src/node_main.cc" target="_blank" rel="noopener">node_main.cc</a>找到了。</p>
-<h3 id="node-main-cc"><a href="#node-main-cc" class="headerlink" title="node_main.cc"></a>node_main.cc</h3><p>这里的主要逻辑是<code>node::Start(argc, argv);</code>。在<a href="https://github.com/nodejs/node/blob/master/src/node.cc" target="_blank" rel="noopener">node.cc</a>里定义了<code>Start()</code>方法。<br><figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Start</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  ... init ...</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> exit_code =</span><br><span class="line">      Start(uv_default_loop(), argc, argv, exec_argc, exec_argv);</span><br><span class="line">  ... release ...</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>这里一开始都是初始化的工作，比如<code>platform</code>、<code>openssl</code>、<code>V8引擎</code>、<code>libuv</code>等，<code>libuv</code>就是<code>Node.js</code>的异步I/O与事件循环的实现。关键代码就是这句，调用的开始。</p>
-<figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">Start</span><span class="params">(<span class="keyword">uv_loop_t</span>* event_loop,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* argv,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> exec_argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* exec_argv)</span> </span>&#123;</span><br><span class="line">  ... init <span class="keyword">and</span> <span class="built_in">set</span> isolate ...</span><br><span class="line">  <span class="keyword">int</span> exit_code = Start(isolate, &amp;isolate_data, argc, argv, exec_argc, exec_argv);</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>isolate翻译成中文是 隔离 意思，在这里可以理解为一个独立V8引擎实例或者一个沙盒。这里设置了一些事件回调和错误处理的handler、Isolate的Scope、微任务原则和WebAssemblyd的回调。最后再执行内联函数<code>Start</code>。<br><figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">Start</span><span class="params">(Isolate* isolate, IsolateData* isolate_data,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* argv,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> exec_argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* exec_argv)</span> </span>&#123;</span><br><span class="line">  ······</span><br><span class="line">  env.Start(argc, argv, exec_argc, exec_argv, v8_is_profiling);</span><br><span class="line">  ······</span><br><span class="line">  StartInspector(&amp;env, path, debug_options);</span><br><span class="line">  ······</span><br><span class="line">  Environment::<span class="function">AsyncCallbackScope <span class="title">callback_scope</span><span class="params">(&amp;env)</span></span>;</span><br><span class="line">  env.async_hooks()-&gt;push_async_ids(<span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  LoadEnvironment(&amp;env);</span><br><span class="line">  env.async_hooks()-&gt;pop_async_id(<span class="number">1</span>);</span><br><span class="line">  ······</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    uv_run(env.event_loop(), UV_RUN_DEFAULT);</span><br><span class="line">    ······</span><br><span class="line">    more = uv_loop_alive(env.event_loop());</span><br><span class="line">  &#125; <span class="keyword">while</span> (more == <span class="literal">true</span>);</span><br><span class="line">  ······</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>这个内联函数<code>Start</code>实现了Node.js具体的工作，一开始初始化上下文<code>context</code>,<code>env</code>启动，启动<code>Inspector</code>调试器,配置异步钩子等，最主要的就是调用<code>LoadEnvironment()</code>函数，此函数执行了首个js文件<code>lib/internal/bootstrap/loaders.js</code>和<code>lib/internal/bootstrap/node.js</code>。接着就是运行一个很重要的循环，这个循环就是事件循环，如果循环退出了，就会执行下面销毁、释放等代码。</p>
-<figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">LoadEnvironment</span><span class="params">(Environment* env)</span> </span>&#123;</span><br><span class="line">  ......</span><br><span class="line">  Local&lt;String&gt; loaders_name =</span><br><span class="line">      FIXED_ONE_BYTE_STRING(env-&gt;isolate(), <span class="string">"internal/bootstrap/loaders.js"</span>);</span><br><span class="line">  Local&lt;Function&gt; loaders_bootstrapper =</span><br><span class="line">      GetBootstrapper(env, LoadersBootstrapperSource(env), loaders_name);</span><br><span class="line">  Local&lt;String&gt; node_name =</span><br><span class="line">      FIXED_ONE_BYTE_STRING(env-&gt;isolate(), <span class="string">"internal/bootstrap/node.js"</span>);</span><br><span class="line">  Local&lt;Function&gt; node_bootstrapper =</span><br><span class="line">      GetBootstrapper(env, NodeBootstrapperSource(env), node_name);</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">if</span> (!ExecuteBootstrapper(env, loaders_bootstrapper,</span><br><span class="line">                           arraysize(loaders_bootstrapper_args),</span><br><span class="line">                           loaders_bootstrapper_args,</span><br><span class="line">                           &amp;bootstrapped_loaders)) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">if</span> (!ExecuteBootstrapper(env, node_bootstrapper,</span><br><span class="line">                           arraysize(node_bootstrapper_args),</span><br><span class="line">                           node_bootstrapper_args,</span><br><span class="line">                           &amp;bootstrapped_node)) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="internal-bootstrap-loaders-js"><a href="#internal-bootstrap-loaders-js" class="headerlink" title="internal/bootstrap/loaders.js"></a>internal/bootstrap/loaders.js</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> <span class="title">bootstrapInternalLoaders</span>(<span class="params">process, getBinding, getLinkedBinding,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   getInternalBinding</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  ... Set up process.moduleLoadList ...</span><br><span class="line">  ... Set up process.binding() and process._linkedBinding() ...</span><br><span class="line"></span><br><span class="line">  ... Set up internalBinding() <span class="keyword">in</span> the closure ...</span><br><span class="line">  ... Set up NativeModule ...</span><br><span class="line">  ... written <span class="keyword">in</span> CommonJS style. ...</span><br><span class="line">  NativeModule.require = <span class="function"><span class="keyword">function</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line">  ... This will be passed to the bootstrapNodeJSCore <span class="function"><span class="keyword">function</span> <span class="title">in</span> <span class="title">bootstrap</span>/<span class="title">node</span>.<span class="title">js</span>. ...</span></span><br><span class="line"><span class="function">  <span class="title">return</span> <span class="title">loaderExports</span>;</span></span><br><span class="line"><span class="function">&#125;);</span></span><br></pre></td></tr></table></figure>
-<p>代码已经有很好的注释了，所以就不用多说什么。</p>
-<h3 id="internal-bootstrap-node-js"><a href="#internal-bootstrap-node-js" class="headerlink" title="internal/bootstrap/node.js"></a>internal/bootstrap/node.js</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> <span class="title">bootstrapNodeJSCore</span>(<span class="params">process, &#123; internalBinding, NativeModule &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> exceptionHandlerState = &#123; <span class="attr">captureFn</span>: <span class="literal">null</span> &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">startup</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    setupProcessObject();</span><br><span class="line">    ......</span><br><span class="line">    setupProcessFatal();</span><br><span class="line">    setupV8();</span><br><span class="line">    setupProcessICUVersions();</span><br><span class="line">    setupGlobalVariables();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> _process = NativeModule.require(<span class="string">'internal/process'</span>);</span><br><span class="line">    ......</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/warning'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/next_tick'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/stdio'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/methods'</span>).setup();</span><br><span class="line">    ......</span><br><span class="line">    _process.setup_hrtime();</span><br><span class="line">    _process.setup_performance();</span><br><span class="line">    _process.setup_cpuUsage();</span><br><span class="line">    _process.setupMemoryUsage();</span><br><span class="line">    _process.setupKillAndExit();</span><br><span class="line">    <span class="keyword">if</span> (global.__coverage__)</span><br><span class="line">      NativeModule.require(<span class="string">'internal/process/write-coverage'</span>).setup();</span><br><span class="line"></span><br><span class="line">    NativeModule.require(<span class="string">'internal/trace_events_async_hooks'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/inspector_async_hook'</span>).setup();</span><br><span class="line"></span><br><span class="line">    _process.setupChannel();</span><br><span class="line">    _process.setupRawDebug();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> browserGlobals = !process._noBrowserGlobals;</span><br><span class="line">    <span class="keyword">if</span> (browserGlobals) &#123;</span><br><span class="line">      setupGlobalTimeouts();</span><br><span class="line">      setupGlobalConsole();</span><br><span class="line">      setupGlobalURL();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Ensure setURLConstructor() is called before the native</span></span><br><span class="line">    <span class="comment">// URL::ToObject() method is used.</span></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line">    <span class="comment">// On OpenBSD process.execPath will be relative unless we</span></span><br><span class="line">    <span class="comment">// get the full path before process.execPath is used.</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">// Handle `--debug*` deprecation and invalidation</span></span><br><span class="line">    ......</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">// Install legacy getters on the `util` binding for typechecking.</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// There are various modes that Node can run in. The most common two</span></span><br><span class="line">    <span class="comment">// are running from a script and running the REPL - but there are a few</span></span><br><span class="line">    <span class="comment">// others like the debugger or running --eval arguments. Here we decide</span></span><br><span class="line">    <span class="comment">// which mode we run in.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (NativeModule.exists(<span class="string">'_third_party_main'</span>)) &#123;</span><br><span class="line">      <span class="comment">// To allow people to extend Node in different ways, this hook allows</span></span><br><span class="line">      <span class="comment">// one to drop a file lib/_third_party_main.js into the build</span></span><br><span class="line">      <span class="comment">// directory which will be executed instead of Node's normal loading.</span></span><br><span class="line">      ......</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (process.argv[<span class="number">1</span>] === <span class="string">'inspect'</span> || process.argv[<span class="number">1</span>] === <span class="string">'debug'</span>) &#123;</span><br><span class="line">      <span class="comment">// Start the debugger agent</span></span><br><span class="line">      ......</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// There is user code to be run</span></span><br><span class="line">    &#125;</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupProcessObject</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalVariables</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalTimeouts</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalConsole</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalURL</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupInspector</span>(<span class="params">originalConsole, wrappedConsole, CJSModule</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">noop</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupProcessFatal</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupV8</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">tryGetCwd</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">wrapForBreakOnFirstLine</span>(<span class="params">source</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Load preload modules</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">preloadModules</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">checkScriptSyntax</span>(<span class="params">source, filename</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  startup();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>直接调用<code>startup()</code>发放来启动，它会调用一系列的<code>setupX()</code>方法来做一些必要的事情，比如进程<code>process</code>对象、全局对象、定时器对象、console对象、url对象、V8、检查js语法等等，最重要的就是运行用户也就是程序员写的js代码。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Node.js浅显的调用流程就是这样子的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OS =&gt; Node.cc::Start() =&gt; internal/bootstrap/loaders.js =&gt; internal/bootstrap/node.js =&gt; app.js</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/" data-id="cjp10jdh9003rdrcp10ve0bqf" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nodejs/2018-6-4-nodejs卸载模块" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/" class="article-date">
-  <time datetime="2018-05-06T16:00:00.000Z" itemprop="datePublished">2018-05-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="require"><a href="#require" class="headerlink" title="require"></a>require</h2><p>Nodejs加载模块使用require()函数，一旦模块被加载了，它将被缓存，也就是说，多次加载它会返回同一个对象。</p>
-<h3 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h3><p>这通常是高效的，这会帮助你在一个项目中重用模块而不用担心使用require时的开销。</p>
-<p>你可以安全的在同一个模块中调用require而不用集中加载所有的依赖。</p>
-<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>虽然自动缓存在Node开发中适合绝大多数场景，也存在一些情况你希望卸载一个缓存的模块，可以通过require.cache对象来达到这个目的。<br>要从缓存中删除一个模块，可以使用delete关键字。还需要模块的绝对路径，可以通过require.resolve来获取。例如：</p>
-<ul>
-<li><code>delete require.cache(require.resolve(&#39;myclass&#39;));</code></li>
-</ul>
-<p>这将返回true，代表模块被卸载了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/" data-id="cjp10jdha003tdrcpk1thd85u" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nodejs/2018-4-24-generator-怎么样判断一个函数是Generator" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/04/24/nodejs/2018-4-24-generator-怎么样判断一个函数是Generator/" class="article-date">
-  <time datetime="2018-04-23T16:00:00.000Z" itemprop="datePublished">2018-04-24</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/24/nodejs/2018-4-24-generator-怎么样判断一个函数是Generator/">怎么样判断一个函数是Generator</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>在JS中，有集中不同类型的函数：</p>
-<ol>
-<li>普通函数</li>
-<li>generator函数</li>
-<li>async函数</li>
-<li>箭头函数</li>
+<h2 id="问题现象：-一个JSP页面，居然要耗时40多秒。网页中有大量的图片的CSS"><a href="#问题现象：-一个JSP页面，居然要耗时40多秒。网页中有大量的图片的CSS" class="headerlink" title="问题现象： 一个JSP页面，居然要耗时40多秒。网页中有大量的图片的CSS"></a>问题现象： 一个JSP页面，居然要耗时40多秒。网页中有大量的图片的CSS</h2><p>问题解决： 原因也找了半天，原来Apache配置里面，把Keep-Alive的开关关闭了。</p>
+<p>这个是个大问题，工程师为什么要关闭它，原来他考虑的太简单了，我们知道Apache适合处于短连接的请求，处理时间越短，并发数才能上去，原来他是这么考虑，但是没有办法，只能这样了，还是打开Keep-Alive开关吧。</p>
+<p>当然，不是所有的情况都设置KeepAlive为On，下面的文字总结比较好：</p>
+<p>在使用apache的过程中，KeepAlive属性我一直保持为默认值On，其实，该属性设置为On还是Off还是要具体问题具体分析的，在生产环境中的影响还是蛮大的。</p>
+<p>KeepAlive选项到底有什么用处？<br>如果你用过Mysql ，应该知道Mysql的连接属性中有一个与KeepAlive 类似的Persistent Connection，即：长连接(PConnect)。该属性打开的话，可以使一次TCP连接为同一用户的多次请求服务，提高了响应速度。</p>
+<p>比如很多网页中图片、CSS、JS、Html都在一台Server上，当用户访问其中的Html网页时，网页中的图片、Css、Js都构成了访问请求，打开KeepAlive 属性可以有效地降低TCP握手的次数(当然浏览器对同一域下同时请求的图片数有限制，一般是2 见下文章节 减少域名解释的开销)，减少httpd进程数，从而降低内存的使用(假定prefork模式)。MaxKeepAliveRequests 和KeepAliveTimeOut 两个属性在KeepAlive =On时起作用，可以控制持久连接的生存时间和最大服务请求数。</p>
+<p>不过，上面说的只是一种情形，那就是<em>静态网页</em>居多的情况下，并且网页中的其他请求与网页在同一台Server上。当你的应用动态程序(比如：php )居多，用户访问时由动态程序即时生成html内容，html内容中图片素材和Css、Js等比较少或者散列在其他Server上时，KeepAlive =On反而会降低Apache 的性能。为什么呢？</p>
+<p>前面提到过，KeepAlive =On时，每次用户访问，打开一个TCP连接，Apache 都会保持该连接一段时间，以便该连接能连续为同一client服务，在KeepAliveTimeOut还没到期并且MaxKeepAliveRequests还没到阈值之前，Apache 必然要有一个httpd进程来维持该连接，httpd进程不是廉价的，他要消耗内存和CPU时间片的。假如当前Apache 每秒响应100个用户访问，KeepAliveTimeOut=5，此时httpd进程数就是100<em>5=500个(prefork 模式)，一个httpd进程消耗5M内存的话，就是500</em>5M=2500M=2.5G，夸张吧？当然，Apache 与Client只进行了100次TCP连接。如果你的内存够大，系统负载不会太高，如果你的内存小于2.5G，就会用到Swap，频繁的Swap切换会加重CPU的Load。</p>
+<p>现在我们关掉KeepAlive ，Apache 仍然每秒响应100个用户访问，因为我们将图片、js、css等分离出去了，每次访问只有1个request，此时httpd的进程数是100<em>1=100个，使用内存100</em>5M=500M，此时Apache 与Client也是进行了100次TCP连接。性能却提升了太多。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>当你的Server内存充足时，KeepAlive =On还是Off对系统性能影响不大。</li>
+<li>当你的Server上静态网页(Html、图片、Css、Js)居多时，建议打开KeepAlive 。</li>
+<li>当你的Server多为动态请求(因为连接数据库，对文件系统访问较多)，KeepAlive 关掉，会节省一定的内存，节省的内存正好可以作为文件系统的Cache(vmstat命令中cache一列)，降低I/O压力。</li>
 </ol>
-<p>那该怎么判断一个函数是generator函数呢？</p>
-<p>阅读koa源码，发现了一个<code>is-generator-function</code>的库，学习下。</p>
-<h2 id="is-generator-function"><a href="#is-generator-function" class="headerlink" title="is-generator-function"></a><code>is-generator-function</code></h2><p>这个库只暴露一个方法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> <span class="title">isGeneratorFunction</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
-<p>它首先会通过<code>typeof fn !== &#39;function&#39;</code>来检查是否是一个<code>function</code>，不是直接返回<code>false</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> fn !== <span class="string">'function'</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>接着会用正则表达式进一步判断。检查函数调用<code>toString()</code>方法后的字符串以<code>function*</code>做开头的。如果是的话就直接返回<code>true</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> isFnRegex = <span class="regexp">/^\s*(?:function)?\*/</span>;</span><br><span class="line"><span class="keyword">var</span> fnToStr = <span class="built_in">Function</span>.prototype.toString;</span><br><span class="line"><span class="keyword">if</span> (isFnRegex.test(fnToStr.call(fn))) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>然后会检查当前js引擎是否有<code>Symbol</code>和<code>Symbol.toStringTag</code>等于<code>&#39;symbol&#39;</code>。因为ES6中引入了<code>Symbol</code>，参考<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag" target="_blank" rel="noopener">Symbol.toStringTag</a>,简单来说就是这个属性可以用来定制调用<code>Object.toString()</code>方法得到<code>[object Object]</code>中 <code>object</code> 后面的那个字符串。ES内置<code>GeneratorFunction.prototype[Symbol.toStringTag]： &#39;GeneratorFunction&#39;</code>，所以这样也能判断这个<code>fn</code>是否是<code>GeneratorFunction</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> hasToStringTag = <span class="keyword">typeof</span> <span class="built_in">Symbol</span> === <span class="string">'function'</span> &amp;&amp; <span class="keyword">typeof</span> <span class="built_in">Symbol</span>.toStringTag === <span class="string">'symbol'</span>;</span><br><span class="line"><span class="keyword">var</span> toStr = <span class="built_in">Object</span>.prototype.toString;</span><br><span class="line"><span class="keyword">if</span> (!hasToStringTag) &#123;</span><br><span class="line">	<span class="keyword">var</span> str = toStr.call(fn);</span><br><span class="line">	<span class="keyword">return</span> str === <span class="string">'[object GeneratorFunction]'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果这个也失效了咋办？最后一招：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> getProto = <span class="built_in">Object</span>.getPrototypeOf;</span><br><span class="line"><span class="keyword">return</span> getProto(fn) === GeneratorFunction;</span><br></pre></td></tr></table></figure></p>
-<p>获取<code>fn</code>的原型。普通函数的原型是<code>[Function]</code>，而<code>generator</code>函数的原型是<code>GeneratorFunction {}</code>，所以也能判断成功。</p>
-<h2 id="is-generator-function-1"><a href="#is-generator-function-1" class="headerlink" title="is-generator-function"></a><code>is-generator-function</code></h2><p>我记得<code>co</code>库里面也有判断一个函数是否是generator函数的代码，我们来看看tj大神是怎么写的。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Check if `obj` is a generator function.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param &#123;Mixed&#125; obj</span></span><br><span class="line"><span class="comment"> * @return &#123;Boolean&#125;</span></span><br><span class="line"><span class="comment"> * @api private</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isGeneratorFunction</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> <span class="keyword">constructor</span> = obj.<span class="keyword">constructor</span>;</span><br><span class="line">  if (!<span class="keyword">constructor</span>) return false;</span><br><span class="line">  if ('GeneratorFunction' === <span class="keyword">constructor</span>.name || 'GeneratorFunction' === <span class="keyword">constructor</span>.displayName) return true;</span><br><span class="line">  return isGenerator(<span class="keyword">constructor</span>.prototype);</span><br><span class="line">&#125;</span><br><span class="line">/**</span><br><span class="line"> * Check if `obj` is a generator.</span><br><span class="line"> *</span><br><span class="line"> * @param &#123;Mixed&#125; obj</span><br><span class="line"> * @<span class="keyword">return</span> &#123;<span class="built_in">Boolean</span>&#125;</span><br><span class="line"> * @api private</span><br><span class="line"> *<span class="regexp">/</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">function isGenerator(obj) &#123;</span></span><br><span class="line"><span class="regexp">  return 'function' == typeof obj.next &amp;&amp; 'function' == typeof obj.throw;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
-<p>tj大神的思路完全不一样。这个<code>fn</code>的构造函数是否是<code>GeneratorFunction</code>，接着在判断<code>fn</code>的构造函数的原型是否有<code>next</code>和<code>throw</code>方法。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>小小的一个判断一个函数是否<code>generator</code>函数就有如此多的办法，666.</p>
+<p>PS：当KeepAlive =On时，KeepAliveTimeOut的设置其实也是一个问题，设置的过短，会导致Apache 频繁建立连接，给Cpu造成压力，设置的过长，系统中就会堆积无用的Http连接，消耗掉大量内存，具体设置多少，可以进行不断的调节，因你的网站浏览和服务器配置 而异。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/04/24/nodejs/2018-4-24-generator-怎么样判断一个函数是Generator/" data-id="cjp10jdh8003pdrcpsny3ssx3" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/" data-id="cjp9i0zg7003z5ucplfpc31dn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -410,14 +163,14 @@
 
 
   
-    <article id="post-lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-nginx/2018-09-09-Nginx性能优化之Buffers" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/04/17/lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现/" class="article-date">
-  <time datetime="2018-04-16T16:00:00.000Z" itemprop="datePublished">2018-04-17</time>
+    <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/" class="article-date">
+  <time datetime="2018-09-08T16:00:00.000Z" itemprop="datePublished">2018-09-09</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
   </div>
 
   </div>
@@ -428,7 +181,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/17/lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现/">lodash-array-head.indexOf.last.lastIndexOf函数实现</a>
+      <a class="article-title" href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
     </h1>
   
 
@@ -436,35 +189,18 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天所实现的是<code>head()</code>,<code>indexOf</code>,<code>last</code>,<code>lastIndexOf</code>函数。</p>
-<h2 id="head"><a href="#head" class="headerlink" title="head()"></a>head()</h2><p>这个方法返回获取数组 array 的第一个元素。</p>
-<h3 id="我的实现是"><a href="#我的实现是" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">head</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array || !<span class="built_in">Array</span>.isArray(array)||array.length&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">undefined</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> array[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>直接array[0].</p>
-<h3 id="lodash的实现是："><a href="#lodash的实现是：" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">head</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (array != <span class="literal">null</span> &amp;&amp; array.length)</span><br><span class="line">    ? array[<span class="number">0</span>]</span><br><span class="line">    : <span class="literal">undefined</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>基本一样</p>
-<h2 id="indexOf"><a href="#indexOf" class="headerlink" title="indexOf()"></a>indexOf()</h2><p>使用 SameValueZero 等值比较，返回首次 value 在数组array中被找到的 索引值， 如果 fromIndex 为负值，将从数组array尾端索引进行匹配。</p>
-<h3 id="我的实现是-1"><a href="#我的实现是-1" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">indexOf</span>(<span class="params">array, value, fromIndex=<span class="number">0</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array|| !<span class="built_in">Array</span>.isArray(array)||array.length&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i=fromIndex,len=array.length;i&lt;len;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(array[i]===value)&#123;</span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>for</code>循环遍历数组,查找第一个出现的元素.</p>
-<h3 id="lodash的实现是：-1"><a href="#lodash的实现是：-1" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">indexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> index = fromIndex == <span class="literal">null</span> ? <span class="number">0</span> : +fromIndex</span><br><span class="line">  <span class="keyword">if</span> (index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    index = <span class="built_in">Math</span>.max(length + index, <span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> baseIndexOf(array, value, index)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseIndexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> value === value</span><br><span class="line">    ? strictIndexOf(array, value, fromIndex)</span><br><span class="line">    : baseFindIndex(array, baseIsNaN, fromIndex)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">strictIndexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">let</span> index = fromIndex - <span class="number">1</span></span><br><span class="line">  <span class="keyword">const</span> &#123; length &#125; = array</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (++index &lt; length) &#123;</span><br><span class="line">    <span class="keyword">if</span> (array[index] === value) &#123;</span><br><span class="line">      <span class="keyword">return</span> index</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseFindIndex</span>(<span class="params">array, predicate, fromIndex, fromRight</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; length &#125; = array</span><br><span class="line">  <span class="keyword">let</span> index = fromIndex + (fromRight ? <span class="number">1</span> : <span class="number">-1</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> ((fromRight ? index-- : ++index &lt; length)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (predicate(array[index], index, array)) &#123;</span><br><span class="line">      <span class="keyword">return</span> index</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里可能有点疑惑,怎么这么烦?瞧见lodash做了很多安全的保证，并支持负数。</p>
-<p>有些代码比较奇特.比如<code>let index = fromIndex == null ? 0 : +fromIndex</code>中<code>+fromIndex</code>是为了传入的<code>fromIndex</code>有可能时<code>string</code>,把它转成<code>number</code>，相当于<code>Number(value)</code>。</p>
-<p><code>value === value</code>这个我一开始也没明白，什么鬼。往后看发现<code>baseFindIndex(array, baseIsNaN, fromIndex)</code>传<code>NAN</code>，我接着试了一下<code>NaN === NaN</code>果然是false，好吧…</p>
-<h2 id="last"><a href="#last" class="headerlink" title="last()"></a>last()</h2><p>获取array中的最后一个元素。</p>
-<h3 id="我的实现是："><a href="#我的实现是：" class="headerlink" title="我的实现是："></a>我的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">last</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array || !<span class="built_in">Array</span>.isArray(array) || array.length &lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">undefined</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> array[array.length<span class="number">-1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>直接返回<code>array[array.length-1]</code></p>
-<h3 id="lodash的实现"><a href="#lodash的实现" class="headerlink" title="lodash的实现"></a>lodash的实现</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">last</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length</span><br><span class="line">  <span class="keyword">return</span> length ? array[length - <span class="number">1</span>] : <span class="literal">undefined</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>差不多</p>
-<h2 id="lastIndexOf"><a href="#lastIndexOf" class="headerlink" title="lastIndexOf()"></a>lastIndexOf()</h2><h3 id="我的实现是：-1"><a href="#我的实现是：-1" class="headerlink" title="我的实现是："></a>我的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">lastIndexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!array || !<span class="built_in">Array</span>.isArray(array) || array.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    fromIndex = fromIndex == <span class="literal">undefined</span> ? array.length - <span class="number">1</span> : fromIndex;</span><br><span class="line">    <span class="keyword">return</span> array.lastIndexOf(value, fromIndex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>偷懒，用了ES5语法。</p>
-<h3 id="lodash的实现-1"><a href="#lodash的实现-1" class="headerlink" title="lodash的实现"></a>lodash的实现</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">lastIndexOf</span>(<span class="params">array, value, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> index = length</span><br><span class="line">  <span class="keyword">if</span> (fromIndex !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">    index = index &lt; <span class="number">0</span> ? <span class="built_in">Math</span>.max(length + index, <span class="number">0</span>) : <span class="built_in">Math</span>.min(index, length - <span class="number">1</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> value === value</span><br><span class="line">    ? strictLastIndexOf(array, value, index)</span><br><span class="line">    : baseFindIndex(array, baseIsNaN, index, <span class="literal">true</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <h2 id="Buffers"><a href="#Buffers" class="headerlink" title="Buffers"></a>Buffers</h2><h3 id="client-body-buffer-size"><a href="#client-body-buffer-size" class="headerlink" title="client_body_buffer_size"></a><code>client_body_buffer_size</code></h3><p>设置读取客户端请求正文的缓冲区大小。如果请求主体大于缓冲区，则整个主体或仅其部分被写入临时文件。对 <code>client_body_buffer_size</code> 而言，设置 16k 大小在大多数情况下是足够的。</p>
+<p>这是又一个可以产生巨大影响的设置，必须谨慎使用。太小了，则 nginx 会不断地使用 I/O 把剩余的部分写入文件。太大了，则当攻击者可以打开所有连接但你无法在系统上分配足够缓冲来处理这些连接时，你可能容易受到 DOS 攻击。</p>
+<h3 id="client-header-buffer-size-和-large-client-header-buffers"><a href="#client-header-buffer-size-和-large-client-header-buffers" class="headerlink" title="client_header_buffer_size 和 large_client_header_buffers"></a><code>client_header_buffer_size</code> 和 <code>large_client_header_buffers</code></h3><p>如果 header 不能跟 <code>client_header_buffer_size</code> 匹配上，就会使用 <code>large_client_header_buffers</code>。如果请求也不适合 <code>large_client_header_buffers</code>，将给客户端返回一个错误提示。对于大多数的请求来说，1KB 的缓存是足够的。但是，如果一个包含大量记录的请求，1KB 是不够的。</p>
+<p>如果请求行的长度超限，将给客户端返回一个 414（请求的 URI 太长）错误提示。如果请求的 header 长度超限，将抛出一个 400（错误请求）的错误代码</p>
+<h3 id="client-max-body-size"><a href="#client-max-body-size" class="headerlink" title="client_max_body_size"></a><code>client_max_body_size</code></h3><p>设置客户端请求主体的最大允许范围，在请求头字段中指定“内容长度”。如果您希望允许用户上传文件，调整此配置以满足您的需要。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Context:	http, server</span><br><span class="line">client_body_buffer_size       16K;</span><br><span class="line">client_header_buffer_size     1k;</span><br><span class="line">large_client_header_buffers   4 8k;</span><br><span class="line">client_max_body_size          8m;</span><br></pre></td></tr></table></figure>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/04/17/lodash/2018-4-17-lodash-array-head.indexOf.last.lastIndexOf函数实现/" data-id="cjp10jdg4001fdrcpkopgyk9f" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/" data-id="cjp9i0zg5003v5ucp7izw3qkn" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lodash/">lodash</a></li></ul>
-
     </footer>
   </div>
   
@@ -472,14 +208,14 @@
 
 
   
-    <article id="post-mongodb/2018-4-11-mongodb-客户端链接不上去" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-nginx/2018-09-04-Nginx性能优化之超时" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/04/11/mongodb/2018-4-11-mongodb-客户端链接不上去/" class="article-date">
-  <time datetime="2018-04-10T16:00:00.000Z" itemprop="datePublished">2018-04-11</time>
+    <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/" class="article-date">
+  <time datetime="2018-09-03T16:00:00.000Z" itemprop="datePublished">2018-09-04</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/mongodb/">mongodb</a>
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
   </div>
 
   </div>
@@ -490,7 +226,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/11/mongodb/2018-4-11-mongodb-客户端链接不上去/">客户端链接不上远端mongodb数据库</a>
+      <a class="article-title" href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
     </h1>
   
 
@@ -498,22 +234,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>当客户端链接远端mongodb数据库时</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo 172.16.233.128:27017</span><br></pre></td></tr></table></figure>
-<p>出现一下报错</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MongoDB shell version: 2.6.10</span><br><span class="line">connecting to: 172.16.233.128:27017/test</span><br><span class="line">2018-04-11T11:20:56.773+0800 warning: Failed to connect to 172.16.233.128:27017, reason: errno:111 Connection refused</span><br><span class="line">2018-04-11T11:20:56.774+0800 Error: couldn&apos;t connect to server 172.16.233.128:27017 (172.16.233.128), connection attempt failed at src/mongo/shell/mongo.js:148</span><br><span class="line">exception: connect failed</span><br></pre></td></tr></table></figure>
-<p>我google了一下,找到了解决方法:</p>
-<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><h3 id="mongod-repair"><a href="#mongod-repair" class="headerlink" title="mongod --repair"></a><code>mongod --repair</code></h3><p>首先关闭远端mongodb服务,执行一下命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod --repair</span><br></pre></td></tr></table></figure></p>
-<p>mongo就会自动检测问题,打印出:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">2018-04-10T20:31:11.782-0700 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine</span><br><span class="line">2018-04-10T20:31:11.782-0700 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem</span><br><span class="line">2018-04-10T20:31:11.782-0700 I STORAGE  [initandlisten] wiredtiger_open config: create,cache_size=256M,session_max=20000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000),statistics_log=(wait=0),verbose=(recovery_progress),,log=(enabled=false),</span><br><span class="line">2018-04-10T20:31:12.237-0700 I STORAGE  [initandlisten] Repairing size cache</span><br><span class="line">2018-04-10T20:31:12.237-0700 I STORAGE  [initandlisten] Verify succeeded on uri table:sizeStorer. Not salvaging.</span><br><span class="line">2018-04-10T20:31:12.238-0700 I STORAGE  [initandlisten] Repairing catalog metadata</span><br><span class="line">2018-04-10T20:31:12.239-0700 I STORAGE  [initandlisten] Verify succeeded on uri table:_mdb_catalog. Not salvaging.</span><br><span class="line">2018-04-10T20:31:12.240-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.240-0700 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.</span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.</span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] ** WARNING: This server is bound to localhost.</span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          Remote systems will be unable to connect to this server. </span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          Start the server with --bind_ip &lt;address&gt; to specify which IP </span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          addresses it should serve responses from, or with --bind_ip_all to</span><br><span class="line">2018-04-10T20:31:12.241-0700 I CONTROL  [initandlisten] **          bind to all interfaces. If this behavior is desired, start the</span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] **          server with --bind_ip 127.0.0.1 to disable this warning.</span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] ** WARNING: /sys/kernel/mm/transparent_hugepage/enabled is &apos;always&apos;.</span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] **        We suggest setting it to &apos;never&apos;</span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] </span><br><span class="line">2018-04-10T20:31:12.242-0700 I CONTROL  [initandlisten] ** WARNING: /sys/kernel/mm/transparent_hugepage/defrag is &apos;always&apos;.</span><br><span class="line">2018-04-10T20:31:12.243-0700 I CONTROL  [initandlisten] **        We suggest setting it to &apos;never&apos;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
-<p>可是发现原因是<code>bind_ip</code>没有设置.我就在<code>/etc/mongod.conf</code>文件中从<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bindIp: 127.0.0.1</span><br></pre></td></tr></table></figure></p>
-<p>改成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bindIp: 127.0.0.1,172.16.233.128</span><br></pre></td></tr></table></figure></p>
-<p>重启mongod服务后,就可以连接成功了.</p>
-<p>为了方便,我在写了<code>/data/db/mongodb.conf</code>配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">dbpath=/data/db/</span><br><span class="line"></span><br><span class="line">logpath=/data/db/mongo.log</span><br><span class="line"></span><br><span class="line">logappend=true</span><br><span class="line"></span><br><span class="line">fork=true</span><br><span class="line"></span><br><span class="line">port=27017</span><br><span class="line"></span><br><span class="line">bind_ip=172.16.233.128</span><br></pre></td></tr></table></figure></p>
+        <h2 id="超时"><a href="#超时" class="headerlink" title="超时"></a>超时</h2><p><code>client_body_timeout</code> 和 <code>client_header_timeout</code> 定义了 nginx 在抛出 408（请求超时）错误之前应该等待客户端传输主体或头信息的时间。</p>
+<p><code>send_timeout</code> 设置向客户端发送响应的超时时间。超时仅在两次连续的写入操作之间被设置，而不是用于整个响应的传输过程。如果客户端在给定时间内没有收到任何内容，则连接将被关闭。</p>
+<p>设置这些值时要小心，因为等待时间过长会使你容易受到攻击者的攻击，并且等待时间太短的话会切断与速度较慢的客户端的连接。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># Configure timeouts</span><br><span class="line">client_body_timeout   12;</span><br><span class="line">client_header_timeout 12;</span><br><span class="line">send_timeout          10;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/04/11/mongodb/2018-4-11-mongodb-客户端链接不上去/" data-id="cjp10jdgs002rdrcpm2v9ycz7" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/" data-id="cjp9i0zg5003t5ucp65ik9ga5" class="article-share-link">Share</a>
       
       
     </footer>
@@ -523,14 +251,14 @@
 
 
   
-    <article id="post-lodash/2018-3-20-lodash-array-flatten函数实现" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-nginx/2018-08-30-Nginx性能优化之缓存" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/03/20/lodash/2018-3-20-lodash-array-flatten函数实现/" class="article-date">
-  <time datetime="2018-03-19T16:00:00.000Z" itemprop="datePublished">2018-03-20</time>
+    <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/" class="article-date">
+  <time datetime="2018-08-29T16:00:00.000Z" itemprop="datePublished">2018-08-30</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
   </div>
 
   </div>
@@ -541,7 +269,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/20/lodash/2018-3-20-lodash-array-flatten函数实现/">lodash-array-flatten函数实现</a>
+      <a class="article-title" href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
     </h1>
   
 
@@ -549,33 +277,49 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天所实现的是<code>flatten()</code>、<code>flattenDeep()</code>和<code>flattenDepth()</code>函数。</p>
-<h2 id="flatten"><a href="#flatten" class="headerlink" title="flatten()"></a>flatten()</h2><p>减少一级array嵌套深度。</p>
-<h3 id="我的实现是"><a href="#我的实现是" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">flatten</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array || !<span class="built_in">Array</span>.isArray(array)|| array.length&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> [];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> result=[];</span><br><span class="line">    array.forEach(<span class="function"><span class="params">val</span>=&gt;</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">Array</span>.isArray(val))&#123;</span><br><span class="line">            val.forEach(<span class="function"><span class="params">val</span>=&gt;</span>result.push(val));</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            result.push(val);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个函数比较简单，循环第一层，如果哪个元素是数组，在遍历这个元素，把最后的结果放在<code>result</code>数组中。</p>
-<h3 id="lodash的实现是："><a href="#lodash的实现是：" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">flatten</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length;</span><br><span class="line">  <span class="keyword">return</span> length ? baseFlatten(array, <span class="number">1</span>) : [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>主要逻辑都在<code>baseFlatten()</code>里，这里传了<code>array</code>和 <code>1</code>。</p>
-<h2 id="flattenDeep"><a href="#flattenDeep" class="headerlink" title="flattenDeep()"></a>flattenDeep()</h2><p>将array递归为一维数组。</p>
-<h3 id="我的实现是-1"><a href="#我的实现是-1" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">flattenDeep</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array || !<span class="built_in">Array</span>.isArray(array))&#123;</span><br><span class="line">        <span class="keyword">return</span> [];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> result=[];</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">addItem</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">        array.forEach(<span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">Array</span>.isArray(element))&#123;</span><br><span class="line">                addItem(element);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                result.push(element);</span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    addItem(array);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>按照<code>flatten()</code>的思路，递归每一层，把不是数组的元素放到<code>result</code>数组中。</p>
-<h3 id="lodash的实现是：-1"><a href="#lodash的实现是：-1" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">flattenDeep</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length;</span><br><span class="line">  <span class="keyword">return</span> length ? baseFlatten(array, INFINITY) : [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>也是调用<code>baseFlatten()</code>函数，只是参数不一样，这里传了<code>array</code>和 <code>INFINITY</code>。</p>
-<h2 id="flattenDepth"><a href="#flattenDepth" class="headerlink" title="flattenDepth()"></a>flattenDepth()</h2><p>根据 depth 递归减少 array 的嵌套层级</p>
-<h3 id="我的实现是："><a href="#我的实现是：" class="headerlink" title="我的实现是："></a>我的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">flattenDepth</span>(<span class="params">array, depth = <span class="number">1</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!array || !<span class="built_in">Array</span>.isArray(array) || array.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> [];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> result=[];</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">addItem</span>(<span class="params">arr,dep</span>)</span>&#123;</span><br><span class="line">        arr.forEach(<span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">Array</span>.isArray(element) &amp;&amp; dep&gt;<span class="number">0</span>)&#123;</span><br><span class="line">                addItem(element,dep<span class="number">-1</span>);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                result.push(element);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    addItem(array,depth);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>递归函数<code>addItem()</code>多定义一个<code>dep</code>层级参数，每遍历一层就减1，减到0就直接加入<code>result</code>数组了。</p>
-<h3 id="lodash的实现"><a href="#lodash的实现" class="headerlink" title="lodash的实现"></a>lodash的实现</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">flattenDepth</span>(<span class="params">array, depth</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length;</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> [];</span><br><span class="line">  &#125;</span><br><span class="line">  depth = depth === <span class="literal">undefined</span> ? <span class="number">1</span> : toInteger(depth);</span><br><span class="line">  <span class="keyword">return</span> baseFlatten(array, depth);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>调用<code>baseFlatten()</code>函数时传了<code>array</code>和 实际的<code>depth</code>。<code>baseFlatten()</code>如下：</p>
-<h2 id="baseFlatten"><a href="#baseFlatten" class="headerlink" title="baseFlatten()"></a>baseFlatten()</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseFlatten</span>(<span class="params">array, depth, predicate, isStrict, result</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> index = <span class="number">-1</span>,</span><br><span class="line">      length = array.length;</span><br><span class="line"></span><br><span class="line">  predicate || (predicate = isFlattenable);</span><br><span class="line">  result || (result = []);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (++index &lt; length) &#123;</span><br><span class="line">    <span class="keyword">var</span> value = array[index];</span><br><span class="line">    <span class="keyword">if</span> (depth &gt; <span class="number">0</span> &amp;&amp; predicate(value)) &#123;</span><br><span class="line">      <span class="keyword">if</span> (depth &gt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">// Recursively flatten arrays (susceptible to call stack limits).</span></span><br><span class="line">        baseFlatten(value, depth - <span class="number">1</span>, predicate, isStrict, result);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        arrayPush(result, value);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!isStrict) &#123;</span><br><span class="line">      result[result.length] = value;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看出，lodash的思路和我差不多，也是在循环递归调用。我写的例子应该更好理解。</p>
+        <h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>http缓存原理具体见<a href="https://www.cnblogs.com/chenqf/p/6386163.html" target="_blank" rel="noopener">彻底弄懂HTTP缓存机制及原理</a></p>
+<p>管理缓存可以仅由 2 个 header 控制：</p>
+<ul>
+<li>在 HTTP/1.1 中用 Cache-Control 管理缓存</li>
+<li>Pragma 对于 HTTP/1.0 客户端的向后兼容性</li>
+</ul>
+<p>缓存本身可以分为两类：公共缓存和私有缓存。公共缓存是被多个用户共同使用的。专用缓存专用于单个用户。我们可以很容易地区分，应该使用哪种缓存：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add_header Cache-Control public;</span><br><span class="line">add_header Pragma public;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Nginx实现缓存"><a href="#Nginx实现缓存" class="headerlink" title="Nginx实现缓存"></a>Nginx实现缓存</h2><p>Nginx实现缓存非常简单，只需在Location和if块中加入<code>expires TIME;</code>即可，<a href="http://nginx.org/en/docs/http/ngx_http_headers_module.html#expires" target="_blank" rel="noopener">详见官方文档</a></p>
+<h2 id="TIME"><a href="#TIME" class="headerlink" title="TIME"></a>TIME</h2><p>TIME可以写多种单位</p>
+<ul>
+<li>ms    milliseconds</li>
+<li>s        seconds</li>
+<li>m        minutes</li>
+<li>h        hours</li>
+<li>d        days</li>
+<li>w        weeks</li>
+<li>M        months, 30 days</li>
+<li>y        years, 365 days</li>
+</ul>
+<h2 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h2><h3 id="Nginx配置："><a href="#Nginx配置：" class="headerlink" title="Nginx配置："></a>Nginx配置：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name www.test.com;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root /var/www/test.com;</span><br><span class="line">        index index.html;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    location ~* \.(jpg|jpeg|png|gif|ico)$  &#123;</span><br><span class="line">        expires 1w;</span><br><span class="line">        add_header Cache-Control public;</span><br><span class="line">        add_header Pragma public;</span><br><span class="line">        root /var/www/test.com/images；</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="在-var-www-test-com-创建-index-html"><a href="#在-var-www-test-com-创建-index-html" class="headerlink" title="在 /var/www/test.com 创建 index.html"></a>在 /var/www/test.com 创建 index.html</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">p</span>&gt;</span>Nginx expires demo<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"./images/lady.jpg"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="在-var-www-test-com-images-下添加-lady-jpg"><a href="#在-var-www-test-com-images-下添加-lady-jpg" class="headerlink" title="在 /var/www/test.com/images 下添加 lady.jpg"></a>在 /var/www/test.com/images 下添加 lady.jpg</h3><p>连续两次用chrome访问192.168.1.36，发现第二次多了如下信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Status Code: 200 OK (from memory cache)</span><br></pre></td></tr></table></figure></p>
+<p>说明已经使用强制缓存，直接从内存中读取图片了。</p>
+<p>上面的配置似乎足够了。然而，使用公共缓存时有一个注意事项。</p>
+<p>让我们看看如果将我们的资源存储在公共缓存（如 CDN）中，URI 将是唯一的标识符。在这种情况下，我们认为 gzip 是开启的。</p>
+<p>有2个浏览器：</p>
+<ul>
+<li>旧的，不支持 gzip</li>
+<li>新的，支持 gzip</li>
+</ul>
+<p>旧的浏览器给 CDN 发送了一个 netguru.co/style 请求。但是 CDN 也没有这个资源，它将会给我们的服务器发送请求，并且返回未经压缩的响应。CDN 在哈希里存储文件（为以后使用）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  netguru.co/styles.css =&gt; FILE(&quot;/sites/netguru/style.css&quot;)</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后将其返回给客户端。</p>
+<p>现在，新的浏览器发送相同的请求到 CDN，请求 netguru.co/style.css，获取 gzip 打包的资源。由于 CDN 仅通过 URI 标识资源，它将为新浏览器返回一样的未压缩资源。新的浏览器将尝试提取未打包的文件，但是将获得无用的东西。</p>
+<p>如果我们能够告诉公共缓存是怎样进行 URI 和编码的资源识别，我们就可以避免这个问题。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  (netguru.co/styles.css, gzip) =&gt; FILE(&quot;/sites/netguru/style.css.gzip&quot;)</span><br><span class="line">  (netguru.co/styles.css, text/css) =&gt; FILE(&quot;/sites/netguru/style.css&quot;)</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br><span class="line">``</span><br></pre></td></tr></table></figure></p>
+<p>这正是 Vary Accept-Encoding: 完成的。它告诉公共缓存，可以通过 URI 和 Accept-Encoding header 区分资源。</p>
+<p>所以我们的最终配置如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ &#123;</span><br><span class="line">  expires 1M;</span><br><span class="line">  add_header Cache-Control public;</span><br><span class="line">  add_header Pragma public;</span><br><span class="line">  add_header Vary Accept-Encoding;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/03/20/lodash/2018-3-20-lodash-array-flatten函数实现/" data-id="cjp10jdg20018drcpdy2z8p6l" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/" data-id="cjp9i0zg3003p5ucp570ha1qc" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lodash/">lodash</a></li></ul>
-
     </footer>
   </div>
   
@@ -583,14 +327,14 @@
 
 
   
-    <article id="post-lodash/2018-3-19-lodash-array-fill和findIndex函数实现" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-nginx/2018-08-28-Nginx性能优化之压缩gzip" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/03/19/lodash/2018-3-19-lodash-array-fill和findIndex函数实现/" class="article-date">
-  <time datetime="2018-03-18T16:00:00.000Z" itemprop="datePublished">2018-03-19</time>
+    <a href="/2018/08/28/nginx/2018-08-28-Nginx性能优化之压缩gzip/" class="article-date">
+  <time datetime="2018-08-27T16:00:00.000Z" itemprop="datePublished">2018-08-28</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
   </div>
 
   </div>
@@ -601,7 +345,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/03/19/lodash/2018-3-19-lodash-array-fill和findIndex函数实现/">lodash-array-fill和findIndex函数实现</a>
+      <a class="article-title" href="/2018/08/28/nginx/2018-08-28-Nginx性能优化之压缩gzip/">Nginx性能优化之压缩gzip</a>
     </h1>
   
 
@@ -609,34 +353,255 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天所实现的是<code>fill()</code>、<code>findIndex()</code>和<code>findLastIndex()</code>函数。</p>
-<h2 id="fill"><a href="#fill" class="headerlink" title="fill()"></a>fill()</h2><p>使用 value 值来填充（替换） array，从start位置开始, 到end位置结束（但不包含end位置）。</p>
-<p>Note: 这个方法会改变 array（不是创建新数组）。</p>
-<h3 id="我的实现是"><a href="#我的实现是" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fill</span>(<span class="params">array, value, start = <span class="number">0</span>, end</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!array || !<span class="built_in">Array</span>.isArray(array)) <span class="keyword">return</span>[];</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!end) &#123;</span><br><span class="line">        end = array.length;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = start; i &lt; end; i++) &#123;</span><br><span class="line">        array[i] = value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> array;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个函数太简单，不用多说。</p>
-<h3 id="lodash的实现是："><a href="#lodash的实现是：" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fill</span>(<span class="params">array, value, start, end</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length;</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> [];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (start &amp;&amp; <span class="keyword">typeof</span> start != <span class="string">'number'</span> &amp;&amp; isIterateeCall(array, value, start)) &#123;</span><br><span class="line">    start = <span class="number">0</span>;</span><br><span class="line">    end = length;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> baseFill(array, value, start, end);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseFill</span>(<span class="params">array, value, start, end</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = array.length;</span><br><span class="line"></span><br><span class="line">  start = toInteger(start);</span><br><span class="line">  <span class="keyword">if</span> (start &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    start = -start &gt; length ? <span class="number">0</span> : (length + start);</span><br><span class="line">  &#125;</span><br><span class="line">  end = (end === <span class="literal">undefined</span> || end &gt; length) ? length : toInteger(end);</span><br><span class="line">  <span class="keyword">if</span> (end &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    end += length;</span><br><span class="line">  &#125;</span><br><span class="line">  end = start &gt; end ? <span class="number">0</span> : toLength(end);</span><br><span class="line">  <span class="keyword">while</span> (start &lt; end) &#123;</span><br><span class="line">    array[start++] = value;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> array;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>逻辑差不多,不用多说。</p>
-<h2 id="findIndex"><a href="#findIndex" class="headerlink" title="findIndex()"></a>findIndex()</h2><p>遍历数组元素，返回第一个通过 predicate 判断为真值的元素的索引值（index）。predicate（断言函数）调用3个参数： (value, index|key, collection)。</p>
-<h3 id="我的实现是-1"><a href="#我的实现是-1" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">findIndex</span>(<span class="params">array, predicate = v =&gt; v, fromIndex = <span class="number">0</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!array || !<span class="built_in">Array</span>.isArray(array) || array.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (predicate === <span class="literal">undefined</span> || predicate === <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> func;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> predicate === <span class="string">'function'</span>) &#123;</span><br><span class="line">        func = predicate;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(predicate)) &#123;</span><br><span class="line">        func = <span class="function"><span class="params">val</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; predicate.length; i += <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (val[predicate[i]] !== predicate[i + <span class="number">1</span>]) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> predicate === <span class="string">'object'</span>) &#123;</span><br><span class="line">        func = <span class="function"><span class="params">val</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> predicate) &#123;</span><br><span class="line">                <span class="keyword">if</span> (val[key] !== predicate[key]) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> predicate === <span class="string">'string'</span>) &#123;</span><br><span class="line">        func = <span class="function"><span class="params">val</span> =&gt;</span> val[predicate];</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i=fromIndex;i&lt;array.length;i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(func(array[i]))&#123;</span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>与之前写过的<code>dropWhile()</code>里面的处理方法差不多，循环调用<code>predicate()</code>验证即可。</p>
-<h3 id="lodash的实现是：-1"><a href="#lodash的实现是：-1" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">findIndex</span>(<span class="params">array, predicate, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length;</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> index = fromIndex == <span class="literal">null</span> ? <span class="number">0</span> : toInteger(fromIndex);</span><br><span class="line">  <span class="keyword">if</span> (index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    index = nativeMax(length + index, <span class="number">0</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> baseFindIndex(array, baseIteratee(predicate, <span class="number">3</span>), index);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>先初始化数据，逻辑都在<code>baseFindIndex()</code>函数里 ，稍后再说。</p>
-<h2 id="findLastIndex"><a href="#findLastIndex" class="headerlink" title="findLastIndex()"></a>findLastIndex()</h2><p>这个方式类似<code>findIndex()</code>， 区别是它是从右到左的迭代集合<code>array</code>中的元素。</p>
-<h3 id="我的实现是："><a href="#我的实现是：" class="headerlink" title="我的实现是："></a>我的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">findLastIndex</span>(<span class="params">array, predicate = v =&gt; v, fromIndex</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!array || !<span class="built_in">Array</span>.isArray(array) || array.length &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (predicate === <span class="literal">undefined</span> || predicate === <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(fromIndex===<span class="literal">undefined</span> || fromIndex===<span class="literal">null</span>)&#123;</span><br><span class="line">        fromIndex=array.length<span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> func;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> predicate === <span class="string">'function'</span>) &#123;</span><br><span class="line">        func = predicate;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(predicate)) &#123;</span><br><span class="line">        func = <span class="function"><span class="params">val</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; predicate.length; i += <span class="number">2</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (val[predicate[i]] !== predicate[i + <span class="number">1</span>]) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> predicate === <span class="string">'object'</span>) &#123;</span><br><span class="line">        func = <span class="function"><span class="params">val</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> predicate) &#123;</span><br><span class="line">                <span class="keyword">if</span> (val[key] !== predicate[key]) &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> predicate === <span class="string">'string'</span>) &#123;</span><br><span class="line">        func = <span class="function"><span class="params">val</span> =&gt;</span> val[predicate];</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i=fromIndex;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">        <span class="keyword">if</span>(func(array[i]))&#123;</span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>与<code>findIndex()</code>函数相反,其他都一样。</p>
-<h3 id="lodash的实现"><a href="#lodash的实现" class="headerlink" title="lodash的实现"></a>lodash的实现</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">findLastIndex</span>(<span class="params">array, predicate, fromIndex</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length;</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> index = length - <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span> (fromIndex !== <span class="literal">undefined</span>) &#123;</span><br><span class="line">    index = toInteger(fromIndex);</span><br><span class="line">    index = fromIndex &lt; <span class="number">0</span></span><br><span class="line">      ? nativeMax(length + index, <span class="number">0</span>)</span><br><span class="line">      : nativeMin(index, length - <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> baseFindIndex(array, baseIteratee(predicate, <span class="number">3</span>), index, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看出，与<code>findIndex()</code>只有最后调用<code>baseFindIndex()</code>时多传了<code>true</code>，<code>baseFindIndex()</code>如下：</p>
-<h2 id="baseFindIndex"><a href="#baseFindIndex" class="headerlink" title="baseFindIndex()"></a>baseFindIndex()</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">baseFindIndex</span>(<span class="params">array, predicate, fromIndex, fromRight</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = array.length,</span><br><span class="line">      index = fromIndex + (fromRight ? <span class="number">1</span> : <span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> ((fromRight ? index-- : ++index &lt; length)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (predicate(array[index], index, array)) &#123;</span><br><span class="line">      <span class="keyword">return</span> index;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>while</code>循环遍历整个数组，找出符合的元素，返回下表。</p>
+        <h2 id="优化网络传输速度"><a href="#优化网络传输速度" class="headerlink" title="优化网络传输速度"></a>优化网络传输速度</h2><p>一般浏览器的请求头会有:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Accept-Encoding:gzip,deflate,sdch</span><br></pre></td></tr></table></figure></p>
+<p>这代表浏览器接受这些压缩格式的数据</p>
+<p>服务器可以根据这个头来进行压缩响应数据，在响应头添加如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Content-Encoding:gzip</span><br><span class="line">Content-Length:36093</span><br></pre></td></tr></table></figure></p>
+<h2 id="Gzip"><a href="#Gzip" class="headerlink" title="Gzip"></a>Gzip</h2><p>启用 gzip 可以显著降低响应的（报文）大小，因此，客户端（网页）会显得更快些。</p>
+<h2 id="压缩级别"><a href="#压缩级别" class="headerlink" title="压缩级别"></a>压缩级别</h2><p>Gzip 有不同的压缩级别，1 到 9 级。递增这个级别将会减少文件的大小，但也会增加资源消耗。作为标准我们将这个数字（级别）保持在 3 - 5 级，就像上面说的那样，它将会得到较小的节省，同时也会得到更大的 CPU 使用率。</p>
+<p>这有个通过 gzip 的不同的压缩级别压缩文件的例子，0 代表未压缩文件。</p>
+<h2 id="Ngin压缩"><a href="#Ngin压缩" class="headerlink" title="Ngin压缩"></a>Ngin压缩</h2><p>Nginx可以使用gzip来压缩服务器的响应数据，来减少响应数据传输的大小。详见<a href="http://nginx.org/en/docs/http/ngx_http_gzip_module.html" target="_blank" rel="noopener">文档</a></p>
+<h2 id="gzip配置的常用参数"><a href="#gzip配置的常用参数" class="headerlink" title="gzip配置的常用参数"></a>gzip配置的常用参数</h2><ul>
+<li>gzip on|off;  #是否开启gzip</li>
+<li>gzip_buffers 32 4K| 16 8K;  #缓冲(压缩在内存中缓冲几块? 每块多大?)</li>
+<li>gzip_comp_level [1-9]; #推荐5 压缩级别(级别越高,压的越小,越浪费CPU计算资源)</li>
+<li>gzip_disable; #正则匹配UA 什么样的Uri不进行gzip</li>
+<li>gzip_min_length 200; # 开始压缩的最小长度(再小就不要压缩了,意义不在)</li>
+<li>gzip_http_version 1.0|1.1; # 开始压缩的http协议版本(可以不设置,目前几乎全是1.1协议)</li>
+<li>gzip_proxied;  # 设置请求者代理服务器,该如何缓存内容</li>
+<li>gzip_types text/plain  application/xml; # 对哪些类型的文件用压缩 如txt,xml,html ,css</li>
+<li>gzip_vary on|off;  # 是否传输gzip压缩标志</li>
+</ul>
+<h2 id="gzip-http-version-1-1"><a href="#gzip-http-version-1-1" class="headerlink" title="gzip_http_version 1.1;"></a>gzip_http_version 1.1;</h2><p>这条指令告诉 nginx 仅在 HTTP 1.1 以上的版本才能使用 gzip。我们在这里不涉及 HTTP 1.0，至于 HTTP 1.0 版本，它是不可能既使用 keep-alive 和 gzip 的。因此你必须做出决定：使用 HTTP 1.0 的客户端要么错过 gzip，要么错过 keep-alive。</p>
+<h2 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">http&#123;</span><br><span class="line">    gzip on;               # enable gzip</span><br><span class="line">    gzip_http_version 1.1; # turn on gzip for http 1.1 and above</span><br><span class="line">    gzip_disable &quot;msie6&quot;;  # IE 6 had issues with gzip</span><br><span class="line">    gzip_comp_level 5;     # inc compresion level, and CPU usage</span><br><span class="line">    gzip_min_length 100;   # minimal weight to gzip file</span><br><span class="line">    gzip_proxied any;      # enable gzip for proxied requests (e.g. CDN)</span><br><span class="line">    gzip_buffers 16 8k;    # compression buffers (if we exceed this value, disk will be used instead of RAM)</span><br><span class="line">    gzip_vary on;          # add header Vary Accept-Encoding (more on that in Caching section)</span><br><span class="line"></span><br><span class="line">    # define files which should be compressed</span><br><span class="line">    gzip_types text/plain;</span><br><span class="line">    gzip_types text/css;</span><br><span class="line">    gzip_types application/javascript;</span><br><span class="line">    gzip_types application/json;</span><br><span class="line">    gzip_types application/vnd.ms-fontobject;</span><br><span class="line">    gzip_types application/x-font-ttf;</span><br><span class="line">    gzip_types font/opentype;</span><br><span class="line">    gzip_types image/svg+xml;</span><br><span class="line">    gzip_types image/x-icon;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意:"></a>注意:</h2><ul>
+<li>图片/mp3这样的二进制文件,不必压缩。<br>因为压缩率比较小, 比如100-&gt;80字节,而且压缩也是耗费CPU资源的.</li>
+<li>比较小的文件不必压缩,</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/03/19/lodash/2018-3-19-lodash-array-fill和findIndex函数实现/" data-id="cjp10jdg10015drcppx75a31k" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/28/nginx/2018-08-28-Nginx性能优化之压缩gzip/" data-id="cjp9i0zg4003r5ucpy56qp5bw" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lodash/">lodash</a></li></ul>
+    </footer>
+  </div>
+  
+</article>
 
+
+  
+    <article id="post-nginx/2018-08-26-Nginx性能优化之进程数配置" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/26/nginx/2018-08-26-Nginx性能优化之进程数配置/" class="article-date">
+  <time datetime="2018-08-25T16:00:00.000Z" itemprop="datePublished">2018-08-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/26/nginx/2018-08-26-Nginx性能优化之进程数配置/">Nginx性能优化之进程数配置</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="我应该使用多少进程？"><a href="#我应该使用多少进程？" class="headerlink" title="我应该使用多少进程？"></a>我应该使用多少进程？</h1><h2 id="工作进程"><a href="#工作进程" class="headerlink" title="工作进程"></a>工作进程</h2><p>worker_process 指令会指定：应该运行多少个 worker。默认情况下，此值设置为 1。最安全的设置是通过传递 auto 选项来使用核心数量。</p>
+<p>但由于 Nginx 的架构，其处理请求的速度非常快 - 我们可能一次不会使用超过 2-4 个进程（除非你正在托管 Facebook 或在 nginx 内部执行一些 CPU 密集型的任务）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_process auto;</span><br></pre></td></tr></table></figure></p>
+<h2 id="worker-连接"><a href="#worker-连接" class="headerlink" title="worker 连接"></a>worker 连接</h2><p>与 worker_process 直接绑定的指令是 worker_connections。它指定一个工作进程可以一次打开多少个连接。这个数目包括所有连接（例如与代理服务器的连接），而不仅仅是与客户端的连接。此外，值得记住的是，一个客户端可以打开多个连接，同时获取其他资源。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_connections 4096;</span><br></pre></td></tr></table></figure></p>
+<h2 id="打开文件数目限制"><a href="#打开文件数目限制" class="headerlink" title="打开文件数目限制"></a>打开文件数目限制</h2><p>在基于 Unix 系统中的“一切都是文件”。这意味着文档、目录、管道甚至套接字都是文件。系统对一个进程可以打开多少文件有一个限制。要查看该限制：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -Sn      <span class="comment"># soft limit</span></span><br><span class="line"><span class="built_in">ulimit</span> -Sn      <span class="comment"># hard limit</span></span><br></pre></td></tr></table></figure></p>
+<p>这个系统限制必须根据 worker_connections 进行调整。任何传入的连接都会打开至少一个文件（通常是两个连接套接字以及后端连接套接字或磁盘上的静态文件）。所以这个值等于 worker_connections*2 是安全的。幸运的是，Nginx 提供了一个配置选项来增加这个系统的值。要使用这个配置，请添加具有适当数目的 worker_rlimit_nofile 指令并重新加载 nginx。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_rlimit_nofile 8192;</span><br></pre></td></tr></table></figure></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">worker_process auto;</span><br><span class="line">worker_connections 4096;   # Sets the maximum number of simultaneous connections that can be opened by a worker process.</span><br><span class="line">worker_rlimit_nofile 8192; # Changes the limit on the maximum number of open files (RLIMIT_NOFILE) for worker processes.</span><br></pre></td></tr></table></figure>
+<h2 id="最大连接数"><a href="#最大连接数" class="headerlink" title="最大连接数"></a>最大连接数</h2><p>如上所述，我们可以计算一次可以处理多少个并发连接：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">最大连接数 = </span><br><span class="line"></span><br><span class="line">    worker_processes * worker_connections</span><br><span class="line">----------------------------------------------</span><br><span class="line"> (keep_alive_timeout + avg_response_time) * 2</span><br></pre></td></tr></table></figure></p>
+<p>keep_alive_timeout (后续有更多介绍) + avg_response_time 告诉我们：单个连接持续了多久。我们也除以 2，通常情况下，你将有一个客户端打开 2 个连接的情况：一个在 nginx 和客户端之间，另一个在 nginx 和上游服务器之间。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/08/26/nginx/2018-08-26-Nginx性能优化之进程数配置/" data-id="cjp9i0zg3003n5ucp1uvs5iqq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2018-08-24-Nginx性能优化之tcp一次性发送" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/24/nginx/2018-08-24-Nginx性能优化之tcp一次性发送/" class="article-date">
+  <time datetime="2018-08-23T16:00:00.000Z" itemprop="datePublished">2018-08-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/24/nginx/2018-08-24-Nginx性能优化之tcp一次性发送/">Nginx性能优化之tcp一次性发送</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="tcp-nopush"><a href="#tcp-nopush" class="headerlink" title="tcp_nopush"></a>tcp_nopush</h2><p><code>tcp_nopush</code> 与 <code>tcp_nodelay</code> 相反。不是为了尽可能快地推送数据包，它的目标是一次性优化数据的发送量。</p>
+<p>在发送给客户端之前，它将强制等待包达到最大长度(MSS)。</p>
+<ul>
+<li>而且这个指令只有在 <code>sendfile</code> 开启时才起作用。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sendfile on;</span><br><span class="line">tcp_nopush on;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>看起来 tcp_nopush 和 tcp_nodelay 是互斥的。但是，如果所有 3 个指令都开启了，nginx 会：</p>
+<ul>
+<li>确保数据包在发送给客户之前是已满的</li>
+<li>对于最后一个数据包，tcp_nopush 将被删除 —— 允许 TCP 立即发送，没有 200ms 的延迟</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/08/24/nginx/2018-08-24-Nginx性能优化之tcp一次性发送/" data-id="cjp9i0zg2003l5ucpanj99ocs" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2018-08-22-Nginx性能优化之文件发送" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/22/nginx/2018-08-22-Nginx性能优化之文件发送/" class="article-date">
+  <time datetime="2018-08-21T16:00:00.000Z" itemprop="datePublished">2018-08-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/22/nginx/2018-08-22-Nginx性能优化之文件发送/">Nginx性能优化之文件发送</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="sendfile"><a href="#sendfile" class="headerlink" title="sendfile"></a>sendfile</h2><p>正常来说，当要发送一个文件时需要下面的步骤：</p>
+<ol>
+<li>malloc(3) - 分配一个本地缓冲区，储存对象数据。</li>
+<li>read(2) - 检索和复制对象到本地缓冲区。</li>
+<li>write(2) - 从本地缓冲区复制对象到 socket 缓冲区。</li>
+</ol>
+<p>这涉及到两个上下文切换（读，写），并使相同对象的第二个副本成为不必要的。正如你所看到的，这不是最佳的方式。值得庆幸的是还有另一个系统调用，提升了发送文件（的效率），它被称为：sendfile(2)（想不到吧！居然是这名字）。这个调用在文件 cache 中检索一个对象，并传递指针（不需要复制整个对象），直接传递到 socket 描述符，Netflix 表示，使用 sendfile(2) 将网络吞吐量从 6Gbps 提高到了 30Gbps。</p>
+<p>然而，sendfile(2) 有一些注意事项：</p>
+<ul>
+<li>不可用于 UNIX sockets（例如：当通过你的上游服务器发送静态文件时）</li>
+<li>能否执行不同的操作，取决于操作系统（这里查看更多）</li>
+</ul>
+<p>在 nginx 中打开它<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sendfile on;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/08/22/nginx/2018-08-22-Nginx性能优化之文件发送/" data-id="cjp9i0zg0003h5ucp1qmixc3x" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2018-08-18-Nginx性能优化之tcp延迟" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/" class="article-date">
+  <time datetime="2018-08-17T16:00:00.000Z" itemprop="datePublished">2018-08-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/">2Nginx性能优化之tcp延迟</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="tcp-nodelay"><a href="#tcp-nodelay" class="headerlink" title="tcp_nodelay"></a>tcp_nodelay</h2><p>在 TCP 发展早期，工程师需要面对流量冲突和堵塞的问题，其中涌现了大批的解决方案，其中之一是由 John Nagle 提出的算法。</p>
+<p>Nagle 的算法旨在防止通讯被大量的小包淹没。该理论不涉及全尺寸 tcp 包（最大报文长度，简称 MSS）的处理。只针对比 MSS 小的包，只有当接收方成功地将以前的包(ACK)的所有确认发送回来时，这些包才会被发送。在等待期间，发送方可以缓冲更多的数据之后再发送。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if package.size &gt;= MSS.size</span><br><span class="line">  send(package)</span><br><span class="line">elsif acks.all_received?</span><br><span class="line">  send(package)</span><br><span class="line">else</span><br><span class="line">  # acumulate data</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
+<p>与此同时，诞生了另一个理论，延时 ACK</p>
+<p>在 TCP 通讯中，在发送数据后，需要接收回应包(ACK)来确认数据被成功传达。</p>
+<p>延时 ACK 旨在解决线路被大量的 ACK 包拥堵的状况。为了减少 ACK 包的数量，接收者等待需要回传的数据加上 ACK 包回传给发送方，如果没有数据需要回传，必须在至少每 2 个 MSS，或每 200 至 500 毫秒内发送 ACK（以防我们不再收到包）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if packages.any?</span><br><span class="line">  send</span><br><span class="line">elsif last_ack_send_more_than_2MSS_ago? || 200_ms_timer.finished?</span><br><span class="line">  send</span><br><span class="line">else</span><br><span class="line">  # wait</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
+<p>正如你可能在一开始就注意到的那样 —— 这可能会导致在持久连接上的一些暂时的死锁。让我们重现它！</p>
+<p>假设：</p>
+<ul>
+<li>初始拥塞窗口等于 2。拥塞窗口是另一个 TCP 机制的一部分，称为慢启动。细节现在并不重要，只要记住它限制了一次可以发送多少个包。在第一次往返中，我们可以发送 2 个 MSS 包。在第二次发送中：4 个 MSS 包，第三次发送中：8 个MSS，依此类推。</li>
+<li>4 个已缓存的等待发送的数据包：A, B, C, D</li>
+<li>A, B, C是 MSS 包</li>
+<li>D 是一个小包</li>
+</ul>
+<p>场景：</p>
+<ul>
+<li>由于是初始的拥塞窗口，发送端被允许传送两个包：A 和 B</li>
+<li>接收端在成功获得这两个包之后，发送一个 ACK</li>
+<li>发件端发送 C 包。然而，Nagle 却阻止它发送 D 包（包长度太小，等待 C 的ACK）</li>
+<li>在接收端，延迟 ACK 使他无法发送 ACK（每隔 2 个包或每隔 200 毫秒发送一次）</li>
+<li>在 200ms 之后，接收器发送 C 包的 ACK</li>
+<li>发送端收到 ACK 并发送 D 包</li>
+</ul>
+<p>在这个数据交换过程中，由于 Nagel 和延迟 ACK 之间的死锁，引入了 200ms 的延迟。</p>
+<p>Nagle 算法是当时真正的救世主，而且目前仍然具有极大的价值。但在大多数情况下，我们不会在我们的网站上使用它，因此可以通过添加 TCP_NODELAY 标志来安全地关闭它。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcp_nodelay on;     # sets TCP_NODELAY flag, used on keep-alive connections</span><br></pre></td></tr></table></figure>
+<p>享受这200ms提速吧！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/" data-id="cjp9i0zg1003j5ucpvyv2i9ab" class="article-share-link">Share</a>
+      
+      
     </footer>
   </div>
   
@@ -648,7 +613,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -688,7 +653,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 
@@ -705,19 +670,19 @@
           </li>
         
           <li>
-            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
           <li>
-            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
           </li>
         
           <li>
-            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
           </li>
         
           <li>
-            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

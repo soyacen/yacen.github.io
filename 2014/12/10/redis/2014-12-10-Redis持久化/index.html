@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
 <meta property="og:description" content="Redis有两种持久化策略： RDBredis的默认持久化机制 RDB相当于照快照。保存的是一种状态  20G数据…-&amp;gt;几kb快照 优点 快照保存数据极快，还原数据速度极快 适用于灾难备份  缺点 RDB机制符合要求就会照快照。(随时随地启动)，会占用一部分资源，内存小的机器就不适合用 服务器正常关闭时，照快照 key满足一定条件，照快照    适用于大内存机器配置123456789save">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-11-28T08:50:25.704Z">
+<meta property="og:updated_time" content="2018-12-03T10:11:22.541Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis持久化">
 <meta name="twitter:description" content="Redis有两种持久化策略： RDBredis的默认持久化机制 RDB相当于照快照。保存的是一种状态  20G数据…-&amp;gt;几kb快照 优点 快照保存数据极快，还原数据速度极快 适用于灾难备份  缺点 RDB机制符合要求就会照快照。(随时随地启动)，会占用一部分资源，内存小的机器就不适合用 服务器正常关闭时，照快照 key满足一定条件，照快照    适用于大内存机器配置123456789save">
@@ -109,7 +109,7 @@
 </ul>
 </li>
 </ol>
-<h3 id="适用于大内存机器"><a href="#适用于大内存机器" class="headerlink" title="适用于大内存机器"></a>适用于大内存机器</h3><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    # after 900 sec (15 min) if at least 1 key changed</span><br><span class="line">save 300 10   # after 300 sec (5 min) if at least 10 keys changed</span><br><span class="line">save 60 10000 # after 60 sec if at least 10000 keys changed</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes</span><br><span class="line">rdbcompression yes</span><br><span class="line">rdbchecksum yes</span><br><span class="line">dbfilename dump.rdb</span><br><span class="line">dir ./</span><br></pre></td></tr></table></figure>
+<h3 id="适用于大内存机器"><a href="#适用于大内存机器" class="headerlink" title="适用于大内存机器"></a>适用于大内存机器</h3><h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    # 900秒内,有1条写入,则产生快照 </span><br><span class="line">save 300 10   # 300秒内有1000次写入,则产生快照</span><br><span class="line">save 60 10000 # 60秒内有10000次写入,则产生快照</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes # 后台备份进程出错时,主进程停不停止写入?</span><br><span class="line">rdbcompression yes  # 导出的rdb文件是否压缩</span><br><span class="line">rdbchecksum yes   # 导入rbd恢复时数据时,要不要检验rdb的完整性</span><br><span class="line">dbfilename dump.rdb   # 导出来的rdb文件名</span><br><span class="line">dir ./   # rdb的放置路径</span><br></pre></td></tr></table></figure>
 <h2 id="AOF-append-of-mode"><a href="#AOF-append-of-mode" class="headerlink" title="AOF(append of mode)"></a>AOF(append of mode)</h2><p>使用日志功能保存数据操作，默认AOF机制关闭</p>
 <p>三种模式：</p>
 <ul>
@@ -124,11 +124,17 @@
 <li>日志文件会特别大，不适用于灾难恢复</li>
 <li>恢复效率远远低于RDB</li>
 </ol>
-<h3 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">appendonly no</span><br><span class="line"></span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># appendfsync always</span><br><span class="line">appendfsync everysec</span><br><span class="line"># appendfsync no</span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no</span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">aof-use-rdb-preamble no</span><br></pre></td></tr></table></figure>
+<h3 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">appendonly no   # 是否打开 aof日志功能</span><br><span class="line"></span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># appendfsync always  # 每1个命令,都立即同步到aof. 安全,速度慢</span><br><span class="line">appendfsync everysec  # 折衷方案,每秒写1次</span><br><span class="line"># appendfsync no # # 写入工作交给操作系统,由操作系统判断缓冲区大小,统一写入到aof. 同步频率低,速度快,</span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no # 正在导出rdb快照的过程中,要不要停止同步aof</span><br><span class="line">auto-aof-rewrite-percentage 100 # aof文件大小比起上次重写时的大小,增长率100%时,重写</span><br><span class="line">auto-aof-rewrite-min-size 64mb # aof文件,至少超过64M时,重写</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">aof-use-rdb-preamble no</span><br></pre></td></tr></table></figure>
+<h3 id="注-在dump-rdb过程中-aof如果停止同步-会不会丢失"><a href="#注-在dump-rdb过程中-aof如果停止同步-会不会丢失" class="headerlink" title="注: 在dump rdb过程中,aof如果停止同步,会不会丢失?"></a>注: 在dump rdb过程中,aof如果停止同步,会不会丢失?</h3><p>答: 不会,所有的操作缓存在内存的队列里, dump完成后,统一操作.</p>
+<h3 id="注-aof重写是指什么"><a href="#注-aof重写是指什么" class="headerlink" title="注: aof重写是指什么?"></a>注: aof重写是指什么?</h3><p>答: aof重写是指把内存中的数据,逆化成命令,写入到.aof日志里.<br>以解决 aof日志过大的问题.</p>
+<h3 id="问-如果rdb文件-和aof文件都存在-优先用谁来恢复数据"><a href="#问-如果rdb文件-和aof文件都存在-优先用谁来恢复数据" class="headerlink" title="问: 如果rdb文件,和aof文件都存在,优先用谁来恢复数据?"></a>问: 如果rdb文件,和aof文件都存在,优先用谁来恢复数据?</h3><p>答: aof</p>
+<h3 id="问-2种是否可以同时用"><a href="#问-2种是否可以同时用" class="headerlink" title="问: 2种是否可以同时用?"></a>问: 2种是否可以同时用?</h3><p>答: 可以,而且推荐这么做</p>
+<h3 id="问-恢复时rdb和aof哪个恢复的快"><a href="#问-恢复时rdb和aof哪个恢复的快" class="headerlink" title="问: 恢复时rdb和aof哪个恢复的快"></a>问: 恢复时rdb和aof哪个恢复的快</h3><p>答: rdb快,因为其是数据的内存映射,直接载入到内存,而aof是命令,需要逐条执行</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjp10jdhh004ddrcpfoddrjdf" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjp9i0zgo00585ucpo73yqplh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -137,19 +143,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2015/02/28/nginx/2015-03-00-Nginx介绍/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2014/12/13/redis/2014-12-13-Redis服务端命令/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Nginx介绍
+          Redis服务端命令
         
       </div>
     </a>
   
   
-    <a href="/2014/10/10/redis/2014-10-10-Redis分布式锁/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2014/08/09/mysql/2014-8-9-读写分离的原理/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">Redis分布式锁</div>
+      <div class="article-nav-title">读写分离的原理</div>
     </a>
   
 </nav>
@@ -194,7 +200,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">August 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/10/">October 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 
@@ -211,19 +217,19 @@
           </li>
         
           <li>
-            <a href="/2018/07/26/other/2018-7-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
           <li>
-            <a href="/2018/05/17/egg/2018-5-17-egg-core源码解析/">egg-core源码解析</a>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
           </li>
         
           <li>
-            <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/">nodejs执行浅析</a>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
           </li>
         
           <li>
-            <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/">nodejs卸载模块</a>
+            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

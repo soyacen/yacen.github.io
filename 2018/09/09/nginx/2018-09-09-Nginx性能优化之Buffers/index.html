@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Nginx性能优化之Buffers | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Buffersclient_body_buffer_size设置读取客户端请求正文的缓冲区大小。如果请求主体大于缓冲区，则整个主体或仅其部分被写入临时文件。对 client_body_buffer_size 而言，设置 16k 大小在大多数情况下是足够的。 这是又一个可以产生巨大影响的设置，必须谨慎使用。太小了，则 nginx 会不断地使用 I/O 把剩余的部分写入文件。太大了，则当攻击者可以打开">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx性能优化之Buffers">
+<meta property="og:url" content="http://yacen.github.io/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="Buffersclient_body_buffer_size设置读取客户端请求正文的缓冲区大小。如果请求主体大于缓冲区，则整个主体或仅其部分被写入临时文件。对 client_body_buffer_size 而言，设置 16k 大小在大多数情况下是足够的。 这是又一个可以产生巨大影响的设置，必须谨慎使用。太小了，则 nginx 会不断地使用 I/O 把剩余的部分写入文件。太大了，则当攻击者可以打开">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-30T06:09:23.094Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx性能优化之Buffers">
+<meta name="twitter:description" content="Buffersclient_body_buffer_size设置读取客户端请求正文的缓冲区大小。如果请求主体大于缓冲区，则整个主体或仅其部分被写入临时文件。对 client_body_buffer_size 而言，设置 16k 大小在大多数情况下是足够的。 这是又一个可以产生巨大影响的设置，必须谨慎使用。太小了，则 nginx 会不断地使用 I/O 把剩余的部分写入文件。太大了，则当攻击者可以打开">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nginx/2018-09-09-Nginx性能优化之Buffers" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/" class="article-date">
+  <time datetime="2018-09-08T16:00:00.000Z" itemprop="datePublished">2018-09-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx性能优化之Buffers
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Buffers"><a href="#Buffers" class="headerlink" title="Buffers"></a>Buffers</h2><h3 id="client-body-buffer-size"><a href="#client-body-buffer-size" class="headerlink" title="client_body_buffer_size"></a><code>client_body_buffer_size</code></h3><p>设置读取客户端请求正文的缓冲区大小。如果请求主体大于缓冲区，则整个主体或仅其部分被写入临时文件。对 <code>client_body_buffer_size</code> 而言，设置 16k 大小在大多数情况下是足够的。</p>
+<p>这是又一个可以产生巨大影响的设置，必须谨慎使用。太小了，则 nginx 会不断地使用 I/O 把剩余的部分写入文件。太大了，则当攻击者可以打开所有连接但你无法在系统上分配足够缓冲来处理这些连接时，你可能容易受到 DOS 攻击。</p>
+<h3 id="client-header-buffer-size-和-large-client-header-buffers"><a href="#client-header-buffer-size-和-large-client-header-buffers" class="headerlink" title="client_header_buffer_size 和 large_client_header_buffers"></a><code>client_header_buffer_size</code> 和 <code>large_client_header_buffers</code></h3><p>如果 header 不能跟 <code>client_header_buffer_size</code> 匹配上，就会使用 <code>large_client_header_buffers</code>。如果请求也不适合 <code>large_client_header_buffers</code>，将给客户端返回一个错误提示。对于大多数的请求来说，1KB 的缓存是足够的。但是，如果一个包含大量记录的请求，1KB 是不够的。</p>
+<p>如果请求行的长度超限，将给客户端返回一个 414（请求的 URI 太长）错误提示。如果请求的 header 长度超限，将抛出一个 400（错误请求）的错误代码</p>
+<h3 id="client-max-body-size"><a href="#client-max-body-size" class="headerlink" title="client_max_body_size"></a><code>client_max_body_size</code></h3><p>设置客户端请求主体的最大允许范围，在请求头字段中指定“内容长度”。如果您希望允许用户上传文件，调整此配置以满足您的需要。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Context:	http, server</span><br><span class="line">client_body_buffer_size       16K;</span><br><span class="line">client_header_buffer_size     1k;</span><br><span class="line">large_client_header_buffers   4 8k;</span><br><span class="line">client_max_body_size          8m;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/" data-id="cjp9i0zg5003v5ucp7izw3qkn" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Nginx性能优化之Keep-Alive
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Nginx性能优化之超时</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Nginx性能优化之进程数配置 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="我应该使用多少进程？工作进程worker_process 指令会指定：应该运行多少个 worker。默认情况下，此值设置为 1。最安全的设置是通过传递 auto 选项来使用核心数量。 但由于 Nginx 的架构，其处理请求的速度非常快 - 我们可能一次不会使用超过 2-4 个进程（除非你正在托管 Facebook 或在 nginx 内部执行一些 CPU 密集型的任务）。1worker_proces">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx性能优化之进程数配置">
+<meta property="og:url" content="http://yacen.github.io/2018/08/26/nginx/2018-08-26-Nginx性能优化之进程数配置/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="我应该使用多少进程？工作进程worker_process 指令会指定：应该运行多少个 worker。默认情况下，此值设置为 1。最安全的设置是通过传递 auto 选项来使用核心数量。 但由于 Nginx 的架构，其处理请求的速度非常快 - 我们可能一次不会使用超过 2-4 个进程（除非你正在托管 Facebook 或在 nginx 内部执行一些 CPU 密集型的任务）。1worker_proces">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-11-30T06:09:01.169Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Nginx性能优化之进程数配置">
+<meta name="twitter:description" content="我应该使用多少进程？工作进程worker_process 指令会指定：应该运行多少个 worker。默认情况下，此值设置为 1。最安全的设置是通过传递 auto 选项来使用核心数量。 但由于 Nginx 的架构，其处理请求的速度非常快 - 我们可能一次不会使用超过 2-4 个进程（除非你正在托管 Facebook 或在 nginx 内部执行一些 CPU 密集型的任务）。1worker_proces">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一码当先</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-nginx/2018-08-26-Nginx性能优化之进程数配置" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/26/nginx/2018-08-26-Nginx性能优化之进程数配置/" class="article-date">
+  <time datetime="2018-08-25T16:00:00.000Z" itemprop="datePublished">2018-08-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Nginx性能优化之进程数配置
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="我应该使用多少进程？"><a href="#我应该使用多少进程？" class="headerlink" title="我应该使用多少进程？"></a>我应该使用多少进程？</h1><h2 id="工作进程"><a href="#工作进程" class="headerlink" title="工作进程"></a>工作进程</h2><p>worker_process 指令会指定：应该运行多少个 worker。默认情况下，此值设置为 1。最安全的设置是通过传递 auto 选项来使用核心数量。</p>
+<p>但由于 Nginx 的架构，其处理请求的速度非常快 - 我们可能一次不会使用超过 2-4 个进程（除非你正在托管 Facebook 或在 nginx 内部执行一些 CPU 密集型的任务）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_process auto;</span><br></pre></td></tr></table></figure></p>
+<h2 id="worker-连接"><a href="#worker-连接" class="headerlink" title="worker 连接"></a>worker 连接</h2><p>与 worker_process 直接绑定的指令是 worker_connections。它指定一个工作进程可以一次打开多少个连接。这个数目包括所有连接（例如与代理服务器的连接），而不仅仅是与客户端的连接。此外，值得记住的是，一个客户端可以打开多个连接，同时获取其他资源。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_connections 4096;</span><br></pre></td></tr></table></figure></p>
+<h2 id="打开文件数目限制"><a href="#打开文件数目限制" class="headerlink" title="打开文件数目限制"></a>打开文件数目限制</h2><p>在基于 Unix 系统中的“一切都是文件”。这意味着文档、目录、管道甚至套接字都是文件。系统对一个进程可以打开多少文件有一个限制。要查看该限制：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -Sn      <span class="comment"># soft limit</span></span><br><span class="line"><span class="built_in">ulimit</span> -Sn      <span class="comment"># hard limit</span></span><br></pre></td></tr></table></figure></p>
+<p>这个系统限制必须根据 worker_connections 进行调整。任何传入的连接都会打开至少一个文件（通常是两个连接套接字以及后端连接套接字或磁盘上的静态文件）。所以这个值等于 worker_connections*2 是安全的。幸运的是，Nginx 提供了一个配置选项来增加这个系统的值。要使用这个配置，请添加具有适当数目的 worker_rlimit_nofile 指令并重新加载 nginx。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_rlimit_nofile 8192;</span><br></pre></td></tr></table></figure></p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">worker_process auto;</span><br><span class="line">worker_connections 4096;   # Sets the maximum number of simultaneous connections that can be opened by a worker process.</span><br><span class="line">worker_rlimit_nofile 8192; # Changes the limit on the maximum number of open files (RLIMIT_NOFILE) for worker processes.</span><br></pre></td></tr></table></figure>
+<h2 id="最大连接数"><a href="#最大连接数" class="headerlink" title="最大连接数"></a>最大连接数</h2><p>如上所述，我们可以计算一次可以处理多少个并发连接：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">最大连接数 = </span><br><span class="line"></span><br><span class="line">    worker_processes * worker_connections</span><br><span class="line">----------------------------------------------</span><br><span class="line"> (keep_alive_timeout + avg_response_time) * 2</span><br></pre></td></tr></table></figure></p>
+<p>keep_alive_timeout (后续有更多介绍) + avg_response_time 告诉我们：单个连接持续了多久。我们也除以 2，通常情况下，你将有一个客户端打开 2 个连接的情况：一个在 nginx 和客户端之间，另一个在 nginx 和上游服务器之间。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/08/26/nginx/2018-08-26-Nginx性能优化之进程数配置/" data-id="cjp9i0zg3003n5ucp1uvs5iqq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/08/28/nginx/2018-08-28-Nginx性能优化之压缩gzip/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Nginx性能优化之压缩gzip
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/08/24/nginx/2018-08-24-Nginx性能优化之tcp一次性发送/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Nginx性能优化之tcp一次性发送</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
