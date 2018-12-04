@@ -70,6 +70,70 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" class="article-date">
+  <time datetime="2014-07-31T16:00:00.000Z" itemprop="datePublished">2014-08-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/">MySQL优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Mysql-中-MyISAM-和-InnoDB-的区别有哪些？"><a href="#Mysql-中-MyISAM-和-InnoDB-的区别有哪些？" class="headerlink" title="Mysql 中 MyISAM 和 InnoDB 的区别有哪些？"></a>Mysql 中 MyISAM 和 InnoDB 的区别有哪些？</h2><p>区别：</p>
+<ol>
+<li><p>InnoDB支持事务，MyISAM不支持，对于InnoDB每一条SQL语言都默认封装成事务，自动提交，这样会影响速度，所以最好把多条SQL语言放在begin和commit之间，组成一个事务；</p>
+</li>
+<li><p>InnoDB支持外键，而MyISAM不支持。对一个包含外键的InnoDB表转为MYISAM会失败；</p>
+</li>
+<li><p>InnoDB是聚集索引，数据文件是和索引绑在一起的，必须要有主键，通过主键索引效率很高。但是辅助索引需要两次查询，先查询到主键，然后再通过主键查询到数据。因此，主键不应该过大，因为主键太大，其他索引也都会很大。而MyISAM是非聚集索引，数据文件是分离的，索引保存的是数据文件的指针。主键索引和辅助索引是独立的。</p>
+</li>
+<li><p>InnoDB不保存表的具体行数，执行select count(*) from table时需要全表扫描。而MyISAM用一个变量保存了整个表的行数，执行上述语句时只需要读出该变量即可，速度很快；</p>
+</li>
+<li><p>Innodb不支持全文索引，而MyISAM支持全文索引，查询效率上MyISAM要高；</p>
+</li>
+</ol>
+<p>如何选择：</p>
+<ol>
+<li><p>是否要支持事务，如果要请选择innodb，如果不需要可以考虑MyISAM；</p>
+</li>
+<li><p>如果表中绝大多数都只是读查询，可以考虑MyISAM，如果既有读写也挺频繁，请使用InnoDB。</p>
+</li>
+<li><p>系统奔溃后，MyISAM恢复起来更困难，能否接受；</p>
+</li>
+<li><p>MySQL5.5版本开始Innodb已经成为Mysql的默认引擎(之前是MyISAM)，说明其优势是有目共睹的，如果你不知道用什么，那就用InnoDB，至少不会差。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" data-id="cjp9ii0kv002iircponlde3q7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mysql/2014-7-30-MySQL优化" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/07/30/mysql/2014-7-30-MySQL优化/" class="article-date">
@@ -118,7 +182,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/30/mysql/2014-7-30-MySQL优化/" data-id="cjp9i7ieo003ykkcp7dsas4c1" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/30/mysql/2014-7-30-MySQL优化/" data-id="cjp9ii0ku002gircpfp2i9bh8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -176,7 +240,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/29/mysql/2014-7-29-行级锁定/" data-id="cjp9i7idz0026kkcpokbqlh1f" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/29/mysql/2014-7-29-行级锁定/" data-id="cjp9ii0kt002dircpuhkcads1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -229,7 +293,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/28/mysql/2014-7-28-MVCC/" data-id="cjp9i7idy0024kkcphf7cfctz" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/28/mysql/2014-7-28-MVCC/" data-id="cjp9ii0kt002bircps9vvomgz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -306,7 +370,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/27/mysql/2014-7-27-表分区/" data-id="cjp9i7idx0021kkcph1j55ib3" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/27/mysql/2014-7-27-表分区/" data-id="cjp9ii0ks0028ircpiz62e30p" class="article-share-link">Share</a>
       
       
     </footer>
@@ -412,7 +476,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/26/mysql/2014-7-26-索引面试题/" data-id="cjp9i7idw001xkkcpekdh5mcc" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/26/mysql/2014-7-26-索引面试题/" data-id="cjp9ii0kr0026ircp8lh3yyf1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -478,7 +542,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/" data-id="cjp9i7idx0020kkcp17f2tmd6" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/" data-id="cjp9ii0kq0023ircpx6jjmnuw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -568,7 +632,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/24/mysql/2014-7-24-MySql面试题-5/" data-id="cjp9i7idv001wkkcpaad8ug8i" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/24/mysql/2014-7-24-MySql面试题-5/" data-id="cjp9ii0kp0021ircph11sl3g3" class="article-share-link">Share</a>
       
       
     </footer>
@@ -639,7 +703,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/23/mysql/2014-7-23-MySql面试题-4/" data-id="cjp9i7idu001ukkcp4vehfmb4" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/23/mysql/2014-7-23-MySql面试题-4/" data-id="cjp9ii0kp001yircppp835ek1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -692,108 +756,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/22/mysql/2014-7-22-MySql面试题-3/" data-id="cjp9i7idu001skkcpej7sfifm" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-22-Redis应用之微博" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/22/redis/2014-07-22-Redis应用之微博/" class="article-date">
-  <time datetime="2014-07-21T16:00:00.000Z" itemprop="datePublished">2014-07-22</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/22/redis/2014-07-22-Redis应用之微博/">Redis应用之微博</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">incr global:userid                  # 产生唯一userid</span><br><span class="line">set user:userid:1:username zhansan  # 设置userid为1的用户的用户名</span><br><span class="line">set user:userid:1:password 111111   # 设置userid为1的用户的密码</span><br><span class="line"></span><br><span class="line">set user:username:zhansan:userid 1  # 设置用户名为zhangsan的userid为 1，用于反查，比如查询是否存在和登录</span><br><span class="line"></span><br><span class="line">// 维护 50 个最新用户 列表</span><br><span class="line">lpush newuserlist userid</span><br><span class="line">ltrim newuserlist 0 49</span><br></pre></td></tr></table></figure>
-<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">get user:username:zhangsan:userid   # 根据username获取userid</span><br><span class="line">get user:userid:1:password          # 根据userid获取password，比较传的pwd和password</span><br><span class="line"></span><br><span class="line"># cookie + salt                     # cookie 加 salt，提高安全性</span><br><span class="line">set user:userid:1:authsecret randomstr # 把 salt 信息存入redis</span><br><span class="line"></span><br><span class="line">#：</span><br></pre></td></tr></table></figure>
-<h2 id="判断是否登陆"><a href="#判断是否登陆" class="headerlink" title="判断是否登陆"></a>判断是否登陆</h2><p>取出cookie信息uname ,uid,randomstr，比较三者和redis中存入的是否一样<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">get user:username:zhangsan:userid   # 根据username获取userid</span><br><span class="line">get user:userid:uid:username        # 根据userid获取username</span><br><span class="line">get user:userid:uid:authsecret      # 根据userid获取salt信息</span><br></pre></td></tr></table></figure></p>
-<h2 id="关注"><a href="#关注" class="headerlink" title="关注"></a>关注</h2><ol>
-<li>获取微博主页用户的userid</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">currentuserid = get user:username:currentusername:userid</span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li><p>判断是否关注某人(是否显示关注按钮)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sismember following:myuserid currentuserid  # 我关注的集合里是否有这个人</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>关注微博主页用户</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sadd following:myuserid currentuserid   # 添加到我的关注的集合</span><br><span class="line">sadd fans:currentuserid myuserid        # 添加到被关注人的粉丝集合</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>取消关注</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">srem following:myuserid currentuserid   # 从我的关注集合中移除</span><br><span class="line">srem fans:currentuserid myuserid        # 把我从被关注人的粉丝集合中移除</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="获取粉丝数"><a href="#获取粉丝数" class="headerlink" title="获取粉丝数"></a>获取粉丝数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard fans:myuserid</span><br></pre></td></tr></table></figure>
-<h2 id="获取关注者数"><a href="#获取关注者数" class="headerlink" title="获取关注者数"></a>获取关注者数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard following:myuserid</span><br></pre></td></tr></table></figure>
-<h2 id="发微博-push-方式"><a href="#发微博-push-方式" class="headerlink" title="发微博(push 方式)"></a>发微博(push 方式)</h2><ol>
-<li><p>写微博</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incr global:postid</span><br><span class="line">hmset post:postid:2 time 1405987200 userid 1 content &quot;this is my home&quot; username &quot;Jax&quot;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>把微博推给粉丝</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fans = smembers fans:userid</span><br><span class="line">for fansuserid in fans &#123;</span><br><span class="line">	lpush recievepost:fansuserid postid</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="获取微博-push-方式"><a href="#获取微博-push-方式" class="headerlink" title="获取微博(push 方式)"></a>获取微博(push 方式)</h2><ol>
-<li><p>截取最新的50条微博</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ltrim recievepost:myuserid 0 49</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取微博并安postid排序</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">posts = sort recievepost:myuserid</span><br><span class="line"></span><br><span class="line">for postid in posts &#123;</span><br><span class="line">  hmget post:postid:[postid] timestamp content userid username</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="发微博-pull-方式"><a href="#发微博-pull-方式" class="headerlink" title="发微博(pull 方式)"></a>发微博(pull 方式)</h2><ol>
-<li><p>写微博</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incr global:postid</span><br><span class="line">hmset post:postid:2 time 1405987200 userid 1 content &quot;this is my home&quot; username &quot;Jax&quot;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>把微博放在自己的微博集合中(有序集合)</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">zadd postset:userid:myuserid postid postid </span><br><span class="line"></span><br><span class="line">count = zcard postset:userid:myuserid </span><br><span class="line"></span><br><span class="line">if count &gt; 20 &#123;</span><br><span class="line">  # 始终保持只有最新的 20 条微博</span><br><span class="line">  zremrangebyrank postset:userid:myuserid 0, 0 </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="获取微博-pull-方式"><a href="#获取微博-pull-方式" class="headerlink" title="获取微博(pull 方式)"></a>获取微博(pull 方式)</h2><ol>
-<li><p>获取关注人集合</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stars = smembers following:myuserid</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取上一次拉去的postid</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lastpull = get pastpull:userid:myuserid</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取关注人的微博，从lastpull到最新postid</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">postids = </span><br><span class="line">for staruserid in stars &#123;</span><br><span class="line">  rangebyscore postset:userid:staruserid lastpull MAX_INT</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>程序更具postid排序，更新lastpull</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sort(postids)</span><br><span class="line">set pastpull:userid:myuserid postids[0]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>获取微博</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for postid in postids &#123;</span><br><span class="line">  lpush recivepost:myuserid postid</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">posts = sort recievepost:myuserid</span><br><span class="line"></span><br><span class="line">for postid in posts &#123;</span><br><span class="line">  hmget post:postid:[postid] timestamp content userid username</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjp9i7if20055kkcpkrold2ql" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/22/mysql/2014-7-22-MySql面试题-3/" data-id="cjp9ii0ko001vircpz6pkrpxh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -847,7 +810,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 
