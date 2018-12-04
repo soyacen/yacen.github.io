@@ -70,223 +70,6 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-koa/2017-10-28-koa-Context" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/28/koa/2017-10-28-koa-Context/" class="article-date">
-  <time datetime="2017-10-27T16:00:00.000Z" itemprop="datePublished">2017-10-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/28/koa/2017-10-28-koa-Context/">koa-Context</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2><p><code>context</code>对象是我们使用koa十分重要的一个环节，在<a href="2018-4-27-koa-Application.md">Application</a>中的<code>createContext(req, res)</code>方法里，在<code>context</code>对象上挂在了很多对象，koa的<code>request</code>和<code>response</code>对象、node原生的<code>req</code>和<code>res</code>对象、<code>app</code>对象、<code>originalUrl</code>、<code>cookies</code>、<code></code>accept<code>、</code>state`。它提供了处理请求与响应的所有接口，下面来看看它的源码。</p>
-<h2 id="Context-prototype"><a href="#Context-prototype" class="headerlink" title="Context prototype"></a>Context prototype</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Context prototype.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> proto = <span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>首先，它的注释写的是<code>Context prototype</code>,这个文件导出的是一个原型对象，<code>context</code>是通过<code>Object.create(context)</code>创建出来的。（<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create" target="_blank" rel="noopener">Object.create()</a>）</p>
-<h2 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h2><p>其他方法比较简单，比如<code>throw()</code>、<code>onerror()</code>等，这里就不再多说。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">throw</span>(...args) &#123;</span><br><span class="line">  <span class="keyword">throw</span> createError(...args);</span><br><span class="line">&#125;,</span><br><span class="line">onerror(err) &#123;</span><br><span class="line">  <span class="comment">// don't do anything if there is no error.</span></span><br><span class="line">  <span class="comment">// this allows you to pass `this.onerror`</span></span><br><span class="line">  <span class="comment">// to node-style callbacks.s allows you to pass `this.onerror`</span></span><br><span class="line">  <span class="comment">// to node-style callbacks.</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="literal">null</span> == err) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!(err <span class="keyword">instanceof</span> <span class="built_in">Error</span>)) err = <span class="keyword">new</span> <span class="built_in">Error</span>(util.format(<span class="string">'non-error thrown: %j'</span>, err));</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> headerSent = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.headerSent || !<span class="keyword">this</span>.writable) &#123;</span><br><span class="line">    headerSent = err.headerSent = <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// delegate</span></span><br><span class="line">  <span class="keyword">this</span>.app.emit(<span class="string">'error'</span>, err, <span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// nothing we can do here other</span></span><br><span class="line">  <span class="comment">// than delegate to the app-level</span></span><br><span class="line">  <span class="comment">// handler and log.</span></span><br><span class="line">  <span class="keyword">if</span> (headerSent) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> &#123; res &#125; = <span class="keyword">this</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// first unset all headers</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> res.getHeaderNames === <span class="string">'function'</span>) &#123;</span><br><span class="line">    res.getHeaderNames().forEach(<span class="function"><span class="params">name</span> =&gt;</span> res.removeHeader(name));</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    res._headers = &#123;&#125;; <span class="comment">// Node &lt; 7.7</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// then set those specified</span></span><br><span class="line">  <span class="keyword">this</span>.set(err.headers);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// force text/plain</span></span><br><span class="line">  <span class="keyword">this</span>.type = <span class="string">'text'</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ENOENT support</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="string">'ENOENT'</span> == err.code) err.status = <span class="number">404</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// default to 500</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="string">'number'</span> != <span class="keyword">typeof</span> err.status || !statuses[err.status]) err.status = <span class="number">500</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// respond</span></span><br><span class="line">  <span class="keyword">const</span> code = statuses[err.status];</span><br><span class="line">  <span class="keyword">const</span> msg = err.expose ? err.message : code;</span><br><span class="line">  <span class="keyword">this</span>.status = err.status;</span><br><span class="line">  <span class="keyword">this</span>.length = Buffer.byteLength(msg);</span><br><span class="line">  <span class="keyword">this</span>.res.end(msg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="delegate"><a href="#delegate" class="headerlink" title="delegate"></a>delegate</h2><p>context的精髓主要在于代理了request和response的一些常用方法，看代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> delegate = <span class="built_in">require</span>(<span class="string">'delegates'</span>);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Response delegation.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">delegate(proto, <span class="string">'response'</span>)</span><br><span class="line">  .method(<span class="string">'attachment'</span>)</span><br><span class="line">  .method(<span class="string">'redirect'</span>)</span><br><span class="line">  .method(<span class="string">'remove'</span>)</span><br><span class="line">  .method(<span class="string">'vary'</span>)</span><br><span class="line">  .method(<span class="string">'set'</span>)</span><br><span class="line">  .method(<span class="string">'append'</span>)</span><br><span class="line">  .method(<span class="string">'flushHeaders'</span>)</span><br><span class="line">  .access(<span class="string">'status'</span>)</span><br><span class="line">  .access(<span class="string">'message'</span>)</span><br><span class="line">  .access(<span class="string">'body'</span>)</span><br><span class="line">  .access(<span class="string">'length'</span>)</span><br><span class="line">  .access(<span class="string">'type'</span>)</span><br><span class="line">  .access(<span class="string">'lastModified'</span>)</span><br><span class="line">  .access(<span class="string">'etag'</span>)</span><br><span class="line">  .getter(<span class="string">'headerSent'</span>)</span><br><span class="line">  .getter(<span class="string">'writable'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Request delegation.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">delegate(proto, <span class="string">'request'</span>)</span><br><span class="line">  .method(<span class="string">'acceptsLanguages'</span>)</span><br><span class="line">  .method(<span class="string">'acceptsEncodings'</span>)</span><br><span class="line">  .method(<span class="string">'acceptsCharsets'</span>)</span><br><span class="line">  .method(<span class="string">'accepts'</span>)</span><br><span class="line">  .method(<span class="string">'get'</span>)</span><br><span class="line">  .method(<span class="string">'is'</span>)</span><br><span class="line">  .access(<span class="string">'querystring'</span>)</span><br><span class="line">  .access(<span class="string">'idempotent'</span>)</span><br><span class="line">  .access(<span class="string">'socket'</span>)</span><br><span class="line">  .access(<span class="string">'search'</span>)</span><br><span class="line">  .access(<span class="string">'method'</span>)</span><br><span class="line">  .access(<span class="string">'query'</span>)</span><br><span class="line">  .access(<span class="string">'path'</span>)</span><br><span class="line">  .access(<span class="string">'url'</span>)</span><br><span class="line">  .getter(<span class="string">'origin'</span>)</span><br><span class="line">  .getter(<span class="string">'href'</span>)</span><br><span class="line">  .getter(<span class="string">'subdomains'</span>)</span><br><span class="line">  .getter(<span class="string">'protocol'</span>)</span><br><span class="line">  .getter(<span class="string">'host'</span>)</span><br><span class="line">  .getter(<span class="string">'hostname'</span>)</span><br><span class="line">  .getter(<span class="string">'URL'</span>)</span><br><span class="line">  .getter(<span class="string">'header'</span>)</span><br><span class="line">  .getter(<span class="string">'headers'</span>)</span><br><span class="line">  .getter(<span class="string">'secure'</span>)</span><br><span class="line">  .getter(<span class="string">'stale'</span>)</span><br><span class="line">  .getter(<span class="string">'fresh'</span>)</span><br><span class="line">  .getter(<span class="string">'ips'</span>)</span><br><span class="line">  .getter(<span class="string">'ip'</span>);</span><br></pre></td></tr></table></figure></p>
-<p>这样就为程序员提供了更简洁的调用方式。主要实现方法在<code>delegates</code>库里，咱们来瞅瞅。</p>
-<h3 id="delegates"><a href="#delegates" class="headerlink" title="delegates"></a>delegates</h3><p>这是一个Nodejs 方法和属性 代理工具库。</p>
-<h4 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = Delegator;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Delegator</span>(<span class="params">proto, target</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!(<span class="keyword">this</span> <span class="keyword">instanceof</span> Delegator)) <span class="keyword">return</span> <span class="keyword">new</span> Delegator(proto, target);</span><br><span class="line">  <span class="keyword">this</span>.proto = proto;</span><br><span class="line">  <span class="keyword">this</span>.target = target;</span><br><span class="line">  <span class="keyword">this</span>.methods = [];</span><br><span class="line">  <span class="keyword">this</span>.getters = [];</span><br><span class="line">  <span class="keyword">this</span>.setters = [];</span><br><span class="line">  <span class="keyword">this</span>.fluents = [];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这种构造函数相当于一个工厂方法，快速创建一个<code>Delegator</code>对象。有一个成员属性，<code>proto</code>是代理对象，<code>target</code>是被代理的对象，<code>methods</code>数组用来存放方法名，<code>getters</code>和<code>setters</code>数组用来存放属性的accessors，<code>fluents</code>数组用来存放属性。<br>（<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/__defineGetter__" target="_blank" rel="noopener"><strong>defineGetter</strong></a>和<a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/__defineSetter__" target="_blank" rel="noopener"><strong>defineSetter</strong></a>）</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">Delegator.prototype.method = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> proto = <span class="keyword">this</span>.proto;</span><br><span class="line">  <span class="keyword">var</span> target = <span class="keyword">this</span>.target;</span><br><span class="line">  <span class="keyword">this</span>.methods.push(name);</span><br><span class="line"></span><br><span class="line">  proto[name] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[target][name].apply(<span class="keyword">this</span>[target], <span class="built_in">arguments</span>);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Delegator.prototype.access = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.getter(name).setter(name);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Delegator.prototype.getter = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> proto = <span class="keyword">this</span>.proto;</span><br><span class="line">  <span class="keyword">var</span> target = <span class="keyword">this</span>.target;</span><br><span class="line">  <span class="keyword">this</span>.getters.push(name);</span><br><span class="line"></span><br><span class="line">  proto.__defineGetter__(name, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[target][name];</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Delegator.prototype.setter = <span class="function"><span class="keyword">function</span>(<span class="params">name</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> proto = <span class="keyword">this</span>.proto;</span><br><span class="line">  <span class="keyword">var</span> target = <span class="keyword">this</span>.target;</span><br><span class="line">  <span class="keyword">this</span>.setters.push(name);</span><br><span class="line"></span><br><span class="line">  proto.__defineSetter__(name, <span class="function"><span class="keyword">function</span>(<span class="params">val</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>[target][name] = val;</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Delegator.prototype.fluent = <span class="function"><span class="keyword">function</span> (<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> proto = <span class="keyword">this</span>.proto;</span><br><span class="line">  <span class="keyword">var</span> target = <span class="keyword">this</span>.target;</span><br><span class="line">  <span class="keyword">this</span>.fluents.push(name);</span><br><span class="line"></span><br><span class="line">  proto[name] = <span class="function"><span class="keyword">function</span>(<span class="params">val</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">'undefined'</span> != <span class="keyword">typeof</span> val) &#123;</span><br><span class="line">      <span class="keyword">this</span>[target][name] = val;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>[target][name];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/28/koa/2017-10-28-koa-Context/" data-id="cjp9i0zew000d5ucp18uebtxs" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-koa/2017-10-17-koa-Application" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/17/koa/2017-10-17-koa-Application/" class="article-date">
-  <time datetime="2017-10-16T16:00:00.000Z" itemprop="datePublished">2017-10-17</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/17/koa/2017-10-17-koa-Application/">koa-Application</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h3><p>koa应该是如今node.js网络框架用的最多的一款了，它与Express类似用中间件的形式把功能封装封装成独立的模块，了解过Java开发的同学应该可以想到类似于JavaEE中的Servlet和Filter这种处理流模式，也有些人很形象的说它是一种洋葱形式的结构。</p>
-<p>koa不仅仅这些。nodejs中异步代码应该是最常见的，时不时来一个异步回调，多层异步回调嵌套就使得代码看能起来很恶心。在v1.x版本使用ES6的generator函数来来解决这个问题，v2.x使用更高大上的async/await来实现异步调用，让代码很好看。</p>
-<p>为了学习，我来分析下koa的源码。</p>
-<p>koa源码很简单，就四个js文件：application.js、context.js、request.js 和 response.js。</p>
-<p>今天来看看<code>application.js</code>吧。</p>
-<h3 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h3><h4 id="一般，我们使用koa会写如下代码："><a href="#一般，我们使用koa会写如下代码：" class="headerlink" title="一般，我们使用koa会写如下代码："></a>一般，我们使用koa会写如下代码：</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa=<span class="built_in">require</span>(<span class="string">'koa'</span>);</span><br><span class="line"><span class="keyword">const</span> app=<span class="keyword">new</span> Koa();</span><br><span class="line"></span><br><span class="line">app.use(<span class="keyword">async</span> ctx=&gt;&#123;</span><br><span class="line">  ctx.body=<span class="string">'hello world'</span>);</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="从使用中就可以知道，koa导出的是一个构造函数，果然是这样："><a href="#从使用中就可以知道，koa导出的是一个构造函数，果然是这样：" class="headerlink" title="从使用中就可以知道，koa导出的是一个构造函数，果然是这样："></a>从使用中就可以知道，koa导出的是一个构造函数，果然是这样：</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = <span class="class"><span class="keyword">class</span> <span class="title">Application</span> <span class="keyword">extends</span> <span class="title">Emitter</span> </span>&#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="可以看出它继承了Emitter，"><a href="#可以看出它继承了Emitter，" class="headerlink" title="可以看出它继承了Emitter，"></a>可以看出它继承了<code>Emitter</code>，</h4><p>这是node.js的核心模块<code>events</code>，<code>events</code>是什么都知道，简单来说就是消息的订阅与发送。当我要想监听应用是否启动成功，可以添加一下代码：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.on(<span class="string">'error'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(e);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
-<h4 id="再来看看构造器："><a href="#再来看看构造器：" class="headerlink" title="再来看看构造器："></a>再来看看构造器：</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constructor</span>() &#123;</span><br><span class="line">  <span class="keyword">super</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.proxy = <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">this</span>.middleware = [];</span><br><span class="line">  <span class="keyword">this</span>.subdomainOffset = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">this</span>.env = process.env.NODE_ENV || <span class="string">'development'</span>;</span><br><span class="line">  <span class="keyword">this</span>.context = <span class="built_in">Object</span>.create(context);</span><br><span class="line">  <span class="keyword">this</span>.request = <span class="built_in">Object</span>.create(request);</span><br><span class="line">  <span class="keyword">this</span>.response = <span class="built_in">Object</span>.create(response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>proxy</code>、<code>subdomainOffset</code>暂不知道干嘛用的；<code>middleware</code>是用来承载所有中间件的数组；<code>env</code>是程序是执行环境；<code>context</code>代表上下文；<code>request</code>代表请求；<code>response</code>代表响应。</p>
-<h4 id="listen"><a href="#listen" class="headerlink" title="listen()"></a>listen()</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">listen(...args) &#123;</span><br><span class="line">  debug(<span class="string">'listen'</span>);</span><br><span class="line">  <span class="keyword">const</span> server = http.createServer(<span class="keyword">this</span>.callback());</span><br><span class="line">  <span class="keyword">return</span> server.listen(...args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>listen()</code>包装了<code>http</code>,做了一个快捷方法，<code>http</code>接受的回调函数在<code>callback()</code>里面定义</p>
-<h4 id="callback"><a href="#callback" class="headerlink" title="callback()"></a>callback()</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">callback() &#123;</span><br><span class="line">  <span class="keyword">const</span> fn = compose(<span class="keyword">this</span>.middleware);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!<span class="keyword">this</span>.listeners(<span class="string">'error'</span>).length) <span class="keyword">this</span>.on(<span class="string">'error'</span>, <span class="keyword">this</span>.onerror);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> handleRequest = <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> ctx = <span class="keyword">this</span>.createContext(req, res);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.handleRequest(ctx, fn);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> handleRequest;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>首先它会<code>compose</code>所有的中间件，然后监听<code>error</code>事件，然后定义并返回<code>handleRequest</code>函数。</p>
-<p><code>handleRequest</code>函数就是<code>http.createServer(?)</code>的回调函数;</p>
-<p><code>handleRequest</code>每次来一个请求都会创建一个<code>ctx</code>，并且调用<code>this.handleRequest(ctx, fn)</code></p>
-<h4 id="onerror-err"><a href="#onerror-err" class="headerlink" title="onerror(err)"></a>onerror(err)</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">onerror(err) &#123;</span><br><span class="line">  assert(err <span class="keyword">instanceof</span> <span class="built_in">Error</span>, <span class="string">`non-error thrown: <span class="subst">$&#123;err&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="number">404</span> == err.status || err.expose) <span class="keyword">return</span>;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.silent) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> msg = err.stack || err.toString();</span><br><span class="line">  <span class="built_in">console</span>.error();</span><br><span class="line">  <span class="built_in">console</span>.error(msg.replace(<span class="regexp">/^/gm</span>, <span class="string">'  '</span>));</span><br><span class="line">  <span class="built_in">console</span>.error();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>系统默认的错误处理程序。如果设置了<code>silent = true</code>，则不会在控制台打印出error。</p>
-<h4 id="createContext-req-res"><a href="#createContext-req-res" class="headerlink" title="createContext(req, res)"></a>createContext(req, res)</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">createContext(req, res) &#123;</span><br><span class="line">  <span class="keyword">const</span> context = <span class="built_in">Object</span>.create(<span class="keyword">this</span>.context);</span><br><span class="line">  <span class="keyword">const</span> request = context.request = <span class="built_in">Object</span>.create(<span class="keyword">this</span>.request);</span><br><span class="line">  <span class="keyword">const</span> response = context.response = <span class="built_in">Object</span>.create(<span class="keyword">this</span>.response);</span><br><span class="line">  context.app = request.app = response.app = <span class="keyword">this</span>;</span><br><span class="line">  context.req = request.req = response.req = req;</span><br><span class="line">  context.res = request.res = response.res = res;</span><br><span class="line">  request.ctx = response.ctx = context;</span><br><span class="line">  request.response = response;</span><br><span class="line">  response.request = request;</span><br><span class="line">  context.originalUrl = request.originalUrl = req.url;</span><br><span class="line">  context.cookies = <span class="keyword">new</span> Cookies(req, res, &#123;</span><br><span class="line">    keys: <span class="keyword">this</span>.keys,</span><br><span class="line">    secure: request.secure</span><br><span class="line">  &#125;);</span><br><span class="line">  request.ip = request.ips[<span class="number">0</span>] || req.socket.remoteAddress || <span class="string">''</span>;</span><br><span class="line">  context.accept = request.accept = accepts(req);</span><br><span class="line">  context.state = &#123;&#125;;</span><br><span class="line">  <span class="keyword">return</span> context;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>就是创建<code>context</code> <code>request</code> <code>response</code> 对象，并在其上挂载一些便捷的访问入口。</p>
-<h4 id="handleRequest-ctx-fnMiddleware"><a href="#handleRequest-ctx-fnMiddleware" class="headerlink" title="handleRequest(ctx, fnMiddleware)"></a>handleRequest(ctx, fnMiddleware)</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">handleRequest(ctx, fnMiddleware) &#123;</span><br><span class="line">  <span class="keyword">const</span> res = ctx.res;</span><br><span class="line">  res.statusCode = <span class="number">404</span>;</span><br><span class="line">  <span class="keyword">const</span> onerror = <span class="function"><span class="params">err</span> =&gt;</span> ctx.onerror(err);</span><br><span class="line">  <span class="keyword">const</span> handleResponse = <span class="function"><span class="params">()</span> =&gt;</span> respond(ctx);</span><br><span class="line">  onFinished(res, onerror);</span><br><span class="line">  <span class="keyword">return</span> fnMiddleware(ctx).then(handleResponse).catch(onerror);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这就是处理请求的函数，首先一上来默认把<code>statusCode</code>改为<code>404</code>，设置错误回调处理逻辑<code>onerror</code>和处理响应逻辑<code>handleResponse</code>，监听<code>onFinished</code>事件，然后调用中间件函数。中间件执行成功就调用<code>handleResponse</code>,失败就调用<code>onerror</code>。</p>
-<h4 id="respond-ctx"><a href="#respond-ctx" class="headerlink" title="respond(ctx);"></a>respond(ctx);</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">respond</span>(<span class="params">ctx</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 如果设置ctx.respond=false，则取消koa默认响应</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="literal">false</span> === ctx.respond) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> res = ctx.res;</span><br><span class="line">  <span class="comment">// 如果ctx.writable=false，取消响应。</span></span><br><span class="line">  <span class="keyword">if</span> (!ctx.writable) <span class="keyword">return</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">let</span> body = ctx.body;</span><br><span class="line">  <span class="keyword">const</span> code = ctx.status;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// statuscode为204、205、304时，去除body，直接结束</span></span><br><span class="line">  <span class="keyword">if</span> (statuses.empty[code]) &#123;</span><br><span class="line">    <span class="keyword">return</span> res.end();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// HEAD访问，计算出长度，返回</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="string">'HEAD'</span> == ctx.method) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!res.headersSent &amp;&amp; isJSON(body)) &#123;</span><br><span class="line">      ctx.length = Buffer.byteLength(<span class="built_in">JSON</span>.stringify(body));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res.end();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// body为null，默认返回message或者statuscode</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="literal">null</span> == body) &#123;</span><br><span class="line">    body = ctx.message || <span class="built_in">String</span>(code);</span><br><span class="line">    <span class="keyword">if</span> (!res.headersSent) &#123;</span><br><span class="line">      ctx.type = <span class="string">'text'</span>;</span><br><span class="line">      ctx.length = Buffer.byteLength(body);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res.end(body);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// body为buffer，返回body</span></span><br><span class="line">  <span class="keyword">if</span> (Buffer.isBuffer(body)) <span class="keyword">return</span> res.end(body);</span><br><span class="line">  <span class="comment">// body为string，返回body</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="string">'string'</span> == <span class="keyword">typeof</span> body) <span class="keyword">return</span> res.end(body);</span><br><span class="line">  <span class="comment">// body为Stream，pipe这个body</span></span><br><span class="line">  <span class="keyword">if</span> (body <span class="keyword">instanceof</span> Stream) <span class="keyword">return</span> body.pipe(res);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// body为json，字符串化，计算长度后返回</span></span><br><span class="line">  body = <span class="built_in">JSON</span>.stringify(body);</span><br><span class="line">  <span class="keyword">if</span> (!res.headersSent) &#123;</span><br><span class="line">    ctx.length = Buffer.byteLength(body);</span><br><span class="line">  &#125;</span><br><span class="line">  res.end(body);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>根据不同的情况走不同的逻辑，最终都是以<code>res.end();</code>结束。</p>
-<h4 id="use-fn"><a href="#use-fn" class="headerlink" title="use(fn)"></a>use(fn)</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">use(fn) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> fn !== <span class="string">'function'</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'middleware must be a function!'</span>);</span><br><span class="line">  <span class="keyword">if</span> (isGeneratorFunction(fn)) &#123;</span><br><span class="line">    deprecate(<span class="string">'Support for generators will be removed in v3. '</span> +</span><br><span class="line">              <span class="string">'See the documentation for examples of how to convert old middleware '</span> +</span><br><span class="line">              <span class="string">'https://github.com/koajs/koa/blob/master/docs/migration.md'</span>);</span><br><span class="line">    fn = convert(fn);</span><br><span class="line">  &#125;</span><br><span class="line">  debug(<span class="string">'use %s'</span>, fn._name || fn.name || <span class="string">'-'</span>);</span><br><span class="line">  <span class="keyword">this</span>.middleware.push(fn);</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个就是向koa添加中间件的方法，先判断 fn 是否是<code>function</code>，不是就直接抛异常；</p>
-<p>在判断 fn 是否是<code>generator</code>，是的话用<code>convert</code>包装成普通function；</p>
-<p>这时 fn 要么是普通function，要么是asyn function；这两者都可以直接调用的；</p>
-<p>最终添加到<code>middleware</code>数组中。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/17/koa/2017-10-17-koa-Application/" data-id="cjp9i0zey000e5ucpfi4wq6oj" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-koa/2017-10-15-convert" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/15/koa/2017-10-15-convert/" class="article-date">
-  <time datetime="2017-10-14T16:00:00.000Z" itemprop="datePublished">2017-10-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/15/koa/2017-10-15-convert/">koa-convert</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="convert"><a href="#convert" class="headerlink" title="convert()"></a>convert()</h2><p>GeneratorFunction 怎么转成普通的function 的呢？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">convert</span> (<span class="params">mw</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> mw !== <span class="string">'function'</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'middleware must be a function'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (mw.constructor.name !== <span class="string">'GeneratorFunction'</span>) &#123;</span><br><span class="line">    <span class="comment">// assume it's Promise-based middleware</span></span><br><span class="line">    <span class="keyword">return</span> mw</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> converted = <span class="function"><span class="keyword">function</span> (<span class="params">ctx, next</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> co.call(ctx, mw.call(ctx, createGenerator(next)))</span><br><span class="line">  &#125;</span><br><span class="line">  converted._name = mw._name || mw.name</span><br><span class="line">  <span class="keyword">return</span> converted</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> * <span class="title">createGenerator</span> (<span class="params">next</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">yield</span> next()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>首先判断<code>mw</code> 是否是function,不是就抛异常</p>
-<p>然后判断<code>mw</code>是否是 GeneratorFunction， 不是就返回原函数。</p>
-<p>走到这里就代表<code>mw</code> 就是 GeneratorFunction，定义普通函数 <code>converted</code> ，在 <code>converted</code> 里面就调用了 <code>return co.call(ctx, mw.call(ctx, createGenerator(next)))</code></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/15/koa/2017-10-15-convert/" data-id="cjp9i0zeu000b5ucpq5bbjwus" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-koa/2017-10-10-compose" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/10/koa/2017-10-10-compose/" class="article-date">
-  <time datetime="2017-10-09T16:00:00.000Z" itemprop="datePublished">2017-10-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/10/koa/2017-10-10-compose/">koa-compose</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="compose"><a href="#compose" class="headerlink" title="compose()"></a>compose()</h2><p><code>middleware</code>里那么多的中间件，是怎么塞到<code>http</code>回调函数里面的呢？上面说是用<code>compose()</code>函数组装在一起的，怎么实现的呢？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">compose</span> (<span class="params">middleware</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="built_in">Array</span>.isArray(middleware)) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'Middleware stack must be an array!'</span>)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> fn <span class="keyword">of</span> middleware) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> fn !== <span class="string">'function'</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'Middleware must be composed of functions!'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">context, next</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// last called middleware #</span></span><br><span class="line">    <span class="keyword">let</span> index = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">return</span> dispatch(<span class="number">0</span>);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">dispatch</span> (<span class="params">i</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (i &lt;= index) <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'next() called multiple times'</span>))</span><br><span class="line">      index = i</span><br><span class="line">      <span class="keyword">let</span> fn = middleware[i]</span><br><span class="line">      <span class="keyword">if</span> (i === middleware.length) fn = next</span><br><span class="line">      <span class="keyword">if</span> (!fn) <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve()</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(fn(context, <span class="function"><span class="keyword">function</span> <span class="title">next</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> dispatch(i + <span class="number">1</span>)</span><br><span class="line">        &#125;))</span><br><span class="line">      &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(err)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>首先判断<code>middleware</code>是不是数组，不是个数组就抛错，</p>
-<p>然后循环<code>middleware</code>,只要有一个元素不是<code>function</code>也抛错，</p>
-<p>最后返回一个匿名函数<code>function(context,next)</code>，形成个闭包,这个匿名函数就是封装了所有<code>middleware</code>中间件函数，也就是<code>handleRequest(ctx, fnMiddleware)</code>里的<code>fnMiddleware</code>。当执行<code>fnMiddleware(ctx).then(handleResponse).catch(onerror);</code>也就执行了<code>middleware</code>里的中间件函数了。</p>
-<p>执行逻辑封装在<code>dispatch (i) {...}</code>函数里，<code>index</code>是记录当前执行的中间件函数的下标。</p>
-<p>首先<code>dispatch(0);</code>执行第一个 ====&gt; <code>0 &gt; -1</code>所以不会返回一个失败的<code>Promise</code> ====&gt; <code>index=0</code> ====&gt; <code>fn = middleware[i]</code> ====&gt; 两个<code>if</code>都不会执行，最后执行<code>fn</code>并返回<code>Promise</code>；执行<code>dispatch(1)</code>…<code>dispatch(2)</code>…。</p>
-<p>最终<code>i===middleware.length</code>，<code>fn = next</code>，执行<code>next</code>,因为<code>fnMiddleware(ctx)</code>没有传，所以直接返回<code>return Promise.resolve()</code>,中间件执行结束。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/10/koa/2017-10-10-compose/" data-id="cjp9i0zet00095ucpzlihi98b" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-分布式/2017-07-05-分布式锁" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/07/05/分布式/2017-07-05-分布式锁/" class="article-date">
@@ -343,7 +126,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/07/05/分布式/2017-07-05-分布式锁/" data-id="cjp9i0zgs005l5ucp9rz8e5u5" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2017/07/05/分布式/2017-07-05-分布式锁/" data-id="cjp9i7if8005kkkcplao17qa4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -353,9 +136,9 @@
 
 
   
-    <article id="post-request/2016-07-25-request-分析3" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-request/2015-07-25-request-分析3" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/07/25/request/2016-07-25-request-分析3/" class="article-date">
+    <a href="/2016/07/25/request/2015-07-25-request-分析3/" class="article-date">
   <time datetime="2016-07-24T16:00:00.000Z" itemprop="datePublished">2016-07-25</time>
 </a>
     
@@ -371,7 +154,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/25/request/2016-07-25-request-分析3/">request-分析3</a>
+      <a class="article-title" href="/2016/07/25/request/2015-07-25-request-分析3/">request-分析3</a>
     </h1>
   
 
@@ -386,7 +169,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2016/07/25/request/2016-07-25-request-分析3/" data-id="cjp9i0zgr005j5ucp6m15i2dy" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2016/07/25/request/2015-07-25-request-分析3/" data-id="cjp9i7if7005ikkcprflvd2pz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -396,9 +179,9 @@
 
 
   
-    <article id="post-request/2016-07-15-request-分析2" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-request/2015-07-15-request-分析2" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/07/15/request/2016-07-15-request-分析2/" class="article-date">
+    <a href="/2016/07/15/request/2015-07-15-request-分析2/" class="article-date">
   <time datetime="2016-07-14T16:00:00.000Z" itemprop="datePublished">2016-07-15</time>
 </a>
     
@@ -414,7 +197,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/15/request/2016-07-15-request-分析2/">request-分析2</a>
+      <a class="article-title" href="/2016/07/15/request/2015-07-15-request-分析2/">request-分析2</a>
     </h1>
   
 
@@ -472,7 +255,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2016/07/15/request/2016-07-15-request-分析2/" data-id="cjp9i0zgr005g5ucpdxj4rz0o" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2016/07/15/request/2015-07-15-request-分析2/" data-id="cjp9i7if6005fkkcpra3w23ny" class="article-share-link">Share</a>
       
       
     </footer>
@@ -482,10 +265,51 @@
 
 
   
-    <article id="post-request/2016-07-05-request-分析1" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-other/2015-07-26-使用js-yaml在Node.js中开始使用YAML" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/07/05/request/2016-07-05-request-分析1/" class="article-date">
-  <time datetime="2016-07-04T16:00:00.000Z" itemprop="datePublished">2016-07-05</time>
+    <a href="/2015/07/26/other/2015-07-26-使用js-yaml在Node.js中开始使用YAML/" class="article-date">
+  <time datetime="2015-07-25T16:00:00.000Z" itemprop="datePublished">2015-07-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs-yaml/">nodejs yaml</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/07/26/other/2015-07-26-使用js-yaml在Node.js中开始使用YAML/">使用js-yaml在Node.js中开始使用YAML</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://thisdavej.com/getting-started-with-yaml-in-node-js-using-js-yaml/" target="_blank" rel="noopener">在本教程中，我们利用YAML的强大功能在Node.js中使用。</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/07/26/other/2015-07-26-使用js-yaml在Node.js中开始使用YAML/" data-id="cjp9i7ies004bkkcpcggf0xyd" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-request/2015-07-05-request-分析1" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/07/05/request/2015-07-05-request-分析1/" class="article-date">
+  <time datetime="2015-07-04T16:00:00.000Z" itemprop="datePublished">2015-07-05</time>
 </a>
     
   <div class="article-category">
@@ -500,7 +324,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/05/request/2016-07-05-request-分析1/">request-分析1</a>
+      <a class="article-title" href="/2015/07/05/request/2015-07-05-request-分析1/">request-分析1</a>
     </h1>
   
 
@@ -540,7 +364,175 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2016/07/05/request/2016-07-05-request-分析1/" data-id="cjp9i0zgq005e5ucpendxb9yg" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/07/05/request/2015-07-05-request-分析1/" data-id="cjp9i7if5005dkkcp8kynfzax" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nodejs/2015-06-04-nodejs卸载模块" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/04/nodejs/2015-06-04-nodejs卸载模块/" class="article-date">
+  <time datetime="2015-06-03T16:00:00.000Z" itemprop="datePublished">2015-06-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/04/nodejs/2015-06-04-nodejs卸载模块/">nodejs卸载模块</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="require"><a href="#require" class="headerlink" title="require"></a>require</h2><p>Nodejs加载模块使用require()函数，一旦模块被加载了，它将被缓存，也就是说，多次加载它会返回同一个对象。</p>
+<h3 id="好处"><a href="#好处" class="headerlink" title="好处"></a>好处</h3><p>这通常是高效的，这会帮助你在一个项目中重用模块而不用担心使用require时的开销。</p>
+<p>你可以安全的在同一个模块中调用require而不用集中加载所有的依赖。</p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>虽然自动缓存在Node开发中适合绝大多数场景，也存在一些情况你希望卸载一个缓存的模块，可以通过require.cache对象来达到这个目的。<br>要从缓存中删除一个模块，可以使用delete关键字。还需要模块的绝对路径，可以通过require.resolve来获取。例如：</p>
+<ul>
+<li><code>delete require.cache(require.resolve(&#39;myclass&#39;));</code></li>
+</ul>
+<p>这将返回true，代表模块被卸载了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/06/04/nodejs/2015-06-04-nodejs卸载模块/" data-id="cjp9i7ier0048kkcp7qdu3qu4" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nodejs/2015-05-07-nodejs执行浅析" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/05/07/nodejs/2015-05-07-nodejs执行浅析/" class="article-date">
+  <time datetime="2015-05-06T16:00:00.000Z" itemprop="datePublished">2015-05-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/07/nodejs/2015-05-07-nodejs执行浅析/">nodejs执行浅析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>.js</code>脚本可以在许多平台上运行，我们最熟知的莫过于浏览器和Node.js了，这里我们来分析下Node.js运行<code>.js</code>脚本背后做了哪些事情。</p>
+<h2 id="Node-js-怎么运行-js脚本"><a href="#Node-js-怎么运行-js脚本" class="headerlink" title="Node.js 怎么运行 .js脚本"></a><code>Node.js</code> 怎么运行 <code>.js</code>脚本</h2><p>我们来写一个最简单的hello world程序：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// app.js</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"hello world"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>要用<code>Node.js</code>运行的话，确保机器装了<a href="https://nodejs.org/en/" target="_blank" rel="noopener">Node.js</a> 运行环境。在命令行敲一下命令：<br><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node app.js</span><br></pre></td></tr></table></figure></p>
+<p>接着就会打印出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello world</span><br></pre></td></tr></table></figure></p>
+<p>从命令可以看出是有个名为<code>node</code>可执行程序来运行<code>app.js</code>的，那就来看看这是可执行程序是什么。感谢<code>Node.js</code>的作者 Ryan Dahl，把<code>Node.js</code>开源，我们来看看<a href="https://github.com/nodejs/node" target="_blank" rel="noopener">Node Source Code</a>。</p>
+<h2 id="Node-Source-Code"><a href="#Node-Source-Code" class="headerlink" title="Node Source Code"></a>Node Source Code</h2><p>大家都应该知道，一个可执行程序都有一个<code>main()</code>方法,果然在<a href="https://github.com/nodejs/node/blob/master/src/node_main.cc" target="_blank" rel="noopener">node_main.cc</a>找到了。</p>
+<h3 id="node-main-cc"><a href="#node-main-cc" class="headerlink" title="node_main.cc"></a>node_main.cc</h3><p>这里的主要逻辑是<code>node::Start(argc, argv);</code>。在<a href="https://github.com/nodejs/node/blob/master/src/node.cc" target="_blank" rel="noopener">node.cc</a>里定义了<code>Start()</code>方法。<br><figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Start</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span> </span>&#123;</span><br><span class="line">  ... init ...</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> exit_code =</span><br><span class="line">      Start(uv_default_loop(), argc, argv, exec_argc, exec_argv);</span><br><span class="line">  ... release ...</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里一开始都是初始化的工作，比如<code>platform</code>、<code>openssl</code>、<code>V8引擎</code>、<code>libuv</code>等，<code>libuv</code>就是<code>Node.js</code>的异步I/O与事件循环的实现。关键代码就是这句，调用的开始。</p>
+<figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">Start</span><span class="params">(<span class="keyword">uv_loop_t</span>* event_loop,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* argv,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> exec_argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* exec_argv)</span> </span>&#123;</span><br><span class="line">  ... init <span class="keyword">and</span> <span class="built_in">set</span> isolate ...</span><br><span class="line">  <span class="keyword">int</span> exit_code = Start(isolate, &amp;isolate_data, argc, argv, exec_argc, exec_argv);</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>isolate翻译成中文是 隔离 意思，在这里可以理解为一个独立V8引擎实例或者一个沙盒。这里设置了一些事件回调和错误处理的handler、Isolate的Scope、微任务原则和WebAssemblyd的回调。最后再执行内联函数<code>Start</code>。<br><figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">Start</span><span class="params">(Isolate* isolate, IsolateData* isolate_data,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* argv,</span></span></span><br><span class="line"><span class="function"><span class="params">                 <span class="keyword">int</span> exec_argc, <span class="keyword">const</span> <span class="keyword">char</span>* <span class="keyword">const</span>* exec_argv)</span> </span>&#123;</span><br><span class="line">  ······</span><br><span class="line">  env.Start(argc, argv, exec_argc, exec_argv, v8_is_profiling);</span><br><span class="line">  ······</span><br><span class="line">  StartInspector(&amp;env, path, debug_options);</span><br><span class="line">  ······</span><br><span class="line">  Environment::<span class="function">AsyncCallbackScope <span class="title">callback_scope</span><span class="params">(&amp;env)</span></span>;</span><br><span class="line">  env.async_hooks()-&gt;push_async_ids(<span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  LoadEnvironment(&amp;env);</span><br><span class="line">  env.async_hooks()-&gt;pop_async_id(<span class="number">1</span>);</span><br><span class="line">  ······</span><br><span class="line">  <span class="keyword">do</span> &#123;</span><br><span class="line">    uv_run(env.event_loop(), UV_RUN_DEFAULT);</span><br><span class="line">    ······</span><br><span class="line">    more = uv_loop_alive(env.event_loop());</span><br><span class="line">  &#125; <span class="keyword">while</span> (more == <span class="literal">true</span>);</span><br><span class="line">  ······</span><br><span class="line">  <span class="keyword">return</span> exit_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个内联函数<code>Start</code>实现了Node.js具体的工作，一开始初始化上下文<code>context</code>,<code>env</code>启动，启动<code>Inspector</code>调试器,配置异步钩子等，最主要的就是调用<code>LoadEnvironment()</code>函数，此函数执行了首个js文件<code>lib/internal/bootstrap/loaders.js</code>和<code>lib/internal/bootstrap/node.js</code>。接着就是运行一个很重要的循环，这个循环就是事件循环，如果循环退出了，就会执行下面销毁、释放等代码。</p>
+<figure class="highlight cc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">LoadEnvironment</span><span class="params">(Environment* env)</span> </span>&#123;</span><br><span class="line">  ......</span><br><span class="line">  Local&lt;String&gt; loaders_name =</span><br><span class="line">      FIXED_ONE_BYTE_STRING(env-&gt;isolate(), <span class="string">"internal/bootstrap/loaders.js"</span>);</span><br><span class="line">  Local&lt;Function&gt; loaders_bootstrapper =</span><br><span class="line">      GetBootstrapper(env, LoadersBootstrapperSource(env), loaders_name);</span><br><span class="line">  Local&lt;String&gt; node_name =</span><br><span class="line">      FIXED_ONE_BYTE_STRING(env-&gt;isolate(), <span class="string">"internal/bootstrap/node.js"</span>);</span><br><span class="line">  Local&lt;Function&gt; node_bootstrapper =</span><br><span class="line">      GetBootstrapper(env, NodeBootstrapperSource(env), node_name);</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">if</span> (!ExecuteBootstrapper(env, loaders_bootstrapper,</span><br><span class="line">                           arraysize(loaders_bootstrapper_args),</span><br><span class="line">                           loaders_bootstrapper_args,</span><br><span class="line">                           &amp;bootstrapped_loaders)) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  ......</span><br><span class="line">  <span class="keyword">if</span> (!ExecuteBootstrapper(env, node_bootstrapper,</span><br><span class="line">                           arraysize(node_bootstrapper_args),</span><br><span class="line">                           node_bootstrapper_args,</span><br><span class="line">                           &amp;bootstrapped_node)) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="internal-bootstrap-loaders-js"><a href="#internal-bootstrap-loaders-js" class="headerlink" title="internal/bootstrap/loaders.js"></a>internal/bootstrap/loaders.js</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> <span class="title">bootstrapInternalLoaders</span>(<span class="params">process, getBinding, getLinkedBinding,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   getInternalBinding</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  ... Set up process.moduleLoadList ...</span><br><span class="line">  ... Set up process.binding() and process._linkedBinding() ...</span><br><span class="line"></span><br><span class="line">  ... Set up internalBinding() <span class="keyword">in</span> the closure ...</span><br><span class="line">  ... Set up NativeModule ...</span><br><span class="line">  ... written <span class="keyword">in</span> CommonJS style. ...</span><br><span class="line">  NativeModule.require = <span class="function"><span class="keyword">function</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line">  ... This will be passed to the bootstrapNodeJSCore <span class="function"><span class="keyword">function</span> <span class="title">in</span> <span class="title">bootstrap</span>/<span class="title">node</span>.<span class="title">js</span>. ...</span></span><br><span class="line"><span class="function">  <span class="title">return</span> <span class="title">loaderExports</span>;</span></span><br><span class="line"><span class="function">&#125;);</span></span><br></pre></td></tr></table></figure>
+<p>代码已经有很好的注释了，所以就不用多说什么。</p>
+<h3 id="internal-bootstrap-node-js"><a href="#internal-bootstrap-node-js" class="headerlink" title="internal/bootstrap/node.js"></a>internal/bootstrap/node.js</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> <span class="title">bootstrapNodeJSCore</span>(<span class="params">process, &#123; internalBinding, NativeModule &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> exceptionHandlerState = &#123; <span class="attr">captureFn</span>: <span class="literal">null</span> &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">startup</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    setupProcessObject();</span><br><span class="line">    ......</span><br><span class="line">    setupProcessFatal();</span><br><span class="line">    setupV8();</span><br><span class="line">    setupProcessICUVersions();</span><br><span class="line">    setupGlobalVariables();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> _process = NativeModule.require(<span class="string">'internal/process'</span>);</span><br><span class="line">    ......</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/warning'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/next_tick'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/stdio'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/process/methods'</span>).setup();</span><br><span class="line">    ......</span><br><span class="line">    _process.setup_hrtime();</span><br><span class="line">    _process.setup_performance();</span><br><span class="line">    _process.setup_cpuUsage();</span><br><span class="line">    _process.setupMemoryUsage();</span><br><span class="line">    _process.setupKillAndExit();</span><br><span class="line">    <span class="keyword">if</span> (global.__coverage__)</span><br><span class="line">      NativeModule.require(<span class="string">'internal/process/write-coverage'</span>).setup();</span><br><span class="line"></span><br><span class="line">    NativeModule.require(<span class="string">'internal/trace_events_async_hooks'</span>).setup();</span><br><span class="line">    NativeModule.require(<span class="string">'internal/inspector_async_hook'</span>).setup();</span><br><span class="line"></span><br><span class="line">    _process.setupChannel();</span><br><span class="line">    _process.setupRawDebug();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> browserGlobals = !process._noBrowserGlobals;</span><br><span class="line">    <span class="keyword">if</span> (browserGlobals) &#123;</span><br><span class="line">      setupGlobalTimeouts();</span><br><span class="line">      setupGlobalConsole();</span><br><span class="line">      setupGlobalURL();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Ensure setURLConstructor() is called before the native</span></span><br><span class="line">    <span class="comment">// URL::ToObject() method is used.</span></span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line">    <span class="comment">// On OpenBSD process.execPath will be relative unless we</span></span><br><span class="line">    <span class="comment">// get the full path before process.execPath is used.</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="comment">// Handle `--debug*` deprecation and invalidation</span></span><br><span class="line">    ......</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">// Install legacy getters on the `util` binding for typechecking.</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// There are various modes that Node can run in. The most common two</span></span><br><span class="line">    <span class="comment">// are running from a script and running the REPL - but there are a few</span></span><br><span class="line">    <span class="comment">// others like the debugger or running --eval arguments. Here we decide</span></span><br><span class="line">    <span class="comment">// which mode we run in.</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (NativeModule.exists(<span class="string">'_third_party_main'</span>)) &#123;</span><br><span class="line">      <span class="comment">// To allow people to extend Node in different ways, this hook allows</span></span><br><span class="line">      <span class="comment">// one to drop a file lib/_third_party_main.js into the build</span></span><br><span class="line">      <span class="comment">// directory which will be executed instead of Node's normal loading.</span></span><br><span class="line">      ......</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (process.argv[<span class="number">1</span>] === <span class="string">'inspect'</span> || process.argv[<span class="number">1</span>] === <span class="string">'debug'</span>) &#123;</span><br><span class="line">      <span class="comment">// Start the debugger agent</span></span><br><span class="line">      ......</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// There is user code to be run</span></span><br><span class="line">    &#125;</span><br><span class="line">    ......</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupProcessObject</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalVariables</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalTimeouts</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalConsole</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupGlobalURL</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupInspector</span>(<span class="params">originalConsole, wrappedConsole, CJSModule</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">noop</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupProcessFatal</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setupV8</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">tryGetCwd</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">wrapForBreakOnFirstLine</span>(<span class="params">source</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Load preload modules</span></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">preloadModules</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">checkScriptSyntax</span>(<span class="params">source, filename</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  startup();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>直接调用<code>startup()</code>发放来启动，它会调用一系列的<code>setupX()</code>方法来做一些必要的事情，比如进程<code>process</code>对象、全局对象、定时器对象、console对象、url对象、V8、检查js语法等等，最重要的就是运行用户也就是程序员写的js代码。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Node.js浅显的调用流程就是这样子的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">OS =&gt; Node.cc::Start() =&gt; internal/bootstrap/loaders.js =&gt; internal/bootstrap/node.js =&gt; app.js</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/05/07/nodejs/2015-05-07-nodejs执行浅析/" data-id="cjp9i7ieq0046kkcpp5u6rix5" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nodejs/2015-04-24-generator-怎么样判断一个函数是Generator" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/" class="article-date">
+  <time datetime="2015-04-23T16:00:00.000Z" itemprop="datePublished">2015-04-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/">怎么样判断一个函数是Generator</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>在JS中，有集中不同类型的函数：</p>
+<ol>
+<li>普通函数</li>
+<li>generator函数</li>
+<li>async函数</li>
+<li>箭头函数</li>
+</ol>
+<p>那该怎么判断一个函数是generator函数呢？</p>
+<p>阅读koa源码，发现了一个<code>is-generator-function</code>的库，学习下。</p>
+<h2 id="is-generator-function"><a href="#is-generator-function" class="headerlink" title="is-generator-function"></a><code>is-generator-function</code></h2><p>这个库只暴露一个方法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> <span class="title">isGeneratorFunction</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>它首先会通过<code>typeof fn !== &#39;function&#39;</code>来检查是否是一个<code>function</code>，不是直接返回<code>false</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> fn !== <span class="string">'function'</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着会用正则表达式进一步判断。检查函数调用<code>toString()</code>方法后的字符串以<code>function*</code>做开头的。如果是的话就直接返回<code>true</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> isFnRegex = <span class="regexp">/^\s*(?:function)?\*/</span>;</span><br><span class="line"><span class="keyword">var</span> fnToStr = <span class="built_in">Function</span>.prototype.toString;</span><br><span class="line"><span class="keyword">if</span> (isFnRegex.test(fnToStr.call(fn))) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后会检查当前js引擎是否有<code>Symbol</code>和<code>Symbol.toStringTag</code>等于<code>&#39;symbol&#39;</code>。因为ES6中引入了<code>Symbol</code>，参考<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag" target="_blank" rel="noopener">Symbol.toStringTag</a>,简单来说就是这个属性可以用来定制调用<code>Object.toString()</code>方法得到<code>[object Object]</code>中 <code>object</code> 后面的那个字符串。ES内置<code>GeneratorFunction.prototype[Symbol.toStringTag]： &#39;GeneratorFunction&#39;</code>，所以这样也能判断这个<code>fn</code>是否是<code>GeneratorFunction</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> hasToStringTag = <span class="keyword">typeof</span> <span class="built_in">Symbol</span> === <span class="string">'function'</span> &amp;&amp; <span class="keyword">typeof</span> <span class="built_in">Symbol</span>.toStringTag === <span class="string">'symbol'</span>;</span><br><span class="line"><span class="keyword">var</span> toStr = <span class="built_in">Object</span>.prototype.toString;</span><br><span class="line"><span class="keyword">if</span> (!hasToStringTag) &#123;</span><br><span class="line">	<span class="keyword">var</span> str = toStr.call(fn);</span><br><span class="line">	<span class="keyword">return</span> str === <span class="string">'[object GeneratorFunction]'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果这个也失效了咋办？最后一招：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> getProto = <span class="built_in">Object</span>.getPrototypeOf;</span><br><span class="line"><span class="keyword">return</span> getProto(fn) === GeneratorFunction;</span><br></pre></td></tr></table></figure></p>
+<p>获取<code>fn</code>的原型。普通函数的原型是<code>[Function]</code>，而<code>generator</code>函数的原型是<code>GeneratorFunction {}</code>，所以也能判断成功。</p>
+<h2 id="is-generator-function-1"><a href="#is-generator-function-1" class="headerlink" title="is-generator-function"></a><code>is-generator-function</code></h2><p>我记得<code>co</code>库里面也有判断一个函数是否是generator函数的代码，我们来看看tj大神是怎么写的。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Check if `obj` is a generator function.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param &#123;Mixed&#125; obj</span></span><br><span class="line"><span class="comment"> * @return &#123;Boolean&#125;</span></span><br><span class="line"><span class="comment"> * @api private</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isGeneratorFunction</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> <span class="keyword">constructor</span> = obj.<span class="keyword">constructor</span>;</span><br><span class="line">  if (!<span class="keyword">constructor</span>) return false;</span><br><span class="line">  if ('GeneratorFunction' === <span class="keyword">constructor</span>.name || 'GeneratorFunction' === <span class="keyword">constructor</span>.displayName) return true;</span><br><span class="line">  return isGenerator(<span class="keyword">constructor</span>.prototype);</span><br><span class="line">&#125;</span><br><span class="line">/**</span><br><span class="line"> * Check if `obj` is a generator.</span><br><span class="line"> *</span><br><span class="line"> * @param &#123;Mixed&#125; obj</span><br><span class="line"> * @<span class="keyword">return</span> &#123;<span class="built_in">Boolean</span>&#125;</span><br><span class="line"> * @api private</span><br><span class="line"> *<span class="regexp">/</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">function isGenerator(obj) &#123;</span></span><br><span class="line"><span class="regexp">  return 'function' == typeof obj.next &amp;&amp; 'function' == typeof obj.throw;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>tj大神的思路完全不一样。这个<code>fn</code>的构造函数是否是<code>GeneratorFunction</code>，接着在判断<code>fn</code>的构造函数的原型是否有<code>next</code>和<code>throw</code>方法。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>小小的一个判断一个函数是否<code>generator</code>函数就有如此多的办法，666.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/" data-id="cjp9i7ieq0044kkcprkf3w6v9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -609,7 +601,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" data-id="cjp9i0zgp005c5ucpydux4t9y" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" data-id="cjp9i7if5005bkkcpwcaqwkmo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -688,7 +680,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjp9i0zgo005a5ucp8oobixky" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjp9i7if40059kkcpjxx9h82e" class="article-share-link">Share</a>
       
       
     </footer>
@@ -742,7 +734,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 

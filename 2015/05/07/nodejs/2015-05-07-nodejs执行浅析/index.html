@@ -11,11 +11,11 @@
 <meta name="keywords" content="nodejs">
 <meta property="og:type" content="article">
 <meta property="og:title" content="nodejs执行浅析">
-<meta property="og:url" content="http://yacen.github.io/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/index.html">
+<meta property="og:url" content="http://yacen.github.io/2015/05/07/nodejs/2015-05-07-nodejs执行浅析/index.html">
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
 <meta property="og:description" content=".js脚本可以在许多平台上运行，我们最熟知的莫过于浏览器和Node.js了，这里我们来分析下Node.js运行.js脚本背后做了哪些事情。 Node.js 怎么运行 .js脚本我们来写一个最简单的hello world程序：12// app.jsconsole.log(&quot;hello world&quot;); 要用Node.js运行的话，确保机器装了Node.js 运行环境。在命令行敲一下命令：1node">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-11-28T08:50:25.703Z">
+<meta property="og:updated_time" content="2018-12-04T08:49:10.366Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="nodejs执行浅析">
 <meta name="twitter:description" content=".js脚本可以在许多平台上运行，我们最熟知的莫过于浏览器和Node.js了，这里我们来分析下Node.js运行.js脚本背后做了哪些事情。 Node.js 怎么运行 .js脚本我们来写一个最简单的hello world程序：12// app.jsconsole.log(&quot;hello world&quot;); 要用Node.js运行的话，确保机器装了Node.js 运行环境。在命令行敲一下命令：1node">
@@ -69,10 +69,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-nodejs/2018-5-7-nodejs执行浅析" class="article article-type-post" itemscope="" itemprop="blogPost">
+        <section id="main"><article id="post-nodejs/2015-05-07-nodejs执行浅析" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/" class="article-date">
-  <time datetime="2018-05-06T16:00:00.000Z" itemprop="datePublished">2018-05-07</time>
+    <a href="/2015/05/07/nodejs/2015-05-07-nodejs执行浅析/" class="article-date">
+  <time datetime="2015-05-06T16:00:00.000Z" itemprop="datePublished">2015-05-07</time>
 </a>
     
   <div class="article-category">
@@ -116,7 +116,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/05/07/nodejs/2018-5-7-nodejs执行浅析/" data-id="cjp9i0zg800415ucpw6lk3ssr" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/05/07/nodejs/2015-05-07-nodejs执行浅析/" data-id="cjp9i7ieq0046kkcpp5u6rix5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
@@ -127,19 +127,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2018/05/11/nginx/2018-05-11-Nginx全局配置/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2015/06/04/nodejs/2015-06-04-nodejs卸载模块/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Nginx配置文件
+          nodejs卸载模块
         
       </div>
     </a>
   
   
-    <a href="/2018/05/07/nodejs/2018-6-4-nodejs卸载模块/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">nodejs卸载模块</div>
+      <div class="article-nav-title">怎么样判断一个函数是Generator</div>
     </a>
   
 </nav>
@@ -184,7 +184,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 
