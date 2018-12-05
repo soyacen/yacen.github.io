@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
 <meta property="og:description" content="用户量小于百万用户量不大，只有几千几万的情况下，直接使用集合类型即可 用户登录1sadd login:20140715:users [userid] 可以直接做 交 差 并 等集合运算 用户量小于亿这个级别使用二进制可以精确存储1setbit login:20140715:users [userid] 1 得到某个用户是否登录,判断是否是 11getbit login:20140715:users">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-11-30T07:30:49.773Z">
+<meta property="og:updated_time" content="2018-12-05T10:13:19.670Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis应用之统计登录用户">
 <meta name="twitter:description" content="用户量小于百万用户量不大，只有几千几万的情况下，直接使用集合类型即可 用户登录1sadd login:20140715:users [userid] 可以直接做 交 差 并 等集合运算 用户量小于亿这个级别使用二进制可以精确存储1setbit login:20140715:users [userid] 1 得到某个用户是否登录,判断是否是 11getbit login:20140715:users">
@@ -98,9 +98,10 @@
         <h2 id="用户量小于百万"><a href="#用户量小于百万" class="headerlink" title="用户量小于百万"></a>用户量小于百万</h2><p>用户量不大，只有几千几万的情况下，直接使用集合类型即可</p>
 <h3 id="用户登录"><a href="#用户登录" class="headerlink" title="用户登录"></a>用户登录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sadd login:20140715:users [userid]</span><br></pre></td></tr></table></figure>
 <p>可以直接做 交 差 并 等集合运算</p>
-<h2 id="用户量小于亿"><a href="#用户量小于亿" class="headerlink" title="用户量小于亿"></a>用户量小于亿</h2><p>这个级别使用二进制可以精确存储<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setbit login:20140715:users [userid] 1</span><br></pre></td></tr></table></figure></p>
-<p>得到某个用户是否登录,判断是否是 1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getbit login:20140715:users [userid]</span><br></pre></td></tr></table></figure></p>
-<p>也可以作 交 差 并 等运算<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bitop [ AND | OR | NOT | XOR] login:20140715-6:users login:20140715:users login:20140716:users</span><br></pre></td></tr></table></figure></p>
+<h2 id="用户量小于亿"><a href="#用户量小于亿" class="headerlink" title="用户量小于亿"></a>用户量小于亿</h2><h3 id="这个级别使用二进制可以精确存储"><a href="#这个级别使用二进制可以精确存储" class="headerlink" title="这个级别使用二进制可以精确存储"></a>这个级别使用二进制可以精确存储</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setbit login:20140715:users [userid] 1</span><br></pre></td></tr></table></figure>
+<h3 id="得到某个用户是否登录-判断是否是-1"><a href="#得到某个用户是否登录-判断是否是-1" class="headerlink" title="得到某个用户是否登录,判断是否是 1"></a>得到某个用户是否登录,判断是否是 1</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getbit login:20140715:users [userid]</span><br></pre></td></tr></table></figure>
+<h3 id="获取登录用户数量"><a href="#获取登录用户数量" class="headerlink" title="获取登录用户数量"></a>获取登录用户数量</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bitcount login:20140715:users 0 -1</span><br></pre></td></tr></table></figure>
+<h3 id="也可以作-交-差-并-等运算"><a href="#也可以作-交-差-并-等运算" class="headerlink" title="也可以作 交 差 并 等运算"></a>也可以作 交 差 并 等运算</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bitop [ AND | OR | NOT | XOR] login:20140715-6:users login:20140715:users login:20140716:users</span><br></pre></td></tr></table></figure>
 <h2 id="用户梁大于亿"><a href="#用户梁大于亿" class="headerlink" title="用户梁大于亿"></a>用户梁大于亿</h2><p>推荐使用 hyperLogLog<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfadd login:20140715:users [userid]</span><br></pre></td></tr></table></figure></p>
 <p>求数量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfcount login:20140715:users</span><br></pre></td></tr></table></figure></p>
 <p>合并<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfmerge  login:20140715:users  login:20140716:users</span><br></pre></td></tr></table></figure></p>
@@ -108,7 +109,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjp9ii0lt0054ircp67dtarwj" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjpb17pkh004g91cp3jqqznh3" class="article-share-link">Share</a>
       
       
     </footer>

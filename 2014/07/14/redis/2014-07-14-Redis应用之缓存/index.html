@@ -5,20 +5,20 @@
   
 
   
-  <title>Redis应用之标签系统 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <title>Redis应用之缓存 | 蓦然回首，bug依然在灯火阑珊处</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="创建图书set book:bookid:name [bookname]1234set book:5:name &amp;apos;PHP圣经&amp;apos;set book:6:name &amp;apos;ruby实战&amp;apos;set book:7:name &amp;apos;mysql运难&amp;apos;set book:8:name &amp;apos;ruby server&amp;apos; 为图书打上标签sadd tag:tag">
+  <meta name="description" content="缓存数据1SET key value [EX seconds] [PX milliseconds] [NX|XX]  EX second ：设置键的过期时间为 second 秒。 SET key value EX second 效果等同于 SETEX key second value 。 PX millisecond ：设置键的过期时间为 millisecond 毫秒。 SET key value">
 <meta name="keywords" content="后端 Node.js go golang">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Redis应用之标签系统">
-<meta property="og:url" content="http://yacen.github.io/2014/07/21/redis/2014-07-21-Redis应用之标签系统/index.html">
+<meta property="og:title" content="Redis应用之缓存">
+<meta property="og:url" content="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis应用之缓存/index.html">
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
-<meta property="og:description" content="创建图书set book:bookid:name [bookname]1234set book:5:name &amp;apos;PHP圣经&amp;apos;set book:6:name &amp;apos;ruby实战&amp;apos;set book:7:name &amp;apos;mysql运难&amp;apos;set book:8:name &amp;apos;ruby server&amp;apos; 为图书打上标签sadd tag:tag">
+<meta property="og:description" content="缓存数据1SET key value [EX seconds] [PX milliseconds] [NX|XX]  EX second ：设置键的过期时间为 second 秒。 SET key value EX second 效果等同于 SETEX key second value 。 PX millisecond ：设置键的过期时间为 millisecond 毫秒。 SET key value">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-12-04T07:32:52.843Z">
+<meta property="og:updated_time" content="2018-12-05T10:17:48.233Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis应用之标签系统">
-<meta name="twitter:description" content="创建图书set book:bookid:name [bookname]1234set book:5:name &amp;apos;PHP圣经&amp;apos;set book:6:name &amp;apos;ruby实战&amp;apos;set book:7:name &amp;apos;mysql运难&amp;apos;set book:8:name &amp;apos;ruby server&amp;apos; 为图书打上标签sadd tag:tag">
+<meta name="twitter:title" content="Redis应用之缓存">
+<meta name="twitter:description" content="缓存数据1SET key value [EX seconds] [PX milliseconds] [NX|XX]  EX second ：设置键的过期时间为 second 秒。 SET key value EX second 效果等同于 SETEX key second value 。 PX millisecond ：设置键的过期时间为 millisecond 毫秒。 SET key value">
   
     <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
   
@@ -69,10 +69,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-redis/2014-07-21-Redis应用之标签系统" class="article article-type-post" itemscope="" itemprop="blogPost">
+        <section id="main"><article id="post-redis/2014-07-14-Redis应用之缓存" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" class="article-date">
-  <time datetime="2014-07-20T16:00:00.000Z" itemprop="datePublished">2014-07-21</time>
+    <a href="/2014/07/14/redis/2014-07-14-Redis应用之缓存/" class="article-date">
+  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
 </a>
     
   <div class="article-category">
@@ -87,7 +87,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      Redis应用之标签系统
+      Redis应用之缓存
     </h1>
   
 
@@ -95,16 +95,18 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="创建图书"><a href="#创建图书" class="headerlink" title="创建图书"></a>创建图书</h2><p><code>set book:bookid:name [bookname]</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set book:5:name &apos;PHP圣经&apos;</span><br><span class="line">set book:6:name &apos;ruby实战&apos;</span><br><span class="line">set book:7:name &apos;mysql运难&apos;</span><br><span class="line">set book:8:name &apos;ruby server&apos;</span><br></pre></td></tr></table></figure></p>
-<h2 id="为图书打上标签"><a href="#为图书打上标签" class="headerlink" title="为图书打上标签"></a>为图书打上标签</h2><p><code>sadd tag:tagname [bookid...]</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sadd tag:PHP 5</span><br><span class="line">sadd tag:WEB 5 6</span><br><span class="line">sadd tag:database 7</span><br><span class="line">sadd tag:ruby 6 8</span><br><span class="line">sadd tag:SERVER 8</span><br></pre></td></tr></table></figure></p>
-<h2 id="查-既有PHP-又有WEB的书"><a href="#查-既有PHP-又有WEB的书" class="headerlink" title="查: 既有PHP,又有WEB的书"></a>查: 既有PHP,又有WEB的书</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sinter tag:PHP tag:WEB  #查集合的交集</span><br></pre></td></tr></table></figure>
-<h2 id="查-有PHP或有WEB标签的书"><a href="#查-有PHP或有WEB标签的书" class="headerlink" title="查: 有PHP或有WEB标签的书"></a>查: 有PHP或有WEB标签的书</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sunion tag:PHP tag:WEB</span><br></pre></td></tr></table></figure>
-<h2 id="查-含有ruby-不含WEB标签的书"><a href="#查-含有ruby-不含WEB标签的书" class="headerlink" title="查:含有ruby,不含WEB标签的书"></a>查:含有ruby,不含WEB标签的书</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sdiff tag:ruby tag:WEB #求差集</span><br></pre></td></tr></table></figure>
+        <h2 id="缓存数据"><a href="#缓存数据" class="headerlink" title="缓存数据"></a>缓存数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET key value [EX seconds] [PX milliseconds] [NX|XX]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>EX second ：设置键的过期时间为 second 秒。 SET key value EX second 效果等同于 SETEX key second value 。</li>
+<li>PX millisecond ：设置键的过期时间为 millisecond 毫秒。 SET key value PX millisecond 效果等同于 PSETEX key millisecond value 。</li>
+<li>NX ：只在键不存在时，才对键进行设置操作。 SET key value NX 效果等同于 SETNX key value 。</li>
+<li>XX ：只在键已经存在时，才对键进行设置操作。<h2 id="获取缓存数据"><a href="#获取缓存数据" class="headerlink" title="获取缓存数据"></a>获取缓存数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET key</span><br></pre></td></tr></table></figure></li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" data-id="cjpb17pkq005591cpwd9s083s" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis应用之缓存/" data-id="cjpb17pkf004b91cpoa43b583" class="article-share-link">Share</a>
       
       
     </footer>
@@ -113,19 +115,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2014/07/21/mysql/2014-7-21-MySql面试题-2/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2014/07/14/redis/2014-07-14-Redis一般命令/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          MySql面试题
+          Redis一般命令
         
       </div>
     </a>
   
   
-    <a href="/2014/07/20/mysql/2014-7-20-MySql面试题-1/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2014/07/13/redis/2014-07-13-Redis适用场合/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">MySql面试题</div>
+      <div class="article-nav-title">Redis适用场合</div>
     </a>
   
 </nav>

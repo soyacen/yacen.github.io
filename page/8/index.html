@@ -70,6 +70,77 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mysql/2014-7-23-MySql面试题-4" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/23/mysql/2014-7-23-MySql面试题-4/" class="article-date">
+  <time datetime="2014-07-22T16:00:00.000Z" itemprop="datePublished">2014-07-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/23/mysql/2014-7-23-MySql面试题-4/">MySql面试题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="31、我们如何得到受查询影响的行数？"><a href="#31、我们如何得到受查询影响的行数？" class="headerlink" title="31、我们如何得到受查询影响的行数？"></a>31、我们如何得到受查询影响的行数？</h2><p>行数可以通过以下代码获得：<br>SELECT ROW_COUNT();  </p>
+<h2 id="32、mysql查询是否区分大小写？"><a href="#32、mysql查询是否区分大小写？" class="headerlink" title="32、mysql查询是否区分大小写？"></a>32、mysql查询是否区分大小写？</h2><p>不区分</p>
+<ul>
+<li>SELECT VERSION(), CURRENT_DATE;</li>
+<li>SeLect version(), current_date;</li>
+<li>seleCt vErSiOn(), current_DATE;</li>
+</ul>
+<p>所有这些例子都是一样的，MySQL不区分大小写。</p>
+<h2 id="33、LIKE和REGEXP操作有什么区别？"><a href="#33、LIKE和REGEXP操作有什么区别？" class="headerlink" title="33、LIKE和REGEXP操作有什么区别？"></a>33、LIKE和REGEXP操作有什么区别？</h2><h2 id="34、BLOB和TEXT有什么区别？"><a href="#34、BLOB和TEXT有什么区别？" class="headerlink" title="34、BLOB和TEXT有什么区别？"></a>34、BLOB和TEXT有什么区别？</h2><p>TEXT与BLOB的主要差别就是BLOB保存二进制数据，TEXT保存字符数据</p>
+<h2 id="35、mysql-fetch-array和mysql-fetch-object的区别是什么？"><a href="#35、mysql-fetch-array和mysql-fetch-object的区别是什么？" class="headerlink" title="35、mysql_fetch_array和mysql_fetch_object的区别是什么？"></a>35、mysql_fetch_array和mysql_fetch_object的区别是什么？</h2><p>以下是mysql_fetch_array和mysql_fetch_object的区别：</p>
+<ul>
+<li>mysql_fetch_array() - 将结果行作为关联数组或来自数据库的常规数组返回。</li>
+<li>mysql_fetch_object - 从数据库返回结果行作为对象。</li>
+</ul>
+<h2 id="36、我们如何在mysql中运行批处理模式？"><a href="#36、我们如何在mysql中运行批处理模式？" class="headerlink" title="36、我们如何在mysql中运行批处理模式？"></a>36、我们如何在mysql中运行批处理模式？</h2><p>以下命令用于在批处理模式下运行：<br>mysql;<br>mysql mysql.out</p>
+<h2 id="37、MyISAM表格将在哪里存储，并且还提供其存储格式？"><a href="#37、MyISAM表格将在哪里存储，并且还提供其存储格式？" class="headerlink" title="37、MyISAM表格将在哪里存储，并且还提供其存储格式？"></a>37、MyISAM表格将在哪里存储，并且还提供其存储格式？</h2><p>每个MyISAM表格以三种格式存储在磁盘上：</p>
+<ul>
+<li>“.frm”文件存储表定义</li>
+<li>数据文件具有“.MYD”(MYData)扩展名</li>
+<li>索引文件具有“.MYI”(MYIndex)扩展名</li>
+</ul>
+<h2 id="38、mysql中有哪些不同的表格？"><a href="#38、mysql中有哪些不同的表格？" class="headerlink" title="38、mysql中有哪些不同的表格？"></a>38、mysql中有哪些不同的表格？</h2><p>共有5种类型的表格：</p>
+<ul>
+<li>MyISAM</li>
+<li>Heap</li>
+<li>Merge</li>
+<li>INNODB</li>
+<li>ISAM<br>MyISAM是MySQL的默认存储引擎。</li>
+</ul>
+<h2 id="39、ISAM是什么？"><a href="#39、ISAM是什么？" class="headerlink" title="39、ISAM是什么？"></a>39、ISAM是什么？</h2><p>ISAM简称为索引顺序访问方法。它是由IBM开发的，用于在磁带等辅助存储系统上存储和检索数据。</p>
+<h2 id="40、InnoDB是什么？"><a href="#40、InnoDB是什么？" class="headerlink" title="40、InnoDB是什么？"></a>40、InnoDB是什么？</h2><p>lnnoDB是一个由Oracle公司开发的Innobase Oy事务安全存储引擎。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/23/mysql/2014-7-23-MySql面试题-4/" data-id="cjpb17pjv002u91cppnzihge7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-redis/2014-07-22-Redis应用之微博" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/07/22/redis/2014-07-22-Redis应用之微博/" class="article-date">
@@ -161,7 +232,60 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjp9ii0lw005eircp2ns500pc" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjpb17pkl004r91cps1jhvhpb" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-7-22-MySql面试题-3" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/22/mysql/2014-7-22-MySql面试题-3/" class="article-date">
+  <time datetime="2014-07-21T16:00:00.000Z" itemprop="datePublished">2014-07-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/22/mysql/2014-7-22-MySql面试题-3/">MySql面试题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="21、mysql服务器默认端口是什么？"><a href="#21、mysql服务器默认端口是什么？" class="headerlink" title="21、mysql服务器默认端口是什么？"></a>21、mysql服务器默认端口是什么？</h2><p>3306</p>
+<h2 id="22、MyISAM-Static和MyISAM-Dynamic有什么区别？"><a href="#22、MyISAM-Static和MyISAM-Dynamic有什么区别？" class="headerlink" title="22、MyISAM Static和MyISAM Dynamic有什么区别？"></a>22、MyISAM Static和MyISAM Dynamic有什么区别？</h2><p>在MyISAM Static上的所有字段有固定宽度。</p>
+<p>MyISAM Dynamic 表将具有像TEXT，BLOB等字段，以适应不同长度的数据类型。</p>
+<p>MyISAM Static在受损情况下更容易恢复</p>
+<h2 id="23、federated表是什么？"><a href="#23、federated表是什么？" class="headerlink" title="23、federated表是什么？"></a>23、federated表是什么？</h2><p>federated表，允许访问位于其他服务器数据库上的表。</p>
+<h2 id="24、如果一个表有一列定义为TIMESTAMP，将发生什么？"><a href="#24、如果一个表有一列定义为TIMESTAMP，将发生什么？" class="headerlink" title="24、如果一个表有一列定义为TIMESTAMP，将发生什么？"></a>24、如果一个表有一列定义为TIMESTAMP，将发生什么？</h2><p>每当行被更改时，时间戳字段将获取当前时间戳。</p>
+<h2 id="25、列设置为AUTO-INCREMENT时，如果在表中达到最大值，会发生什么情况？"><a href="#25、列设置为AUTO-INCREMENT时，如果在表中达到最大值，会发生什么情况？" class="headerlink" title="25、列设置为AUTO　INCREMENT时，如果在表中达到最大值，会发生什么情况？"></a>25、列设置为AUTO　INCREMENT时，如果在表中达到最大值，会发生什么情况？</h2><p>它会停止递增，任何进一步的插入都将产生错误，因为密钥已被使用。</p>
+<h2 id="26、怎样才能找出最后一次插入时分配了哪个自动增量？"><a href="#26、怎样才能找出最后一次插入时分配了哪个自动增量？" class="headerlink" title="26、怎样才能找出最后一次插入时分配了哪个自动增量？"></a>26、怎样才能找出最后一次插入时分配了哪个自动增量？</h2><p>LAST_INSERT_ID将返回由Auto_increment分配的最后一个值，并且不需要指定表名称。</p>
+<h2 id="27、你怎么看到为表格定义的所有索引？"><a href="#27、你怎么看到为表格定义的所有索引？" class="headerlink" title="27、你怎么看到为表格定义的所有索引？"></a>27、你怎么看到为表格定义的所有索引？</h2><p>索引是通过以下方式为表格定义的：<br>SHOW INDEX FROM <tablename>;</tablename></p>
+<h2 id="28、LIKE声明中的％和-是什么意思？"><a href="#28、LIKE声明中的％和-是什么意思？" class="headerlink" title="28、LIKE声明中的％和_是什么意思？"></a>28、LIKE声明中的％和_是什么意思？</h2><p>%对应于0个或更多字符，_只是LIKE语句中的一个字符。</p>
+<h2 id="29、如何在Unix和mysql时间戳之间进行转换？"><a href="#29、如何在Unix和mysql时间戳之间进行转换？" class="headerlink" title="29、如何在Unix和mysql时间戳之间进行转换？"></a>29、如何在Unix和mysql时间戳之间进行转换？</h2><p>UNIX_TIMESTAMP是从MySQL时间戳转换为Unix时间戳的命令</p>
+<p>FROM_UNIXTIME是从Unix时间戳转换为MySQL时间戳的命令</p>
+<p>30、列对比运算符是什么？<br>在SELECT语句的列比较中使用=，&lt;&gt;，&lt;=，&lt;，&gt; =，&gt;，&lt;&lt;，&gt;&gt;，&lt;=&gt;，AND，OR或LIKE运算符。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/22/mysql/2014-7-22-MySql面试题-3/" data-id="cjpb17pju002r91cpt8v9bmm9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -242,7 +366,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/21/mysql/2014-7-21-MySql面试题-2/" data-id="cjp9ii0kn001sircptk8mnths" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/21/mysql/2014-7-21-MySql面试题-2/" data-id="cjpb17pjt002p91cpdcr1iuf9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -287,49 +411,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" data-id="cjp9ii0lv005bircpui2jaug7" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-20-Redis应用之多人在线" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/20/redis/2014-07-20-Redis应用之多人在线/" class="article-date">
-  <time datetime="2014-07-19T16:00:00.000Z" itemprop="datePublished">2014-07-20</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/20/redis/2014-07-20-Redis应用之多人在线/">Redis应用之多人在线</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="发送端发送消息"><a href="#发送端发送消息" class="headerlink" title="发送端发送消息"></a>发送端发送消息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush chat:userid:123:userid:456 hello</span><br></pre></td></tr></table></figure>
-<h2 id="接收端接受消息"><a href="#接收端接受消息" class="headerlink" title="接收端接受消息"></a>接收端接受消息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brpop chat:userid:123:userid:456 30000</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/20/redis/2014-07-20-Redis应用之多人在线/" data-id="cjp9ii0lu0059ircpoitg81zf" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" data-id="cjpb17pkq005591cpwd9s083s" class="article-share-link">Share</a>
       
       
     </footer>
@@ -489,7 +571,49 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/20/mysql/2014-7-20-MySql面试题-1/" data-id="cjp9ii0kn001oircpztlj6o0f" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/20/mysql/2014-7-20-MySql面试题-1/" data-id="cjpb17pl5005t91cp3xqx98dw" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-20-Redis应用之多人在线聊天" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天/" class="article-date">
+  <time datetime="2014-07-19T16:00:00.000Z" itemprop="datePublished">2014-07-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天/">Redis应用之多人在线聊天</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="发送端发送消息"><a href="#发送端发送消息" class="headerlink" title="发送端发送消息"></a>发送端发送消息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush chat:userid:123:userid:456 hello</span><br></pre></td></tr></table></figure>
+<h2 id="接收端接受消息"><a href="#接收端接受消息" class="headerlink" title="接收端接受消息"></a>接收端接受消息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brpop chat:userid:123:userid:456 30000</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天/" data-id="cjpb17pkj004l91cpgeps4ixs" class="article-share-link">Share</a>
       
       
     </footer>
@@ -532,7 +656,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" data-id="cjp9ii0lt0056ircppz6y9kot" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" data-id="cjpb17pki004j91cp1sone6k0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -571,9 +695,10 @@
         <h2 id="用户量小于百万"><a href="#用户量小于百万" class="headerlink" title="用户量小于百万"></a>用户量小于百万</h2><p>用户量不大，只有几千几万的情况下，直接使用集合类型即可</p>
 <h3 id="用户登录"><a href="#用户登录" class="headerlink" title="用户登录"></a>用户登录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sadd login:20140715:users [userid]</span><br></pre></td></tr></table></figure>
 <p>可以直接做 交 差 并 等集合运算</p>
-<h2 id="用户量小于亿"><a href="#用户量小于亿" class="headerlink" title="用户量小于亿"></a>用户量小于亿</h2><p>这个级别使用二进制可以精确存储<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setbit login:20140715:users [userid] 1</span><br></pre></td></tr></table></figure></p>
-<p>得到某个用户是否登录,判断是否是 1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getbit login:20140715:users [userid]</span><br></pre></td></tr></table></figure></p>
-<p>也可以作 交 差 并 等运算<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bitop [ AND | OR | NOT | XOR] login:20140715-6:users login:20140715:users login:20140716:users</span><br></pre></td></tr></table></figure></p>
+<h2 id="用户量小于亿"><a href="#用户量小于亿" class="headerlink" title="用户量小于亿"></a>用户量小于亿</h2><h3 id="这个级别使用二进制可以精确存储"><a href="#这个级别使用二进制可以精确存储" class="headerlink" title="这个级别使用二进制可以精确存储"></a>这个级别使用二进制可以精确存储</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setbit login:20140715:users [userid] 1</span><br></pre></td></tr></table></figure>
+<h3 id="得到某个用户是否登录-判断是否是-1"><a href="#得到某个用户是否登录-判断是否是-1" class="headerlink" title="得到某个用户是否登录,判断是否是 1"></a>得到某个用户是否登录,判断是否是 1</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getbit login:20140715:users [userid]</span><br></pre></td></tr></table></figure>
+<h3 id="获取登录用户数量"><a href="#获取登录用户数量" class="headerlink" title="获取登录用户数量"></a>获取登录用户数量</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bitcount login:20140715:users 0 -1</span><br></pre></td></tr></table></figure>
+<h3 id="也可以作-交-差-并-等运算"><a href="#也可以作-交-差-并-等运算" class="headerlink" title="也可以作 交 差 并 等运算"></a>也可以作 交 差 并 等运算</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bitop [ AND | OR | NOT | XOR] login:20140715-6:users login:20140715:users login:20140716:users</span><br></pre></td></tr></table></figure>
 <h2 id="用户梁大于亿"><a href="#用户梁大于亿" class="headerlink" title="用户梁大于亿"></a>用户梁大于亿</h2><p>推荐使用 hyperLogLog<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfadd login:20140715:users [userid]</span><br></pre></td></tr></table></figure></p>
 <p>求数量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfcount login:20140715:users</span><br></pre></td></tr></table></figure></p>
 <p>合并<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfmerge  login:20140715:users  login:20140716:users</span><br></pre></td></tr></table></figure></p>
@@ -581,7 +706,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjp9ii0lt0054ircp67dtarwj" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjpb17pkh004g91cp3jqqznh3" class="article-share-link">Share</a>
       
       
     </footer>
@@ -625,107 +750,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" data-id="cjp9ii0ls0051ircpqjqh33yq" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-14-Redis一般命令" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/14/redis/2014-07-14-Redis一般命令/" class="article-date">
-  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis一般命令/">Redis一般命令</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://redis.io/commands" target="_blank" rel="noopener">英文版</a></p>
-<p><a href="http://doc.redisfans.com/#" target="_blank" rel="noopener">中文版</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis一般命令/" data-id="cjp9ii0lr004zircp250hdijs" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-13-Redis适用场合" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/13/redis/2014-07-13-Redis适用场合/" class="article-date">
-  <time datetime="2014-07-12T16:00:00.000Z" itemprop="datePublished">2014-07-13</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/13/redis/2014-07-13-Redis适用场合/">Redis适用场合</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Redis其实开创了一种新的数据存储思路，使用Redis，我们不用再面对功能单调的数据库时，把精力放在如何把大象放进冰箱的问题，而是利用Redis提供的灵活多变的数据结构和数据操作，为不同的大象构建不同的冰箱。</p>
-<p>下面是一些Redis常用的场景：</p>
-<ol>
-<li>关系型数据库缓存</li>
-<li>任务队列(rpoplpush)</li>
-<li>大量数据运算(set,交、差、并,is a)</li>
-<li></li>
-<li>srandmember 随即抽奖</li>
-</ol>
-<h2 id="取最新N个数据的操作"><a href="#取最新N个数据的操作" class="headerlink" title="取最新N个数据的操作"></a>取最新N个数据的操作</h2><p>比如典型的取你网站的最新文章，通过下面方式，我们可以将最新的 5000 条评论的 ID 放在Redis 的 List 集合中，并将超出集合部分从数据库获取。使用 LPUSH latest.comments命令，向 list 集合中插入数据插入完成后再用 LTRIM latest.comments 0 5000 命令使其永远只保存最近 5000 个 ID如果你还有不同的筛选维度，比如某个分类的最新 N 条，那么你可以再建一个按此分类的List，只存 ID 的话，Redis 是非常高效的。</p>
-<h2 id="排行榜应用，取TOP-N操作（排行榜）"><a href="#排行榜应用，取TOP-N操作（排行榜）" class="headerlink" title="排行榜应用，取TOP N操作（排行榜）"></a>排行榜应用，取TOP N操作（排行榜）</h2><p>这个需求与上面需求的不同之处在于，前面操作以时间为权重，这个是以某一个条件为权重，比如按购买的次数或者顶的次数，这时候就需要 sorted set 出马，将你要排序的值设置为sorted set的score，将具体的数据设置为相应的value，每次只需要执行一条ZADD命令即可。</p>
-<h2 id="需要精确设定过期时间的应用"><a href="#需要精确设定过期时间的应用" class="headerlink" title="需要精确设定过期时间的应用"></a>需要精确设定过期时间的应用</h2><p>比如你可以把上面说到的 sorted set 的 score 值设置成过期时间的时间戳，那么就可以简单地通过过期时间排序，定时清除过期数据了，不仅是清除 Redis 中的过期数据，你完全可以把 Redis 里这个过期时间当成是对数据库中数据的索引，用 Redis 来找出哪些数据需要过期删除，然后再精准地从数据库中删除相应的记录。</p>
-<h2 id="计数器应用"><a href="#计数器应用" class="headerlink" title="计数器应用"></a>计数器应用</h2><p>Redis的命令是原子性的，你可以轻松利用INCR、DECR命令来构建计数器系统（底层的写入是单线程模型，并发写会按到位顺序执行）</p>
-<h2 id="Unique-操作，获取某段时间所有数据去重值"><a href="#Unique-操作，获取某段时间所有数据去重值" class="headerlink" title="Unique 操作，获取某段时间所有数据去重值"></a>Unique 操作，获取某段时间所有数据去重值</h2><p>这个使用Redis的Set数据结构最合适，只需要不断将数据往Set中扔就行，set就是集合，会自动去重</p>
-<h2 id="实时系统、发垃圾系统"><a href="#实时系统、发垃圾系统" class="headerlink" title="实时系统、发垃圾系统"></a>实时系统、发垃圾系统</h2><p>通过上面说到的 set 功能，你可以知道一个终端用户是否进行了某个操作，可以找到其操作的集合并进行分析统计对比等。没有做不到，只有想不到。</p>
-<h2 id="Pub、Sub-构建实时消息系统"><a href="#Pub、Sub-构建实时消息系统" class="headerlink" title="Pub、Sub 构建实时消息系统"></a>Pub、Sub 构建实时消息系统</h2><p>Redis 的 Pub/Sub 系统可以构建实时的消息系统，比如很多用 Pub/Sub 构建的实时聊天系统的例子。</p>
-<h2 id="构建队列系统"><a href="#构建队列系统" class="headerlink" title="构建队列系统"></a>构建队列系统</h2><p>使用list可以构建队列系统，使用sorted set 甚至可以构建有优先级的队列系统。</p>
-<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>性能优于Memcached，并且更优秀的在于数据结构更加多样化</p>
-<h2 id="抽奖"><a href="#抽奖" class="headerlink" title="抽奖"></a>抽奖</h2>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/13/redis/2014-07-13-Redis适用场合/" data-id="cjp9ii0lq004vircpa39gr2jk" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" data-id="cjpb17pkg004e91cpyrowwyri" class="article-share-link">Share</a>
       
       
     </footer>
