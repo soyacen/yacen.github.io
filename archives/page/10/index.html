@@ -5,20 +5,19 @@
   
 
   
-  <title>Redis应用之计数器-id生成器 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <title>Archives | 蓦然回首，bug依然在灯火阑珊处</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="计数器增 1,并返回值1incr global:counter 获取计数器当前值1get global:counter 重置计数器1getset global:counter set命令也可以，getset可以获取先前值，有时会有用">
+  <meta name="description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
 <meta name="keywords" content="后端 Node.js go golang">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Redis应用之计数器-id生成器">
-<meta property="og:url" content="http://yacen.github.io/2014/07/24/redis/2014-07-25-Redis应用之id生成器/index.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:url" content="http://yacen.github.io/archives/page/10/index.html">
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
-<meta property="og:description" content="计数器增 1,并返回值1incr global:counter 获取计数器当前值1get global:counter 重置计数器1getset global:counter set命令也可以，getset可以获取先前值，有时会有用">
+<meta property="og:description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-12-05T09:55:29.066Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Redis应用之计数器-id生成器">
-<meta name="twitter:description" content="计数器增 1,并返回值1incr global:counter 获取计数器当前值1get global:counter 重置计数器1getset global:counter set命令也可以，getset可以获取先前值，有时会有用">
+<meta name="twitter:title" content="蓦然回首，bug依然在灯火阑珊处">
+<meta name="twitter:description" content="记录一些资料，有原创也有摘录，防止以后会忘记。">
   
     <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
   
@@ -69,68 +68,45 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-redis/2014-07-25-Redis应用之id生成器" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/24/redis/2014-07-25-Redis应用之id生成器/" class="article-date">
-  <time datetime="2014-07-23T16:00:00.000Z" itemprop="datePublished">2014-07-24</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+        <section id="main">
   
-    <h1 class="article-title" itemprop="name">
-      Redis应用之计数器-id生成器
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2014" class="archive-year">2014</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      <a href="/2014/06/03/redis/2014-06-03-Redis特点/" class="archive-article-date">
+  <time datetime="2014-06-02T16:00:00.000Z" itemprop="datePublished">Jun 3</time>
+</a>
+      
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2014/06/03/redis/2014-06-03-Redis特点/">Redis特点</a>
     </h1>
   
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="计数器增-1-并返回值"><a href="#计数器增-1-并返回值" class="headerlink" title="计数器增 1,并返回值"></a>计数器增 1,并返回值</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incr global:counter</span><br></pre></td></tr></table></figure>
-<h2 id="获取计数器当前值"><a href="#获取计数器当前值" class="headerlink" title="获取计数器当前值"></a>获取计数器当前值</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get global:counter</span><br></pre></td></tr></table></figure>
-<h2 id="重置计数器"><a href="#重置计数器" class="headerlink" title="重置计数器"></a>重置计数器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getset global:counter</span><br></pre></td></tr></table></figure>
-<p><code>set</code>命令也可以，<code>getset</code>可以获取先前值，有时会有用</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/24/redis/2014-07-25-Redis应用之id生成器/" data-id="cjpb17pkn004x91cpdivxqbbp" class="article-share-link">Share</a>
-      
-      
-    </footer>
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2014/07/25/mysql/2014-7-25-MySql面试题-6/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          MySql面试题
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2014/07/24/mysql/2014-7-24-MySql面试题-5/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">MySql面试题</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/archives/page/9/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/8/">8</a><a class="page-number" href="/archives/page/9/">9</a><span class="page-number current">10</span>
+  </nav>
 
 </section>
         

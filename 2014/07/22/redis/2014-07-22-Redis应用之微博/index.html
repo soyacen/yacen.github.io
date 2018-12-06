@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
 <meta property="og:description" content="注册123456789incr global:userid                  # 产生唯一useridset user:userid:1:username zhansan  # 设置userid为1的用户的用户名set user:userid:1:password 111111   # 设置userid为1的用户的密码set user:username:zhansan:userid">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-12-04T08:36:19.388Z">
+<meta property="og:updated_time" content="2018-12-06T08:00:48.344Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis应用之微博">
 <meta name="twitter:description" content="注册123456789incr global:userid                  # 产生唯一useridset user:userid:1:username zhansan  # 设置userid为1的用户的用户名set user:userid:1:password 111111   # 设置userid为1的用户的密码set user:username:zhansan:userid">
@@ -156,11 +156,12 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for postid in postids &#123;</span><br><span class="line">  lpush recivepost:myuserid postid</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">posts = sort recievepost:myuserid</span><br><span class="line"></span><br><span class="line">for postid in posts &#123;</span><br><span class="line">  hmget post:postid:[postid] timestamp content userid username</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 </ol>
+<h2 id="与某个明星starid共同关注"><a href="#与某个明星starid共同关注" class="headerlink" title="与某个明星starid共同关注"></a>与某个明星starid共同关注</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sinterstore common:concern myuserid starid</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjpb17pkl004r91cps1jhvhpb" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjpcbv9ew004tk6cpd49d8ozw" class="article-share-link">Share</a>
       
       
     </footer>
