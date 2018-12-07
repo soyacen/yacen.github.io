@@ -42,7 +42,7 @@
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">一码当先</a>
+          <a href="/" id="subtitle">记录平时可能用到的资料</a>
         </h2>
       
     </div>
@@ -139,7 +139,70 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpcbv9f8005kk6cpgw4ltaiw" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpduxrbx0065ajcpmi80vur4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-12-11-Redis-HyperLogLog" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" class="article-date">
+  <time datetime="2014-12-10T16:00:00.000Z" itemprop="datePublished">2014-12-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/">Redis-HyperLogLog</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="HyperLogLog-介绍"><a href="#HyperLogLog-介绍" class="headerlink" title="HyperLogLog 介绍"></a>HyperLogLog 介绍</h2><p>HyperLogLog 可以接受多个元素作 为输入,并给出输入元素的基数估算值:</p>
+<ul>
+<li>基数:集合中不同元素的数量。比如 {‘apple’, ‘banana’, ‘cherry’, ‘banana’, ‘apple’} 的基数就是 3 。</li>
+<li>估算值:算法给出的基数并不是精确的,可能会比 实际稍微多一些或者稍微少一些,但会控制在合理的范围之内。</li>
+</ul>
+<h2 id="HyperLogLog-的优点"><a href="#HyperLogLog-的优点" class="headerlink" title="HyperLogLog 的优点"></a>HyperLogLog 的优点</h2><ul>
+<li>即使输入元素的数量或者体 积非常非常大, 计算基数所需的空 间总是固定的、并且是很小的。</li>
+</ul>
+<p>在 Redis 里面,每个 HyperLogLog 键只需要花费 12 KB 内存,就可以 计算接近 2^64 个不同元素的基数。</p>
+<p>这和计算基数时,元素越多耗 费内存就越多的集合形成 鲜明对比。</p>
+<p>但是,因为 HyperLogLog 只会根据输入元素来计算基数,而不会 储存输入元素本身,所以<br>HyperLogLog 不能像集合那 样,返回输入的各个元素。</p>
+<h2 id="将元素添加至-HyperLogLog"><a href="#将元素添加至-HyperLogLog" class="headerlink" title="将元素添加至 HyperLogLog"></a>将元素添加至 HyperLogLog</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PFADD key element [element ...]</span><br></pre></td></tr></table></figure>
+<p>将任意数量的元素添加到指定的 HyperLogLog 里面。</p>
+<p>这个命令可能会 对 HyperLogLog 进行修改,以便反映新的基数估算 值,如果 HyperLogLog 的基数估算值在命令执行之后出现了变化, 那么命令返回 1 , 否则返回 0 。</p>
+<p>命令的复杂度为 O(N) ,N 为被添加元素的数量。</p>
+<h2 id="返回给定-HyperLogLog-的基数估算值"><a href="#返回给定-HyperLogLog-的基数估算值" class="headerlink" title="返回给定 HyperLogLog 的基数估算值"></a>返回给定 HyperLogLog 的基数估算值</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PFCOUNT key [key ...]</span><br></pre></td></tr></table></figure>
+<p>当只给定一个 HyperLogLog 时,命令返回给定 HyperLogLog 的基数估算值。</p>
+<p>当给定多个 HyperLogLog 时,命令会先对给定的 HyperLogLog 进行并集计算,得出一个合并后的HyperLogLog ,然后返回这个合并 HyperLogLog 的基数估算值作为命令的结果(合并得出的HyperLogLog 不会被储存,使用之后就会被 删掉)。</p>
+<p>当命令作用于 单个 HyperLogLog 时, 复杂度为 O(1) , 并且具有非常低的平均常数 时间。</p>
+<p>当命令作用于多个 HyperLogLog 时, 复杂度为 O(N) ,并且常数时间也比处理单个 HyperLogLog 时要大得多。</p>
+<h2 id="合并多个-HyperLogLog"><a href="#合并多个-HyperLogLog" class="headerlink" title="合并多个 HyperLogLog"></a>合并多个 HyperLogLog</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PFMERGE destkey sourcekey [sourcekey ...]</span><br></pre></td></tr></table></figure>
+<p>将多个 HyperLogLog 合并为一个 HyperLogLog ,合并后的 HyperLogLog 的基数估算值是通过对所有给定 HyperLogLog 进行并集计算得出的。</p>
+<p>命令的复杂度为 O(N) , 其中 N 为被合并的 HyperLogLog 数量, 不过这个命令的常数复杂度比较高。</p>
+<h2 id="PFMERGE-的使用示例"><a href="#PFMERGE-的使用示例" class="headerlink" title="PFMERGE 的使用示例"></a>PFMERGE 的使用示例</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; PFADD str1 &quot;apple&quot; &quot;banana&quot; &quot;cherry&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; PFCOUNT str1</span><br><span class="line">(integer) 3</span><br><span class="line">redis&gt; PFADD str2 &quot;apple&quot; &quot;cherry&quot; &quot;durian&quot; &quot;mongo&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; PFCOUNT str2</span><br><span class="line">(integer) 4</span><br><span class="line">redis&gt; PFMERGE str1&amp;2 str1 str2</span><br><span class="line">OK</span><br><span class="line">redis&gt; PFCOUNT str1&amp;2</span><br><span class="line">(integer) 5</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" data-id="cjpduxrbv005zajcpigupeuak" class="article-share-link">Share</a>
       
       
     </footer>
@@ -214,7 +277,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjpcbv9f30059k6cp8ozusk2f" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjpduxrbx0067ajcpae6dnln5" class="article-share-link">Share</a>
       
       
     </footer>
@@ -263,7 +326,56 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjpcbv9e2002lk6cpr70x8tmw" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjpduxrb4003zajcpurc8jqtn" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-09-Redis应用之在线直播间" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" class="article-date">
+  <time datetime="2014-08-08T16:00:00.000Z" itemprop="datePublished">2014-08-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/">Redis应用之在线直播间</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="在线直播间"><a href="#在线直播间" class="headerlink" title="在线直播间"></a>在线直播间</h2><p>每个直播间都有一个播主和多个听众。</p>
+<p>播主只要在直播间播放一首歌,那么所有听众都会听到相同的歌曲。</p>
+<h2 id="使用发布与订阅功能实现直播间"><a href="#使用发布与订阅功能实现直播间" class="headerlink" title="使用发布与订阅功能实现直播间"></a>使用发布与订阅功能实现直播间</h2><p>要使用 Redis 实现类似的直播间,我们可以为每个直播间设置一个频道,每个直播间的听众都是频道的订阅者,而播主则通过向频道发送消息来告诉大家要播放哪首歌。</p>
+<p>比如说,假设用户 peter 正在进行直播,他的直播间的频道为 peter::live::room ,当 peter要播放 ID 为 10086 的歌曲时,他会执行命令 PUBLISH peter::live::room “play_song::<br>10086” 。</p>
+<p>而所有听众在接收到 这条消息时,只需要分析出里面的指令( play_song)和要播放的歌曲 ID (10086),就可以播放 peter 指定的歌<br>曲了。</p>
+<h2 id="播主功能，播放-ID-为-song-id-的歌曲。"><a href="#播主功能，播放-ID-为-song-id-的歌曲。" class="headerlink" title="播主功能，播放 ID 为 song_id 的歌曲。"></a>播主功能，播放 ID 为 song_id 的歌曲。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">publish live:room:[roomid] &quot;song is song_id&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="听众功能，收听直播间。"><a href="#听众功能，收听直播间。" class="headerlink" title="听众功能，收听直播间。"></a>听众功能，收听直播间。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">subscribe live:room:[roomid]</span><br></pre></td></tr></table></figure>
+<h2 id="列出所有直播间"><a href="#列出所有直播间" class="headerlink" title="列出所有直播间"></a>列出所有直播间</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pubsub channels</span><br></pre></td></tr></table></figure>
+<h2 id="听众数量"><a href="#听众数量" class="headerlink" title="听众数量"></a>听众数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pubsub numsub live:room:[roomid]</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjpduxrbv005xajcpqbyvm24r" class="article-share-link">Share</a>
       
       
     </footer>
@@ -313,7 +425,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjpcbv9e0002jk6cpgoohtzqf" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjpduxrb4003xajcprnhb7rqf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -366,7 +478,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjpcbv9e0002hk6cpg7ub7slk" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjpduxrb3003vajcply9gtk1n" class="article-share-link">Share</a>
       
       
     </footer>
@@ -418,7 +530,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjpcbv9dz002fk6cp7uot7ufk" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjpduxrb2003rajcpcb68r9q3" class="article-share-link">Share</a>
       
       
     </footer>
@@ -489,7 +601,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjpcbv9dy002dk6cpb040idty" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjpduxrb1003pajcppz06sx3z" class="article-share-link">Share</a>
       
       
     </footer>
@@ -499,14 +611,14 @@
 
 
   
-    <article id="post-mysql/2014-8-4-MySql数据库的工作流程" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-redis/2014-08-05-Redis应用之Session" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" class="article-date">
-  <time datetime="2014-08-03T16:00:00.000Z" itemprop="datePublished">2014-08-04</time>
+    <a href="/2014/08/05/redis/2014-08-05-Redis应用之Session/" class="article-date">
+  <time datetime="2014-08-04T16:00:00.000Z" itemprop="datePublished">2014-08-05</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+    <a class="article-category-link" href="/categories/redis/">redis</a>
   </div>
 
   </div>
@@ -517,7 +629,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/">MySql数据库的工作流程</a>
+      <a class="article-title" href="/2014/08/05/redis/2014-08-05-Redis应用之Session/">Redis应用之Session</a>
     </h1>
   
 
@@ -525,168 +637,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在收到一个查询的时候，Mysql的架构中的各个组件是如此工作的：<br><img src="mysql3.png" alt="mysql3"></p>
-<p>客户端同数据库服务层建立TCP连接，连接管理模块会建立连接，并请求一个连接线程。如果连接池中有空闲的连接线程，则分配给这个连接，如果没有，在没有超过最大连接数的情况下，创建新的连接线程负责这个客户端。</p>
-<p>在真正的操作之前，还需要调用用户模块进行授权检查，来验证用户是否有权限。通过后，方才提供服务，连接线程开始接收并处理来自客户端的SQL语句。</p>
-<p>连接线程接收到SQL语句之后，将语句交给SQL语句解析模块进行语法分析和语义分析。</p>
-<p>如果是一个查询语句，则可以先看查询缓存中是否有结果，如果有结果可以直接返回给客户端。</p>
-<p>如果查询缓存中没有结果，就需要真的查询数据库引擎层了，于是发给SQL优化器，进行查询的优化。如果是表变更，则分别交给insert, update, delete, create，alter处理模块进行处理。</p>
-<p>接下来就是请求数据库引擎层，打开表，如果需要的话获取相应的锁。</p>
-<p>接下来的处理过程就到了数据库引擎层，例如InnoDB。</p>
-<p>在数据库引擎层，要先查询缓存页中有没有相应的数据，如果有则可以直接返回，如果没有就要从磁盘上去读取。</p>
-<p>当在磁盘中找到相应的数据之后，则会加载到缓存中来，从而使得后面的查询更加高效，由于内存有限，多采用变通的LRU表来管理缓存页，保证缓存的都是经常访问的数据。</p>
-<p>获取数据后返回给客户端，关闭连接，释放连接线程，过程结束。</p>
-
+        <h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><p>用户 Session (会话)是一种验证用户身份的手段,通常会分 别储存在服务器端和客户端,一般由用户ID(uid)和 Session ID (sid)组成。</p>
+<p>当用户成功登录网站之后,网 页浏览器会把网站返回的 Session 储存起来,之后每次 浏览器查看网站的某个页面时,浏览器都会把 Session 里面储存的信息连同网页请求一并发送给网站,使得网站可以检查这个客户端是否已经登录,以及是否为指定的用户,等等。</p>
+<p>Session 一般每过一周或者一个月就会自 动过期,强制用户再次登录,以防用户遗忘密码,或者Session ID 遭人破解。</p>
+<h2 id="设置Session"><a href="#设置Session" class="headerlink" title="设置Session"></a>设置Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set key info PX [expireTime|1000 * 60 * 60 * 24]</span><br></pre></td></tr></table></figure>
+<h2 id="获取Session"><a href="#获取Session" class="headerlink" title="获取Session"></a>获取Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get key</span><br></pre></td></tr></table></figure>
+<h2 id="销毁Session"><a href="#销毁Session" class="headerlink" title="销毁Session"></a>销毁Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">del key</span><br></pre></td></tr></table></figure>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" data-id="cjpcbv9dw002bk6cpwr2cwj2x" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-3-MySql数据库的总体架构" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" class="article-date">
-  <time datetime="2014-08-02T16:00:00.000Z" itemprop="datePublished">2014-08-03</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/">MySql数据库的总体架构</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><img src="mysql1.png" alt="mysql1"></p>
-<p>这是一张非常经典的Mysql的系统架构图，通过这个图可以看出Mysql各个部分的功能。</p>
-<p>当客户端连接数据库的时候，首先面对的是连接池，用于管理用户的连接，并会做一定的认证和鉴权。</p>
-<p>连接了数据库之后，客户端会发送SQL语句，而SQL接口这个模块就是来接受用户的SQL语句的。</p>
-<p>SQL语句往往需要符合严格的语法规则，因而要有语法解析器对语句进行语法解析，解析语法的原理如同编译原理中的学到的那样，从语句变成语法树。</p>
-<p>对于用户属于的查询可以进行优化，从而可以选择最快的查询路径，这就是优化器的作用。</p>
-<p>为了加快查询速度，会有查询缓存模块，如果查询缓存有命中的查询结果，查询语句就可以直接去查询缓存中取数据。</p>
-<p>上面的所有的组件都是数据库服务层，接下来是数据库引擎层，当前主流的数据库引擎就是InnoDB。</p>
-<p>对于数据库有任何的修改，数据库服务层会有binary log记录下来，这是主备复制的基础。</p>
-<p>对于数据库引擎层，一个著名的图如下：</p>
-<p><img src="mysql2.png" alt="mysql2"><br>在存储引擎层，也有缓存，也有日志，最终数据是落到盘上的。</p>
-<p>存储引擎层的缓存也是用于提高性能的，但是同数据库服务层的缓存不同，数据库服务层的缓存是查询缓存，而数据库引擎层的缓存读写都缓存。数据库服务层的缓存是基于查询逻辑的，而数据库引擎引擎的缓存是基于数据页的，可以说是物理的。</p>
-<p>哪怕是数据的写入仅仅写入到了数据库引擎层中的缓存，对于数据库服务层来讲，就算是已经持久化了，当然这个时候会造成缓存页和硬盘上的页的数据的不一致，这种不一致由数据库引擎层的日志来保证完整性。</p>
-<p>所以数据库引擎层的日志和数据库服务层的也不同，服务层的日志记录的是一个个的修改逻辑，而引擎层的日志记录的是缓存页和数据页的物理差异。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" data-id="cjpcbv9du0027k6cp9d2vgaw2" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-2-数据库表创建注意事项" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" class="article-date">
-  <time datetime="2014-08-01T16:00:00.000Z" itemprop="datePublished">2014-08-02</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/">MySQL优化</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="M数据库表创建注意事项"><a href="#M数据库表创建注意事项" class="headerlink" title="M数据库表创建注意事项"></a>M数据库表创建注意事项</h2><ol>
-<li><p>字段名及字段配制合理性</p>
-<ul>
-<li><p>剔除关系不密切的字段；</p>
-</li>
-<li><p>字段命名要有规则及相对应的含义（不要一部分英文，一部分拼音，还有类似a.b.c这样不明含义的字段）；</p>
-</li>
-<li><p>字段命名尽量不要使用缩写（大多数缩写都不能明确字段含义）；</p>
-</li>
-<li><p>字段不要大小写混用（想要具有可读性，多个英文单词可使用下划线形式连接）；</p>
-</li>
-<li><p>字段名不要使用保留字或者关键字；</p>
-</li>
-<li><p>保持字段名和类型的一致性；</p>
-</li>
-<li><p>慎重选择数字类型；</p>
-</li>
-<li><p>给文本字段留足余量；</p>
-</li>
-</ul>
-</li>
-<li><p>系统特殊字段处理及建成后建议</p>
-<ul>
-<li><p>添加删除标记（例如操作人. 删除时间）；</p>
-</li>
-<li><p>建立版本机制；</p>
-</li>
-</ul>
-</li>
-<li><p>表结构合理性配置</p>
-<ul>
-<li><p>多型字段的处理，就是表中是否存在字段能够分解成更小独立的几部分（例如：人可以分为男人和女人）；</p>
-</li>
-<li><p>多值字段的处理，可以将表分为三张表，这样使得检索和排序更加有调理，且保证数据的完整性！</p>
-</li>
-</ul>
-</li>
-<li><p>其它建议</p>
-<ul>
-<li><p>对于大数据字段，独立表进行存储，以便影响性能（例如：简介字段）；</p>
-</li>
-<li><p>使用varchar类型代替char，因为varchar会动态分配长度，char指定长度是固定的；</p>
-</li>
-<li><p>给表创建主键，对于没有主键的表，在查询和索引定义上有一定的影响；</p>
-</li>
-<li><p>避免表字段运行为null，建议设置默认值（例如：int类型设置默认值为0）在索引查询上，效率立显；</p>
-</li>
-<li><p>建立索引，最好建立在唯一和非空的字段上，建立太多的索引对后期插入. 更新都存在一定的影响（考虑实际情况来创建）；</p>
-</li>
-</ul>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" data-id="cjpcbv9dv0029k6cpbrcfqfox" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjpduxrbu005vajcpc2dumq20" class="article-share-link">Share</a>
       
       
     </footer>

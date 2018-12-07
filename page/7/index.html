@@ -42,7 +42,7 @@
       </h1>
       
         <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">一码当先</a>
+          <a href="/" id="subtitle">记录平时可能用到的资料</a>
         </h2>
       
     </div>
@@ -69,6 +69,332 @@
 </header>
       <div class="outer">
         <section id="main">
+  
+    <article id="post-redis/2014-08-04-Redis应用之周榜、月榜、年榜" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" class="article-date">
+  <time datetime="2014-08-03T16:00:00.000Z" itemprop="datePublished">2014-08-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/">Redis应用之周榜、月榜、年榜</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="创建每日排行榜"><a href="#创建每日排行榜" class="headerlink" title="创建每日排行榜"></a>创建每日排行榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 2014-08-04</span><br><span class="line">zadd music:rank:2014-08-04 1345 Happy 2314 Fancy 3413 Rude 5313 Problem</span><br><span class="line"></span><br><span class="line"># 2014-08-05</span><br><span class="line">zadd music:rank:2014-08-05 1234 Happy 2345 Fancy 3456 Rude 4567 Problem </span><br><span class="line"></span><br><span class="line"># 2014-08-06</span><br><span class="line">zadd music:rank:2014-08-06 2431 Happy 3456 Fancy 4321 Rude 6432 Problem </span><br><span class="line"></span><br><span class="line"># 2014-08-07</span><br><span class="line">zadd music:rank:2014-08-07 1632 Happy 2632 Fancy 2456 Rude 1245 Problem</span><br></pre></td></tr></table></figure>
+<h2 id="周榜"><a href="#周榜" class="headerlink" title="周榜"></a>周榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zunionstore music:weakrank:2014-08-04-10 music:rank:2014-08-04 music:rank:2014-08-05 music:rank:2014-08-06 ...music:rank:2014-08-10</span><br></pre></td></tr></table></figure>
+<h2 id="月榜"><a href="#月榜" class="headerlink" title="月榜"></a>月榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zunionstore music:monthrank:2014-08 music:rank:2014-08-04 music:rank:2014-08-05 music:rank:2014-08-06 ...music:rank:2014-08-30</span><br></pre></td></tr></table></figure>
+<h2 id="年榜"><a href="#年榜" class="headerlink" title="年榜"></a>年榜</h2><p>zunionstore music:yearrank:2014 music:monthrank:2014-01 music:monthrank:2014-02 music:monthrank:2014-03 …music:monthrank:2014-12</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" data-id="cjpduxrbt005tajcpo6ho9e9i" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-8-4-MySql数据库的工作流程" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" class="article-date">
+  <time datetime="2014-08-03T16:00:00.000Z" itemprop="datePublished">2014-08-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/">MySql数据库的工作流程</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在收到一个查询的时候，Mysql的架构中的各个组件是如此工作的：<br><img src="mysql3.png" alt="mysql3"></p>
+<p>客户端同数据库服务层建立TCP连接，连接管理模块会建立连接，并请求一个连接线程。如果连接池中有空闲的连接线程，则分配给这个连接，如果没有，在没有超过最大连接数的情况下，创建新的连接线程负责这个客户端。</p>
+<p>在真正的操作之前，还需要调用用户模块进行授权检查，来验证用户是否有权限。通过后，方才提供服务，连接线程开始接收并处理来自客户端的SQL语句。</p>
+<p>连接线程接收到SQL语句之后，将语句交给SQL语句解析模块进行语法分析和语义分析。</p>
+<p>如果是一个查询语句，则可以先看查询缓存中是否有结果，如果有结果可以直接返回给客户端。</p>
+<p>如果查询缓存中没有结果，就需要真的查询数据库引擎层了，于是发给SQL优化器，进行查询的优化。如果是表变更，则分别交给insert, update, delete, create，alter处理模块进行处理。</p>
+<p>接下来就是请求数据库引擎层，打开表，如果需要的话获取相应的锁。</p>
+<p>接下来的处理过程就到了数据库引擎层，例如InnoDB。</p>
+<p>在数据库引擎层，要先查询缓存页中有没有相应的数据，如果有则可以直接返回，如果没有就要从磁盘上去读取。</p>
+<p>当在磁盘中找到相应的数据之后，则会加载到缓存中来，从而使得后面的查询更加高效，由于内存有限，多采用变通的LRU表来管理缓存页，保证缓存的都是经常访问的数据。</p>
+<p>获取数据后返回给客户端，关闭连接，释放连接线程，过程结束。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" data-id="cjpduxrb2003tajcpt4kko2yo" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-8-3-MySql数据库的总体架构" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" class="article-date">
+  <time datetime="2014-08-02T16:00:00.000Z" itemprop="datePublished">2014-08-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/">MySql数据库的总体架构</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="mysql1.png" alt="mysql1"></p>
+<p>这是一张非常经典的Mysql的系统架构图，通过这个图可以看出Mysql各个部分的功能。</p>
+<p>当客户端连接数据库的时候，首先面对的是连接池，用于管理用户的连接，并会做一定的认证和鉴权。</p>
+<p>连接了数据库之后，客户端会发送SQL语句，而SQL接口这个模块就是来接受用户的SQL语句的。</p>
+<p>SQL语句往往需要符合严格的语法规则，因而要有语法解析器对语句进行语法解析，解析语法的原理如同编译原理中的学到的那样，从语句变成语法树。</p>
+<p>对于用户属于的查询可以进行优化，从而可以选择最快的查询路径，这就是优化器的作用。</p>
+<p>为了加快查询速度，会有查询缓存模块，如果查询缓存有命中的查询结果，查询语句就可以直接去查询缓存中取数据。</p>
+<p>上面的所有的组件都是数据库服务层，接下来是数据库引擎层，当前主流的数据库引擎就是InnoDB。</p>
+<p>对于数据库有任何的修改，数据库服务层会有binary log记录下来，这是主备复制的基础。</p>
+<p>对于数据库引擎层，一个著名的图如下：</p>
+<p><img src="mysql2.png" alt="mysql2"><br>在存储引擎层，也有缓存，也有日志，最终数据是落到盘上的。</p>
+<p>存储引擎层的缓存也是用于提高性能的，但是同数据库服务层的缓存不同，数据库服务层的缓存是查询缓存，而数据库引擎层的缓存读写都缓存。数据库服务层的缓存是基于查询逻辑的，而数据库引擎引擎的缓存是基于数据页的，可以说是物理的。</p>
+<p>哪怕是数据的写入仅仅写入到了数据库引擎层中的缓存，对于数据库服务层来讲，就算是已经持久化了，当然这个时候会造成缓存页和硬盘上的页的数据的不一致，这种不一致由数据库引擎层的日志来保证完整性。</p>
+<p>所以数据库引擎层的日志和数据库服务层的也不同，服务层的日志记录的是一个个的修改逻辑，而引擎层的日志记录的是缓存页和数据页的物理差异。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" data-id="cjpduxrb0003najcpq4f0ig6a" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-03-Redis应用之自动补完" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/03/redis/2014-08-03-Redis应用之自动补完/" class="article-date">
+  <time datetime="2014-08-02T16:00:00.000Z" itemprop="datePublished">2014-08-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/03/redis/2014-08-03-Redis应用之自动补完/">Redis应用之自动补完</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="搜索引擎的自动提示补完"><a href="#搜索引擎的自动提示补完" class="headerlink" title="搜索引擎的自动提示补完"></a>搜索引擎的自动提示补完</h1><h2 id="构建提示列表"><a href="#构建提示列表" class="headerlink" title="构建提示列表"></a>构建提示列表</h2><p>为了构建按使用次数 进行排序的提示列表,程序需要分析用 户的输入,并记录每个字、词、句的使用频<br>率。</p>
+<p>举个例子,每当用 户输入‘周杰伦’的时候,程序会执行以下命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ZINCRBY &apos;auto-complete::周&apos; &apos;周杰伦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周杰&apos; &apos;周杰伦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周杰伦&apos; &apos;周杰伦&apos; 1</span><br></pre></td></tr></table></figure></p>
+<p>又比如说,每当用户输入‘周公解梦’的时候,程序会执行以下命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ZINCRBY &apos;auto-complete::周&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公解&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公解梦&apos; &apos;周公解梦&apos; 1</span><br></pre></td></tr></table></figure></p>
+<h2 id="当用户键入相应的字、词、句时-程序可以通-过访问以-‘auto-complete-’-开头的键来得到相应的提示信息。"><a href="#当用户键入相应的字、词、句时-程序可以通-过访问以-‘auto-complete-’-开头的键来得到相应的提示信息。" class="headerlink" title="当用户键入相应的字、词、句时,程序可以通 过访问以 ‘auto-complete::’ 开头的键来得到相应的提示信息。"></a>当用户键入相应的字、词、句时,程序可以通 过访问以 ‘auto-complete::’ 开头的键来得到相应的提示信息。</h2><p>举个例子,当用 户键入 ‘周’ 字的时候,程序就会 对 ‘auto-complete::周’ 这个有序集合调用,<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZREVRANGE auto-complete::周 0 4  # [&apos;周永康&apos;, &apos;周公解梦&apos;, &apos;周杰伦&apos;, &apos;周迅&apos;, &apos;周星驰&apos;]</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/03/redis/2014-08-03-Redis应用之自动补完/" data-id="cjpduxrbs005pajcpv5xqwmft" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-02-Redis应用之翻页" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/02/redis/2014-08-02-Redis应用之翻页/" class="article-date">
+  <time datetime="2014-08-01T16:00:00.000Z" itemprop="datePublished">2014-08-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/02/redis/2014-08-02-Redis应用之翻页/">Redis应用之翻页</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="blog文章分页"><a href="#blog文章分页" class="headerlink" title="blog文章分页"></a>blog文章分页</h1><h2 id="添加一篇blog，以时间作为score"><a href="#添加一篇blog，以时间作为score" class="headerlink" title="添加一篇blog，以时间作为score"></a>添加一篇blog，以时间作为score</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">zadd blog:page 1407000000 &apos;今天天气正好&apos;</span><br><span class="line"></span><br><span class="line">zadd blog:page 1417000000 &apos;lol剑姬出装&apos;</span><br><span class="line"></span><br><span class="line">zadd blog:page 1427000000 &apos;dk单刷副本&apos;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h2 id="每页有-n-篇blog-返回第-m-页-start-m-1-n-end-mm-1"><a href="#每页有-n-篇blog-返回第-m-页-start-m-1-n-end-mm-1" class="headerlink" title="每页有 n 篇blog, 返回第 m 页,start = (m-1)n, end =mm-1"></a>每页有 n 篇blog, 返回第 m 页,start = (m-1)<em>n, end =m</em>m-1</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 每页5篇 ，第1页</span><br><span class="line">zrevrange blog:page 0 4</span><br><span class="line"></span><br><span class="line"># 每页5篇 ，第2页</span><br><span class="line">zrevrange blog:page 5 9</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/02/redis/2014-08-02-Redis应用之翻页/" data-id="cjpduxrbr005najcpmmzfda3b" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-8-2-数据库表创建注意事项" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" class="article-date">
+  <time datetime="2014-08-01T16:00:00.000Z" itemprop="datePublished">2014-08-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/">MySQL优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="M数据库表创建注意事项"><a href="#M数据库表创建注意事项" class="headerlink" title="M数据库表创建注意事项"></a>M数据库表创建注意事项</h2><ol>
+<li><p>字段名及字段配制合理性</p>
+<ul>
+<li><p>剔除关系不密切的字段；</p>
+</li>
+<li><p>字段命名要有规则及相对应的含义（不要一部分英文，一部分拼音，还有类似a.b.c这样不明含义的字段）；</p>
+</li>
+<li><p>字段命名尽量不要使用缩写（大多数缩写都不能明确字段含义）；</p>
+</li>
+<li><p>字段不要大小写混用（想要具有可读性，多个英文单词可使用下划线形式连接）；</p>
+</li>
+<li><p>字段名不要使用保留字或者关键字；</p>
+</li>
+<li><p>保持字段名和类型的一致性；</p>
+</li>
+<li><p>慎重选择数字类型；</p>
+</li>
+<li><p>给文本字段留足余量；</p>
+</li>
+</ul>
+</li>
+<li><p>系统特殊字段处理及建成后建议</p>
+<ul>
+<li><p>添加删除标记（例如操作人. 删除时间）；</p>
+</li>
+<li><p>建立版本机制；</p>
+</li>
+</ul>
+</li>
+<li><p>表结构合理性配置</p>
+<ul>
+<li><p>多型字段的处理，就是表中是否存在字段能够分解成更小独立的几部分（例如：人可以分为男人和女人）；</p>
+</li>
+<li><p>多值字段的处理，可以将表分为三张表，这样使得检索和排序更加有调理，且保证数据的完整性！</p>
+</li>
+</ul>
+</li>
+<li><p>其它建议</p>
+<ul>
+<li><p>对于大数据字段，独立表进行存储，以便影响性能（例如：简介字段）；</p>
+</li>
+<li><p>使用varchar类型代替char，因为varchar会动态分配长度，char指定长度是固定的；</p>
+</li>
+<li><p>给表创建主键，对于没有主键的表，在查询和索引定义上有一定的影响；</p>
+</li>
+<li><p>避免表字段运行为null，建议设置默认值（例如：int类型设置默认值为0）在索引查询上，效率立显；</p>
+</li>
+<li><p>建立索引，最好建立在唯一和非空的字段上，建立太多的索引对后期插入. 更新都存在一定的影响（考虑实际情况来创建）；</p>
+</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" data-id="cjpduxrb0003lajcpl0igmj58" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
   
     <article id="post-mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
@@ -124,7 +450,49 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" data-id="cjpcbv9du0025k6cpuzdb1aro" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" data-id="cjpduxraz003jajcprs224cin" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-01-Redis应用之排行榜" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/01/redis/2014-08-01-Redis应用之排行榜/" class="article-date">
+  <time datetime="2014-07-31T16:00:00.000Z" itemprop="datePublished">2014-08-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/01/redis/2014-08-01-Redis应用之排行榜/">Redis应用之排行榜</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="创建一个排行榜-比如歌曲的收听人数排行榜"><a href="#创建一个排行榜-比如歌曲的收听人数排行榜" class="headerlink" title="创建一个排行榜,比如歌曲的收听人数排行榜"></a>创建一个排行榜,比如歌曲的收听人数排行榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zadd music:rank 1345 Happy 2314 Fancy 3413 Rude 5313 Problem [count music...]</span><br></pre></td></tr></table></figure>
+<h2 id="当一个用户听歌，对应人数-1"><a href="#当一个用户听歌，对应人数-1" class="headerlink" title="当一个用户听歌，对应人数+1"></a>当一个用户听<rude>歌，对应人数+1</rude></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zincrby music:rank Rude 1</span><br></pre></td></tr></table></figure>
+<h2 id="获取排行版前n位"><a href="#获取排行版前n位" class="headerlink" title="获取排行版前n位"></a>获取排行版前n位</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrevrange music:rank 0 n-1 [withscores]</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/01/redis/2014-08-01-Redis应用之排行榜/" data-id="cjpduxrbq005lajcpam82q0lr" class="article-share-link">Share</a>
       
       
     </footer>
@@ -182,7 +550,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/30/mysql/2014-7-30-MySQL优化/" data-id="cjpcbv9dt0022k6cplpkm69xi" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/30/mysql/2014-7-30-MySQL优化/" data-id="cjpduxray003hajcpxjo9bx1b" class="article-share-link">Share</a>
       
       
     </footer>
@@ -240,423 +608,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/29/mysql/2014-7-29-行级锁定/" data-id="cjpcbv9ds0020k6cp08nmbksa" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-29-Redis应用之抽奖系统" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/29/redis/2014-07-29-Redis应用之抽奖系统/" class="article-date">
-  <time datetime="2014-07-28T16:00:00.000Z" itemprop="datePublished">2014-07-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/29/redis/2014-07-29-Redis应用之抽奖系统/">Redis应用之抽奖系统</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="添加参与者"><a href="#添加参与者" class="headerlink" title="添加参与者"></a>添加参与者</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sadd loterry:people user [users...]</span><br></pre></td></tr></table></figure>
-<h2 id="返回所有参与者"><a href="#返回所有参与者" class="headerlink" title="返回所有参与者"></a>返回所有参与者</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">smembers loterry:people</span><br><span class="line">或</span><br><span class="line">scan loterry:people [cursor]</span><br></pre></td></tr></table></figure>
-<h2 id="返回参与者数量"><a href="#返回参与者数量" class="headerlink" title="返回参与者数量"></a>返回参与者数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard loterry:people</span><br></pre></td></tr></table></figure>
-<h2 id="抽出-n-个获奖者，"><a href="#抽出-n-个获奖者，" class="headerlink" title="抽出 n 个获奖者，"></a>抽出 n 个获奖者，</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">srandmember loterry:people n # 可能有重复</span><br><span class="line">或</span><br><span class="line">for n &#123;</span><br><span class="line">  spop loterry:people # 没有重复</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/29/redis/2014-07-29-Redis应用之抽奖系统/" data-id="cjpcbv9f10055k6cptz6tau82" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-30-Redis应用之商品筛选" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/" class="article-date">
-  <time datetime="2014-07-27T16:00:00.000Z" itemprop="datePublished">2014-07-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/">Redis应用之抽奖系统</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="商品筛选"><a href="#商品筛选" class="headerlink" title="商品筛选"></a>商品筛选</h1><p>京东上的一个手机 筛选系统,用户可以根据品牌、价格、网络、屏幕尺寸等条件, 对商品进行筛选。</p>
-<p>对于每个条件的每个 选项,我们可以使用一个集合来保存 该选项对应的所有商品,并通过在多个选项之间进行交集计算,从而达到 筛选的目的。</p>
-<p>对于品牌条件,我 们可以创建这样的集合,比如 apple = { ‘iPhone 5c’, ‘iPhons 5s’, …} ,而 samsung ={‘Galaxy S5’, ‘Galaxy S4’, …} ,诸如此类。</p>
-<p>而对于价格条件,我 们可以创建这样的集合,比如 price_2900_to_4099 = { ‘Galaxy S5’, ‘Galaxy S4’,..} ,以及 price_uppon_4100 = { ‘iPhone 5c’, ‘iPhone 5S’, …} ,诸如此类。</p>
-<p>每当用户添加一个过滤选项时,我们就计算出所有被选中选项的交集,而交集的 计算结果就是符合筛选条件的商品。</p>
-<h2 id="添加筛选项"><a href="#添加筛选项" class="headerlink" title="添加筛选项"></a>添加筛选项</h2><p>品牌<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 苹果品牌</span><br><span class="line">sadd brand:apple &apos;iPhone 5c&apos; &apos;iPhons 5s&apos; ....</span><br><span class="line"># 三星品牌</span><br><span class="line">sadd brand:samsung &apos;Galaxy S5&apos; &apos;Galaxy S4&apos; ...</span><br></pre></td></tr></table></figure></p>
-<p>价格<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 2900-4099 的</span><br><span class="line">sadd price:2900-4099 &apos;iPhone 5c&apos; &apos;Galaxy S4&apos; ...</span><br><span class="line"></span><br><span class="line"># 4100-1000 </span><br><span class="line">sadd price:4100-10000 &apos;iPhone 5S&apos; &apos;Galaxy S5&apos; ...</span><br></pre></td></tr></table></figure></p>
-<h2 id="选择苹果，价格在2900-4099的"><a href="#选择苹果，价格在2900-4099的" class="headerlink" title="选择苹果，价格在2900-4099的"></a>选择苹果，价格在2900-4099的</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sinterstore phone:apple:2900-4099 brand:apple price:2900-4099</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/" data-id="cjpcbv9f20057k6cpq9yezdq4" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-7-28-MVCC" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/28/mysql/2014-7-28-MVCC/" class="article-date">
-  <time datetime="2014-07-27T16:00:00.000Z" itemprop="datePublished">2014-07-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/28/mysql/2014-7-28-MVCC/">MVCC</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="关于MVCC"><a href="#关于MVCC" class="headerlink" title="关于MVCC"></a>关于MVCC</h2><p>MySQL InnoDB存储引擎，实现的是基于多版本的并发控制协议——MVCC (Multi-Version Concurrency Control) (注：与MVCC相对的，是基于锁的并发控制，Lock-Based Concurrency Control)。MVCC最大的好处：读不加锁，读写不冲突。在读多写少的OLTP应用中，读写不冲突是非常重要的，极大的增加了系统的并发性能，现阶段几乎所有的RDBMS，都支持了MVCC。</p>
-<ol>
-<li><p>LBCC：Lock-Based Concurrency Control，基于锁的并发控制。</p>
-</li>
-<li><p>MVCC：Multi-Version Concurrency Control，基于多版本的并发控制协议。纯粹基于锁的并发机制并发量低，MVCC是在基于锁的并发控制上的改进，主要是在读操作上提高了并发量。</p>
-</li>
-</ol>
-<h2 id="在MVCC并发控制中，读操作可以分成两类："><a href="#在MVCC并发控制中，读操作可以分成两类：" class="headerlink" title="在MVCC并发控制中，读操作可以分成两类："></a>在MVCC并发控制中，读操作可以分成两类：</h2><ol>
-<li><p>快照读 (snapshot read)：读取的是记录的可见版本 (有可能是历史版本)，不用加锁（共享读锁s锁也不加，所以不会阻塞其他事务的写）。</p>
-</li>
-<li><p>当前读 (current read)：读取的是记录的最新版本，并且，当前读返回的记录，都会加上锁，保证其他事务不会再并发修改这条记录。</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/28/mysql/2014-7-28-MVCC/" data-id="cjpcbv9dr001xk6cp9th85zab" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-28-Redis应用之赞.喜欢.like.签到.投票" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/28/redis/2014-07-28-Redis应用之赞.喜欢.like.签到.投票/" class="article-date">
-  <time datetime="2014-07-27T16:00:00.000Z" itemprop="datePublished">2014-07-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/28/redis/2014-07-28-Redis应用之赞.喜欢.like.签到.投票/">Redis应用之赞.喜欢.like.签到.投票</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="点赞，喜欢，投票"><a href="#点赞，喜欢，投票" class="headerlink" title="点赞，喜欢，投票"></a>点赞，喜欢，投票</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sadd something|somebody [something|user]</span><br></pre></td></tr></table></figure>
-<h2 id="取消点赞，不喜欢，悔票"><a href="#取消点赞，不喜欢，悔票" class="headerlink" title="取消点赞，不喜欢，悔票"></a>取消点赞，不喜欢，悔票</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">srem something|somebody [something|user]</span><br></pre></td></tr></table></figure>
-<h2 id="检查是否点赞喜欢或已投票"><a href="#检查是否点赞喜欢或已投票" class="headerlink" title="检查是否点赞喜欢或已投票"></a>检查是否点赞喜欢或已投票</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sismember something|somebody [something|user]</span><br></pre></td></tr></table></figure>
-<h2 id="返回所有点赞喜欢或已投票的"><a href="#返回所有点赞喜欢或已投票的" class="headerlink" title="返回所有点赞喜欢或已投票的"></a>返回所有点赞喜欢或已投票的</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">smembers something|somebody</span><br><span class="line">或</span><br><span class="line">scan something|somebody [cursor]</span><br></pre></td></tr></table></figure>
-<h2 id="返回所有点赞喜欢或已投票数量"><a href="#返回所有点赞喜欢或已投票数量" class="headerlink" title="返回所有点赞喜欢或已投票数量"></a>返回所有点赞喜欢或已投票数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard something|somebody</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/28/redis/2014-07-28-Redis应用之赞.喜欢.like.签到.投票/" data-id="cjpcbv9ez0053k6cp87tqn695" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-7-27-表分区" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/27/mysql/2014-7-27-表分区/" class="article-date">
-  <time datetime="2014-07-26T16:00:00.000Z" itemprop="datePublished">2014-07-27</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/27/mysql/2014-7-27-表分区/">表分区</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="什么是表分区？"><a href="#什么是表分区？" class="headerlink" title="什么是表分区？"></a>什么是表分区？</h2><p>表分区，是指根据一定规则，将数据库中的一张表分解成多个更小的，容易管理的部分。从逻辑上看，只有一张表，但是底层却是由多个物理分区组成。</p>
-<h2 id="表分区与分表的区别"><a href="#表分区与分表的区别" class="headerlink" title="表分区与分表的区别"></a>表分区与分表的区别</h2><p>分表：指的是通过一定规则，将一张表分解成多张不同的表。比如将用户订单记录根据时间成多个表。</p>
-<p>分表与分区的区别在于：分区从逻辑上来讲只有一张表，而分表则是将一张表分解成多张表。</p>
-<h2 id="表分区有什么好处？"><a href="#表分区有什么好处？" class="headerlink" title="表分区有什么好处？"></a>表分区有什么好处？</h2><ol>
-<li><p>分区表的数据可以分布在不同的物理设备上，从而高效地利用多个硬件设备。 和单个磁盘或者文件系统相比，可以存储更多数据</p>
-</li>
-<li><p>优化查询。在where语句中包含分区条件时，可以只扫描一个或多个分区表来提高查询效率；涉及sum和count语句时，也可以在多个分区上并行处理，最后汇总结果。</p>
-</li>
-<li><p>分区表更容易维护。例如：想批量删除大量数据可以清除整个分区。</p>
-</li>
-<li><p>可以使用分区表来避免某些特殊的瓶颈，例如InnoDB的单个索引的互斥访问，ext3问价你系统的inode锁竞争等。</p>
-</li>
-</ol>
-<h2 id="分区表的限制因素"><a href="#分区表的限制因素" class="headerlink" title="分区表的限制因素"></a>分区表的限制因素</h2><ol>
-<li><p>一个表最多只能有1024个分区</p>
-</li>
-<li><p>MySQL5.1中，分区表达式必须是整数，或者返回整数的表达式。在MySQL5.5中提供了非整数表达式分区的支持。</p>
-</li>
-<li><p>如果分区字段中有主键或者唯一索引的列，那么多有主键列和唯一索引列都必须包含进来。即：分区字段要么不包含主键或者索引列，要么包含全部主键和索引列。</p>
-</li>
-<li><p>分区表中无法使用外键约束</p>
-</li>
-<li><p>MySQL的分区适用于一个表的所有数据和索引，不能只对表数据分区而不对索引分区，也不能只对索引分区而不对表分区，也不能只对表的一部分数据分区。</p>
-</li>
-</ol>
-<h2 id="如何判断当前MySQL是否支持分区？"><a href="#如何判断当前MySQL是否支持分区？" class="headerlink" title="如何判断当前MySQL是否支持分区？"></a>如何判断当前MySQL是否支持分区？</h2><p>命令：show variables like ‘%partition%’ 运行结果:<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like '%partition%';</span><br><span class="line">+<span class="comment">-------------------+-------+| Variable_name | Value |+-------------------+-------+| have_partitioning | YES |+-------------------+-------+1 row in set (0.00 sec)</span></span><br></pre></td></tr></table></figure></p>
-<p>have_partintioning 的值为YES，表示支持分区。</p>
-<h2 id="MySQL支持的分区类型有哪些？"><a href="#MySQL支持的分区类型有哪些？" class="headerlink" title="MySQL支持的分区类型有哪些？"></a>MySQL支持的分区类型有哪些？</h2><ol>
-<li><p>RANGE分区： 这种模式允许将数据划分不同范围。例如可以将一个表通过年份划分成若干个分区</p>
-</li>
-<li><p>LIST分区： 这种模式允许系统通过预定义的列表的值来对数据进行分割。按照List中的值分区，与RANGE的区别是，range分区的区间范围值是连续的。</p>
-</li>
-<li><p>HASH分区 ：这中模式允许通过对表的一个或多个列的Hash Key进行计算，最后通过这个Hash码不同数值对应的数据区域进行分区。例如可以建立一个对表主键进行分区的表。</p>
-</li>
-<li><p>KEY分区 ：上面Hash模式的一种延伸，这里的Hash Key是MySQL系统产生的。</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/27/mysql/2014-7-27-表分区/" data-id="cjpcbv9dp001tk6cpk2jxcvc1" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-27-Redis应用之队列" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/27/redis/2014-07-27-Redis应用之队列/" class="article-date">
-  <time datetime="2014-07-26T16:00:00.000Z" itemprop="datePublished">2014-07-27</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/27/redis/2014-07-27-Redis应用之队列/">Redis应用之队列</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="入队enqueue"><a href="#入队enqueue" class="headerlink" title="入队enqueue"></a>入队enqueue</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush queueKey item</span><br></pre></td></tr></table></figure>
-<h2 id="出队dequeue"><a href="#出队dequeue" class="headerlink" title="出队dequeue"></a>出队dequeue</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpop queueKey</span><br></pre></td></tr></table></figure>
-<h2 id="获取队列所有元素，不减少元素"><a href="#获取队列所有元素，不减少元素" class="headerlink" title="获取队列所有元素，不减少元素"></a>获取队列所有元素，不减少元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lrange queueKey 0 -1</span><br></pre></td></tr></table></figure>
-<h2 id="获取队列长度"><a href="#获取队列长度" class="headerlink" title="获取队列长度"></a>获取队列长度</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">llen queueKey</span><br></pre></td></tr></table></figure>
-<h2 id="截取队列，定长为length"><a href="#截取队列，定长为length" class="headerlink" title="截取队列，定长为length"></a>截取队列，定长为length</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ltrim queueKey 0 length-1</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/27/redis/2014-07-27-Redis应用之队列/" data-id="cjpcbv9ey004zk6cpu1xve6ky" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-7-26-索引面试题" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/26/mysql/2014-7-26-索引面试题/" class="article-date">
-  <time datetime="2014-07-25T16:00:00.000Z" itemprop="datePublished">2014-07-26</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/26/mysql/2014-7-26-索引面试题/">索引面试题</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="为什么用自增列作为主键"><a href="#为什么用自增列作为主键" class="headerlink" title="为什么用自增列作为主键"></a>为什么用自增列作为主键</h2><ol>
-<li><p>如果我们定义了主键(PRIMARY KEY)，那么InnoDB会选择主键作为聚集索引、如果没有显式定义主键，则InnoDB会选择第一个不包含有NULL值的唯一索引作为主键索引、如果也没有这样的唯一索引，则InnoDB会选择内置6字节长的ROWID作为隐含的聚集索引(ROWID随着行记录的写入而主键递增，这个ROWID不像ORACLE的ROWID那样可引用，是隐含的)。</p>
-</li>
-<li><p>数据记录本身被存于主索引（一颗B+Tree）的叶子节点上。这就要求同一个叶子节点内（大小为一个内存页或磁盘页）的各条数据记录按主键顺序存放，因此每当有一条新的记录插入时，MySQL会根据其主键将其插入适当的节点和位置，如果页面达到装载因子（InnoDB默认为15/16），则开辟一个新的页（节点）</p>
-</li>
-<li><p>如果表使用自增主键，那么每次插入新的记录，记录就会顺序添加到当前索引节点的后续位置，当一页写满，就会自动开辟一个新的页</p>
-</li>
-<li><p>如果使用非自增主键（如果身份证号或学号等），由于每次插入主键的值近似于随机，因此每次新纪录都要被插到现有索引页得中间某个位置，此时MySQL不得不为了将新记录插到合适位置而移动数据，甚至目标页面可能已经被回写到磁盘上而从缓存中清掉，此时又要从磁盘上读回来，这增加了很多开销，同时频繁的移动、分页操作造成了大量的碎片，得到了不够紧凑的索引结构，后续不得不通过OPTIMIZE TABLE来重建表并优化填充页面。</p>
-</li>
-</ol>
-<h2 id="为什么使用数据索引能提高效率"><a href="#为什么使用数据索引能提高效率" class="headerlink" title="为什么使用数据索引能提高效率"></a>为什么使用数据索引能提高效率</h2><ol>
-<li><p>数据索引的存储是有序的</p>
-</li>
-<li><p>在有序的情况下，通过索引查询一个数据是无需遍历索引记录的</p>
-</li>
-<li><p>极端情况下，数据索引的查询效率为二分法查询效率，趋近于 log2(N)</p>
-</li>
-</ol>
-<h2 id="B-树索引和哈希索引的区别"><a href="#B-树索引和哈希索引的区别" class="headerlink" title="B+树索引和哈希索引的区别"></a>B+树索引和哈希索引的区别</h2><p>B+树是一个平衡的多叉树，从根节点到每个叶子节点的高度差值不超过1，而且同层级的节点间有指针相互链接，是有序的</p>
-<p><img src="index1.webp" alt="mysql1"></p>
-<p>哈希索引就是采用一定的哈希算法，把键值换算成新的哈希值，检索时不需要类似B+树那样从根节点到叶子节点逐级查找，只需一次哈希算法即可,是无序的</p>
-<p><img src="index2.webp" alt="mysql1"></p>
-<h2 id="哈希索引的优势"><a href="#哈希索引的优势" class="headerlink" title="哈希索引的优势"></a>哈希索引的优势</h2><p>等值查询。哈希索引具有绝对优势（前提是：没有大量重复键值，如果大量重复键值时，哈希索引的效率很低，因为存在所谓的哈希碰撞问题。）</p>
-<h2 id="哈希索引不适用的场景"><a href="#哈希索引不适用的场景" class="headerlink" title="哈希索引不适用的场景"></a>哈希索引不适用的场景</h2><ol>
-<li><p>不支持范围查询</p>
-</li>
-<li><p>不支持索引完成排序</p>
-</li>
-<li><p>不支持联合索引的最左前缀匹配规则</p>
-</li>
-</ol>
-<p>通常，B+树索引结构适用于绝大多数场景，像下面这种场景用哈希索引才更有优势：</p>
-<p>在HEAP表中，如果存储的数据重复度很低（也就是说基数很大），对该列数据以等值查询为主，没有范围查询、没有排序的时候，特别适合采用哈希索引，例如这种SQL：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">name</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">'李明'</span>; — 仅等值查询</span><br></pre></td></tr></table></figure>
-<p>而常用的InnoDB引擎中默认使用的是B+树索引，它会实时监控表上索引的使用情况，如果认为建立哈希索引可以提高查询效率，则自动在内存中的“自适应哈希索引缓冲区”建立哈希索引（在InnoDB中默认开启自适应哈希索引），通过观察搜索模式，MySQL会利用index key的前缀建立哈希索引，如果一个表几乎大部分都在缓冲池中，那么建立一个哈希索引能够加快等值查询。</p>
-<p>注意：在某些工作负载下，通过哈希索引查找带来的性能提升远大于额外的监控索引搜索情况和保持这个哈希表结构所带来的开销。但某些时候，在负载高的情况下，自适应哈希索引中添加的read/write锁也会带来竞争，比如高并发的join操作。like操作和%的通配符操作也不适用于自适应哈希索引，可能要关闭自适应哈希索引。</p>
-<h2 id="B树和B-树的区别"><a href="#B树和B-树的区别" class="headerlink" title="B树和B+树的区别"></a>B树和B+树的区别</h2><ol>
-<li>B树，每个节点都存储key和data，所有节点组成这棵树，并且叶子节点指针为nul，叶子结点不包含任何关键字信息。</li>
-</ol>
-<p><img src="index3.webp" alt="mysql1"></p>
-<ol start="2">
-<li>B+树，所有的叶子结点中包含了全部关键字的信息，及指向含有这些关键字记录的指针，且叶子结点本身依关键字的大小自小而大的顺序链接，所有的非终端结点可以看成是索引部分，结点中仅含有其子树根结点中最大（或最小）关键字。 (而B 树的非终节点也包含需要查找的有效信息)</li>
-</ol>
-<p><img src="index4.webp" alt="mysql1"></p>
-<h2 id="为什么说B-比B树更适合实际应用中操作系统的文件索引和数据库索引？"><a href="#为什么说B-比B树更适合实际应用中操作系统的文件索引和数据库索引？" class="headerlink" title="为什么说B+比B树更适合实际应用中操作系统的文件索引和数据库索引？"></a>为什么说B+比B树更适合实际应用中操作系统的文件索引和数据库索引？</h2><ol>
-<li><p>B+的磁盘读写代价更低。B+的内部结点并没有指向关键字具体信息的指针。因此其内部结点相对B树更小。如果把所有同一内部结点的关键字存放在同一盘块中，那么盘块所能容纳的关键字数量也越多。一次性读入内存中的需要查找的关键字也就越多。相对来说IO读写次数也就降低了。</p>
-</li>
-<li><p>B+-tree的查询效率更加稳定。由于非终结点并不是最终指向文件内容的结点，而只是叶子结点中关键字的索引。所以任何关键字的查找必须走一条从根结点到叶子结点的路。所有关键字查询的路径长度相同，导致每一个数据的查询效率相当。</p>
-</li>
-</ol>
-<h2 id="MySQL联合索引"><a href="#MySQL联合索引" class="headerlink" title="MySQL联合索引"></a>MySQL联合索引</h2><ol>
-<li><p>联合索引是两个或更多个列上的索引。对于联合索引:Mysql从左到右的使用索引中的字段，一个查询可以只使用索引中的一部份，但只能是最左侧部分。例如索引是key index (a,b,c). 可以支持a 、 a,b 、 a,b,c 3种组合进行查找，但不支持 b,c进行查找 .当最左侧字段是常量引用时，索引就十分有效。</p>
-</li>
-<li><p>利用索引中的附加列，您可以缩小搜索的范围，但使用一个具有两列的索引 不同于使用两个单独的索引。复合索引的结构与电话簿类似，人名由姓和名构成，电话簿首先按姓氏对进行排序，然后按名字对有相同姓氏的人进行排序。如果您知 道姓，电话簿将非常有用；如果您知道姓和名，电话簿则更为有用，但如果您只知道名不姓，电话簿将没有用处。</p>
-</li>
-</ol>
-<h2 id="什么情况下应不建或少建索引"><a href="#什么情况下应不建或少建索引" class="headerlink" title="什么情况下应不建或少建索引"></a>什么情况下应不建或少建索引</h2><ol>
-<li><p>表记录太少</p>
-</li>
-<li><p>经常插入、删除、修改的表</p>
-</li>
-<li><p>数据重复且分布平均的表字段，假如一个表有10万行记录，有一个字段A只有T和F两种值，且每个值的分布概率大约为50%，那么对这种表A字段建索引一般不会提高数据库的查询速度。</p>
-</li>
-<li><p>经常和主字段一块查询但主字段索引值比较多的表字段</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/26/mysql/2014-7-26-索引面试题/" data-id="cjpcbv9dq001wk6cph236g7yf" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/29/mysql/2014-7-29-行级锁定/" data-id="cjpduxray003fajcpuk9uk7gm" class="article-share-link">Share</a>
       
       
     </footer>

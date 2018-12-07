@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Redis-HyperLogLog | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="HyperLogLog 介绍HyperLogLog 可以接受多个元素作 为输入,并给出输入元素的基数估算值:  基数:集合中不同元素的数量。比如 {‘apple’, ‘banana’, ‘cherry’, ‘banana’, ‘apple’} 的基数就是 3 。 估算值:算法给出的基数并不是精确的,可能会比 实际稍微多一些或者稍微少一些,但会控制在合理的范围之内。  HyperLogLog 的优点">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis-HyperLogLog">
+<meta property="og:url" content="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="HyperLogLog 介绍HyperLogLog 可以接受多个元素作 为输入,并给出输入元素的基数估算值:  基数:集合中不同元素的数量。比如 {‘apple’, ‘banana’, ‘cherry’, ‘banana’, ‘apple’} 的基数就是 3 。 估算值:算法给出的基数并不是精确的,可能会比 实际稍微多一些或者稍微少一些,但会控制在合理的范围之内。  HyperLogLog 的优点">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-12-06T10:06:09.278Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis-HyperLogLog">
+<meta name="twitter:description" content="HyperLogLog 介绍HyperLogLog 可以接受多个元素作 为输入,并给出输入元素的基数估算值:  基数:集合中不同元素的数量。比如 {‘apple’, ‘banana’, ‘cherry’, ‘banana’, ‘apple’} 的基数就是 3 。 估算值:算法给出的基数并不是精确的,可能会比 实际稍微多一些或者稍微少一些,但会控制在合理的范围之内。  HyperLogLog 的优点">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录平时可能用到的资料</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-redis/2014-12-11-Redis-HyperLogLog" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" class="article-date">
+  <time datetime="2014-12-10T16:00:00.000Z" itemprop="datePublished">2014-12-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redis-HyperLogLog
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="HyperLogLog-介绍"><a href="#HyperLogLog-介绍" class="headerlink" title="HyperLogLog 介绍"></a>HyperLogLog 介绍</h2><p>HyperLogLog 可以接受多个元素作 为输入,并给出输入元素的基数估算值:</p>
+<ul>
+<li>基数:集合中不同元素的数量。比如 {‘apple’, ‘banana’, ‘cherry’, ‘banana’, ‘apple’} 的基数就是 3 。</li>
+<li>估算值:算法给出的基数并不是精确的,可能会比 实际稍微多一些或者稍微少一些,但会控制在合理的范围之内。</li>
+</ul>
+<h2 id="HyperLogLog-的优点"><a href="#HyperLogLog-的优点" class="headerlink" title="HyperLogLog 的优点"></a>HyperLogLog 的优点</h2><ul>
+<li>即使输入元素的数量或者体 积非常非常大, 计算基数所需的空 间总是固定的、并且是很小的。</li>
+</ul>
+<p>在 Redis 里面,每个 HyperLogLog 键只需要花费 12 KB 内存,就可以 计算接近 2^64 个不同元素的基数。</p>
+<p>这和计算基数时,元素越多耗 费内存就越多的集合形成 鲜明对比。</p>
+<p>但是,因为 HyperLogLog 只会根据输入元素来计算基数,而不会 储存输入元素本身,所以<br>HyperLogLog 不能像集合那 样,返回输入的各个元素。</p>
+<h2 id="将元素添加至-HyperLogLog"><a href="#将元素添加至-HyperLogLog" class="headerlink" title="将元素添加至 HyperLogLog"></a>将元素添加至 HyperLogLog</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PFADD key element [element ...]</span><br></pre></td></tr></table></figure>
+<p>将任意数量的元素添加到指定的 HyperLogLog 里面。</p>
+<p>这个命令可能会 对 HyperLogLog 进行修改,以便反映新的基数估算 值,如果 HyperLogLog 的基数估算值在命令执行之后出现了变化, 那么命令返回 1 , 否则返回 0 。</p>
+<p>命令的复杂度为 O(N) ,N 为被添加元素的数量。</p>
+<h2 id="返回给定-HyperLogLog-的基数估算值"><a href="#返回给定-HyperLogLog-的基数估算值" class="headerlink" title="返回给定 HyperLogLog 的基数估算值"></a>返回给定 HyperLogLog 的基数估算值</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PFCOUNT key [key ...]</span><br></pre></td></tr></table></figure>
+<p>当只给定一个 HyperLogLog 时,命令返回给定 HyperLogLog 的基数估算值。</p>
+<p>当给定多个 HyperLogLog 时,命令会先对给定的 HyperLogLog 进行并集计算,得出一个合并后的HyperLogLog ,然后返回这个合并 HyperLogLog 的基数估算值作为命令的结果(合并得出的HyperLogLog 不会被储存,使用之后就会被 删掉)。</p>
+<p>当命令作用于 单个 HyperLogLog 时, 复杂度为 O(1) , 并且具有非常低的平均常数 时间。</p>
+<p>当命令作用于多个 HyperLogLog 时, 复杂度为 O(N) ,并且常数时间也比处理单个 HyperLogLog 时要大得多。</p>
+<h2 id="合并多个-HyperLogLog"><a href="#合并多个-HyperLogLog" class="headerlink" title="合并多个 HyperLogLog"></a>合并多个 HyperLogLog</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PFMERGE destkey sourcekey [sourcekey ...]</span><br></pre></td></tr></table></figure>
+<p>将多个 HyperLogLog 合并为一个 HyperLogLog ,合并后的 HyperLogLog 的基数估算值是通过对所有给定 HyperLogLog 进行并集计算得出的。</p>
+<p>命令的复杂度为 O(N) , 其中 N 为被合并的 HyperLogLog 数量, 不过这个命令的常数复杂度比较高。</p>
+<h2 id="PFMERGE-的使用示例"><a href="#PFMERGE-的使用示例" class="headerlink" title="PFMERGE 的使用示例"></a>PFMERGE 的使用示例</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; PFADD str1 &quot;apple&quot; &quot;banana&quot; &quot;cherry&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; PFCOUNT str1</span><br><span class="line">(integer) 3</span><br><span class="line">redis&gt; PFADD str2 &quot;apple&quot; &quot;cherry&quot; &quot;durian&quot; &quot;mongo&quot;</span><br><span class="line">(integer) 1</span><br><span class="line">redis&gt; PFCOUNT str2</span><br><span class="line">(integer) 4</span><br><span class="line">redis&gt; PFMERGE str1&amp;2 str1 str2</span><br><span class="line">OK</span><br><span class="line">redis&gt; PFCOUNT str1&amp;2</span><br><span class="line">(integer) 5</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" data-id="cjpduxrbv005zajcpigupeuak" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/12/13/redis/2014-12-13-Redis服务端命令/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Redis服务端命令
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/12/10/redis/2014-12-10-Redis持久化/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Redis持久化</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
+          </li>
+        
+          <li>
+            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>
