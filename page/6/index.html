@@ -139,7 +139,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpduxrbx0065ajcpmi80vur4" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpduyimv005xkqcprk3a9lrj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -202,7 +202,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" data-id="cjpduxrbv005zajcpigupeuak" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" data-id="cjpduyimu005vkqcp2jickrpw" class="article-share-link">Share</a>
       
       
     </footer>
@@ -277,56 +277,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjpduxrbx0067ajcpae6dnln5" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-9-读写分离的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/09/mysql/2014-8-9-读写分离的原理/" class="article-date">
-  <time datetime="2014-08-08T16:00:00.000Z" itemprop="datePublished">2014-08-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/09/mysql/2014-8-9-读写分离的原理/">读写分离的原理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>数据库往往写少读多，所以性能优化的第一步就是读写分离。</p>
-<p><img src="mysql7.png" alt="mysql7"></p>
-<p>主从复制基于主节点上的服务层的日志实现的，而从节点上有一个IO线程读取这个日志，然后写入本地。另有一个线程从本地日志读取后在从节点重新执行。</p>
-<p><img src="mysql8.png" alt="mysql8"></p>
-<p>如图是主从异步复制的流程图。在主实例写入引擎后就返回成功，然后将事件发给从实例，在从实例上执行。这种同步方式速度较快，但是在主挂了的时候，如果还没有复制，则可能存在数据丢失问题。</p>
-<p><img src="mysql9.png" alt="mysql9"></p>
-<p>数据库同步复制也不同，是当从节点落盘后再返回客户端，当然这样会使得性能有所降低，网易数据库团队是通过组提交，并行复制等技术将性能提上来。</p>
-<p>有了主从复制，在数据库DAO层可以设置读写分离策略，也有通过数据库中间件做这个事情的。</p>
-<p>其实数据库日志还有很多其他用处，如使用canal(阿里巴巴开源项目: 基于mysql数据库binlog的增量订阅 &amp;消费)订阅数据库的binlog ，可以用于更新缓存等。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjpduxrb4003zajcpurc8jqtn" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjpduyimu005tkqcp48t1hplv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -375,7 +326,56 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjpduxrbv005xajcpqbyvm24r" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjpduyimt005rkqcp7wujrtpk" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-8-9-读写分离的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/09/mysql/2014-8-9-读写分离的原理/" class="article-date">
+  <time datetime="2014-08-08T16:00:00.000Z" itemprop="datePublished">2014-08-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/09/mysql/2014-8-9-读写分离的原理/">读写分离的原理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>数据库往往写少读多，所以性能优化的第一步就是读写分离。</p>
+<p><img src="mysql7.png" alt="mysql7"></p>
+<p>主从复制基于主节点上的服务层的日志实现的，而从节点上有一个IO线程读取这个日志，然后写入本地。另有一个线程从本地日志读取后在从节点重新执行。</p>
+<p><img src="mysql8.png" alt="mysql8"></p>
+<p>如图是主从异步复制的流程图。在主实例写入引擎后就返回成功，然后将事件发给从实例，在从实例上执行。这种同步方式速度较快，但是在主挂了的时候，如果还没有复制，则可能存在数据丢失问题。</p>
+<p><img src="mysql9.png" alt="mysql9"></p>
+<p>数据库同步复制也不同，是当从节点落盘后再返回客户端，当然这样会使得性能有所降低，网易数据库团队是通过组提交，并行复制等技术将性能提上来。</p>
+<p>有了主从复制，在数据库DAO层可以设置读写分离策略，也有通过数据库中间件做这个事情的。</p>
+<p>其实数据库日志还有很多其他用处，如使用canal(阿里巴巴开源项目: 基于mysql数据库binlog的增量订阅 &amp;消费)订阅数据库的binlog ，可以用于更新缓存等。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjpduyilk002lkqcpym0aauxc" class="article-share-link">Share</a>
       
       
     </footer>
@@ -425,7 +425,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjpduxrb4003xajcprnhb7rqf" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjpduyilj002jkqcpgl8tbayv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -478,7 +478,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjpduxrb3003vajcply9gtk1n" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjpduyilj002hkqcp8vmbwekd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -530,7 +530,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjpduxrb2003rajcpcb68r9q3" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjpduyili002fkqcpz09a3tzq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -601,7 +601,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjpduxrb1003pajcppz06sx3z" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjpduyilh002dkqcpgp0kwsdt" class="article-share-link">Share</a>
       
       
     </footer>
@@ -646,7 +646,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjpduxrbu005vajcpc2dumq20" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjpduyimt005pkqcpkm8ujymo" class="article-share-link">Share</a>
       
       
     </footer>

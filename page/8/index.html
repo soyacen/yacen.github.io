@@ -104,55 +104,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/29/redis/2014-07-29-Redis应用之抽奖系统/" data-id="cjpduxrbw0061ajcp997g9im3" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-30-Redis应用之商品筛选" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/" class="article-date">
-  <time datetime="2014-07-27T16:00:00.000Z" itemprop="datePublished">2014-07-28</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/">Redis应用之抽奖系统</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="商品筛选"><a href="#商品筛选" class="headerlink" title="商品筛选"></a>商品筛选</h1><p>京东上的一个手机 筛选系统,用户可以根据品牌、价格、网络、屏幕尺寸等条件, 对商品进行筛选。</p>
-<p>对于每个条件的每个 选项,我们可以使用一个集合来保存 该选项对应的所有商品,并通过在多个选项之间进行交集计算,从而达到 筛选的目的。</p>
-<p>对于品牌条件,我 们可以创建这样的集合,比如 apple = { ‘iPhone 5c’, ‘iPhons 5s’, …} ,而 samsung ={‘Galaxy S5’, ‘Galaxy S4’, …} ,诸如此类。</p>
-<p>而对于价格条件,我 们可以创建这样的集合,比如 price_2900_to_4099 = { ‘Galaxy S5’, ‘Galaxy S4’,..} ,以及 price_uppon_4100 = { ‘iPhone 5c’, ‘iPhone 5S’, …} ,诸如此类。</p>
-<p>每当用户添加一个过滤选项时,我们就计算出所有被选中选项的交集,而交集的 计算结果就是符合筛选条件的商品。</p>
-<h2 id="添加筛选项"><a href="#添加筛选项" class="headerlink" title="添加筛选项"></a>添加筛选项</h2><p>品牌<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 苹果品牌</span><br><span class="line">sadd brand:apple &apos;iPhone 5c&apos; &apos;iPhons 5s&apos; ....</span><br><span class="line"># 三星品牌</span><br><span class="line">sadd brand:samsung &apos;Galaxy S5&apos; &apos;Galaxy S4&apos; ...</span><br></pre></td></tr></table></figure></p>
-<p>价格<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 2900-4099 的</span><br><span class="line">sadd price:2900-4099 &apos;iPhone 5c&apos; &apos;Galaxy S4&apos; ...</span><br><span class="line"></span><br><span class="line"># 4100-1000 </span><br><span class="line">sadd price:4100-10000 &apos;iPhone 5S&apos; &apos;Galaxy S5&apos; ...</span><br></pre></td></tr></table></figure></p>
-<h2 id="选择苹果，价格在2900-4099的"><a href="#选择苹果，价格在2900-4099的" class="headerlink" title="选择苹果，价格在2900-4099的"></a>选择苹果，价格在2900-4099的</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sinterstore phone:apple:2900-4099 brand:apple price:2900-4099</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/" data-id="cjpduxrbw0063ajcp6umfix1l" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/29/redis/2014-07-29-Redis应用之抽奖系统/" data-id="cjpduyimp005dkqcpvt0qxqhr" class="article-share-link">Share</a>
       
       
     </footer>
@@ -205,7 +157,55 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/28/mysql/2014-7-28-MVCC/" data-id="cjpduxraw003aajcp5xjzn12u" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/28/mysql/2014-7-28-MVCC/" data-id="cjpduyilb0020kqcpkk9dv1ti" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-30-Redis应用之商品筛选" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/" class="article-date">
+  <time datetime="2014-07-27T16:00:00.000Z" itemprop="datePublished">2014-07-28</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/">Redis应用之抽奖系统</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="商品筛选"><a href="#商品筛选" class="headerlink" title="商品筛选"></a>商品筛选</h1><p>京东上的一个手机 筛选系统,用户可以根据品牌、价格、网络、屏幕尺寸等条件, 对商品进行筛选。</p>
+<p>对于每个条件的每个 选项,我们可以使用一个集合来保存 该选项对应的所有商品,并通过在多个选项之间进行交集计算,从而达到 筛选的目的。</p>
+<p>对于品牌条件,我 们可以创建这样的集合,比如 apple = { ‘iPhone 5c’, ‘iPhons 5s’, …} ,而 samsung ={‘Galaxy S5’, ‘Galaxy S4’, …} ,诸如此类。</p>
+<p>而对于价格条件,我 们可以创建这样的集合,比如 price_2900_to_4099 = { ‘Galaxy S5’, ‘Galaxy S4’,..} ,以及 price_uppon_4100 = { ‘iPhone 5c’, ‘iPhone 5S’, …} ,诸如此类。</p>
+<p>每当用户添加一个过滤选项时,我们就计算出所有被选中选项的交集,而交集的 计算结果就是符合筛选条件的商品。</p>
+<h2 id="添加筛选项"><a href="#添加筛选项" class="headerlink" title="添加筛选项"></a>添加筛选项</h2><p>品牌<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 苹果品牌</span><br><span class="line">sadd brand:apple &apos;iPhone 5c&apos; &apos;iPhons 5s&apos; ....</span><br><span class="line"># 三星品牌</span><br><span class="line">sadd brand:samsung &apos;Galaxy S5&apos; &apos;Galaxy S4&apos; ...</span><br></pre></td></tr></table></figure></p>
+<p>价格<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 2900-4099 的</span><br><span class="line">sadd price:2900-4099 &apos;iPhone 5c&apos; &apos;Galaxy S4&apos; ...</span><br><span class="line"></span><br><span class="line"># 4100-1000 </span><br><span class="line">sadd price:4100-10000 &apos;iPhone 5S&apos; &apos;Galaxy S5&apos; ...</span><br></pre></td></tr></table></figure></p>
+<h2 id="选择苹果，价格在2900-4099的"><a href="#选择苹果，价格在2900-4099的" class="headerlink" title="选择苹果，价格在2900-4099的"></a>选择苹果，价格在2900-4099的</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sinterstore phone:apple:2900-4099 brand:apple price:2900-4099</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/28/redis/2014-07-30-Redis应用之商品筛选/" data-id="cjpduyimq005fkqcpjcl8dy1i" class="article-share-link">Share</a>
       
       
     </footer>
@@ -249,7 +249,51 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/28/redis/2014-07-28-Redis应用之赞.喜欢.like.签到.投票/" data-id="cjpduxrbq005jajcpa3bjcwk2" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/28/redis/2014-07-28-Redis应用之赞.喜欢.like.签到.投票/" data-id="cjpduyimo005bkqcpi4hjgpgr" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-27-Redis应用之队列" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/27/redis/2014-07-27-Redis应用之队列/" class="article-date">
+  <time datetime="2014-07-26T16:00:00.000Z" itemprop="datePublished">2014-07-27</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/27/redis/2014-07-27-Redis应用之队列/">Redis应用之队列</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="入队enqueue"><a href="#入队enqueue" class="headerlink" title="入队enqueue"></a>入队enqueue</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush queueKey item</span><br></pre></td></tr></table></figure>
+<h2 id="出队dequeue"><a href="#出队dequeue" class="headerlink" title="出队dequeue"></a>出队dequeue</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpop queueKey</span><br></pre></td></tr></table></figure>
+<h2 id="获取队列所有元素，不减少元素"><a href="#获取队列所有元素，不减少元素" class="headerlink" title="获取队列所有元素，不减少元素"></a>获取队列所有元素，不减少元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lrange queueKey 0 -1</span><br></pre></td></tr></table></figure>
+<h2 id="获取队列长度"><a href="#获取队列长度" class="headerlink" title="获取队列长度"></a>获取队列长度</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">llen queueKey</span><br></pre></td></tr></table></figure>
+<h2 id="截取队列，定长为length"><a href="#截取队列，定长为length" class="headerlink" title="截取队列，定长为length"></a>截取队列，定长为length</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ltrim queueKey 0 length-1</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/27/redis/2014-07-27-Redis应用之队列/" data-id="cjpduyimn0059kqcpzcoo18q0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -326,51 +370,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/27/mysql/2014-7-27-表分区/" data-id="cjpduxrav0038ajcpigrjxgjc" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-27-Redis应用之队列" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/27/redis/2014-07-27-Redis应用之队列/" class="article-date">
-  <time datetime="2014-07-26T16:00:00.000Z" itemprop="datePublished">2014-07-27</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/27/redis/2014-07-27-Redis应用之队列/">Redis应用之队列</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="入队enqueue"><a href="#入队enqueue" class="headerlink" title="入队enqueue"></a>入队enqueue</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush queueKey item</span><br></pre></td></tr></table></figure>
-<h2 id="出队dequeue"><a href="#出队dequeue" class="headerlink" title="出队dequeue"></a>出队dequeue</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpop queueKey</span><br></pre></td></tr></table></figure>
-<h2 id="获取队列所有元素，不减少元素"><a href="#获取队列所有元素，不减少元素" class="headerlink" title="获取队列所有元素，不减少元素"></a>获取队列所有元素，不减少元素</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lrange queueKey 0 -1</span><br></pre></td></tr></table></figure>
-<h2 id="获取队列长度"><a href="#获取队列长度" class="headerlink" title="获取队列长度"></a>获取队列长度</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">llen queueKey</span><br></pre></td></tr></table></figure>
-<h2 id="截取队列，定长为length"><a href="#截取队列，定长为length" class="headerlink" title="截取队列，定长为length"></a>截取队列，定长为length</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ltrim queueKey 0 length-1</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/27/redis/2014-07-27-Redis应用之队列/" data-id="cjpduxrbp005hajcpkx57z53w" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/27/mysql/2014-7-27-表分区/" data-id="cjpduyil8001tkqcpagr0m0rq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -476,7 +476,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/26/mysql/2014-7-26-索引面试题/" data-id="cjpduxraw003dajcppdq6w3jb" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/26/mysql/2014-7-26-索引面试题/" data-id="cjpduyil7001rkqcp3zuy0vea" class="article-share-link">Share</a>
       
       
     </footer>
@@ -519,7 +519,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/26/redis/2014-07-26-Redis应用之时间线/" data-id="cjpduxrbs005rajcp0glscume" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/26/redis/2014-07-26-Redis应用之时间线/" data-id="cjpduyimn0057kqcpjmwyjupm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -585,7 +585,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/" data-id="cjpduxrau0035ajcp83l9jtgi" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/" data-id="cjpduyil6001nkqcpjaoqedcz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -629,7 +629,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/25/redis/2014-07-25-Redis应用之id生成器/" data-id="cjpduxrbo005dajcpbhqpipth" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/25/redis/2014-07-25-Redis应用之id生成器/" data-id="cjpduyimm0055kqcp5dzgzz1s" class="article-share-link">Share</a>
       
       
     </footer>

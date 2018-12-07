@@ -104,7 +104,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" data-id="cjpduxrbt005tajcpo6ho9e9i" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" data-id="cjpduyims005nkqcpnvb5sh1d" class="article-share-link">Share</a>
       
       
     </footer>
@@ -155,7 +155,51 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" data-id="cjpduxrb2003tajcpt4kko2yo" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" data-id="cjpduyilh002bkqcpq9axhwju" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-03-Redis应用之自动补完" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/03/redis/2014-08-03-Redis应用之自动补完/" class="article-date">
+  <time datetime="2014-08-02T16:00:00.000Z" itemprop="datePublished">2014-08-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/03/redis/2014-08-03-Redis应用之自动补完/">Redis应用之自动补完</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="搜索引擎的自动提示补完"><a href="#搜索引擎的自动提示补完" class="headerlink" title="搜索引擎的自动提示补完"></a>搜索引擎的自动提示补完</h1><h2 id="构建提示列表"><a href="#构建提示列表" class="headerlink" title="构建提示列表"></a>构建提示列表</h2><p>为了构建按使用次数 进行排序的提示列表,程序需要分析用 户的输入,并记录每个字、词、句的使用频<br>率。</p>
+<p>举个例子,每当用 户输入‘周杰伦’的时候,程序会执行以下命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ZINCRBY &apos;auto-complete::周&apos; &apos;周杰伦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周杰&apos; &apos;周杰伦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周杰伦&apos; &apos;周杰伦&apos; 1</span><br></pre></td></tr></table></figure></p>
+<p>又比如说,每当用户输入‘周公解梦’的时候,程序会执行以下命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ZINCRBY &apos;auto-complete::周&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公解&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公解梦&apos; &apos;周公解梦&apos; 1</span><br></pre></td></tr></table></figure></p>
+<h2 id="当用户键入相应的字、词、句时-程序可以通-过访问以-‘auto-complete-’-开头的键来得到相应的提示信息。"><a href="#当用户键入相应的字、词、句时-程序可以通-过访问以-‘auto-complete-’-开头的键来得到相应的提示信息。" class="headerlink" title="当用户键入相应的字、词、句时,程序可以通 过访问以 ‘auto-complete::’ 开头的键来得到相应的提示信息。"></a>当用户键入相应的字、词、句时,程序可以通 过访问以 ‘auto-complete::’ 开头的键来得到相应的提示信息。</h2><p>举个例子,当用 户键入 ‘周’ 字的时候,程序就会 对 ‘auto-complete::周’ 这个有序集合调用,<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZREVRANGE auto-complete::周 0 4  # [&apos;周永康&apos;, &apos;周公解梦&apos;, &apos;周杰伦&apos;, &apos;周迅&apos;, &apos;周星驰&apos;]</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/03/redis/2014-08-03-Redis应用之自动补完/" data-id="cjpduyimr005lkqcp3otq0whb" class="article-share-link">Share</a>
       
       
     </footer>
@@ -209,51 +253,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" data-id="cjpduxrb0003najcpq4f0ig6a" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-08-03-Redis应用之自动补完" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/03/redis/2014-08-03-Redis应用之自动补完/" class="article-date">
-  <time datetime="2014-08-02T16:00:00.000Z" itemprop="datePublished">2014-08-03</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/03/redis/2014-08-03-Redis应用之自动补完/">Redis应用之自动补完</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="搜索引擎的自动提示补完"><a href="#搜索引擎的自动提示补完" class="headerlink" title="搜索引擎的自动提示补完"></a>搜索引擎的自动提示补完</h1><h2 id="构建提示列表"><a href="#构建提示列表" class="headerlink" title="构建提示列表"></a>构建提示列表</h2><p>为了构建按使用次数 进行排序的提示列表,程序需要分析用 户的输入,并记录每个字、词、句的使用频<br>率。</p>
-<p>举个例子,每当用 户输入‘周杰伦’的时候,程序会执行以下命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ZINCRBY &apos;auto-complete::周&apos; &apos;周杰伦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周杰&apos; &apos;周杰伦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周杰伦&apos; &apos;周杰伦&apos; 1</span><br></pre></td></tr></table></figure></p>
-<p>又比如说,每当用户输入‘周公解梦’的时候,程序会执行以下命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ZINCRBY &apos;auto-complete::周&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公解&apos; &apos;周公解梦&apos; 1</span><br><span class="line">ZINCRBY &apos;auto-complete::周公解梦&apos; &apos;周公解梦&apos; 1</span><br></pre></td></tr></table></figure></p>
-<h2 id="当用户键入相应的字、词、句时-程序可以通-过访问以-‘auto-complete-’-开头的键来得到相应的提示信息。"><a href="#当用户键入相应的字、词、句时-程序可以通-过访问以-‘auto-complete-’-开头的键来得到相应的提示信息。" class="headerlink" title="当用户键入相应的字、词、句时,程序可以通 过访问以 ‘auto-complete::’ 开头的键来得到相应的提示信息。"></a>当用户键入相应的字、词、句时,程序可以通 过访问以 ‘auto-complete::’ 开头的键来得到相应的提示信息。</h2><p>举个例子,当用 户键入 ‘周’ 字的时候,程序就会 对 ‘auto-complete::周’ 这个有序集合调用,<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZREVRANGE auto-complete::周 0 4  # [&apos;周永康&apos;, &apos;周公解梦&apos;, &apos;周杰伦&apos;, &apos;周迅&apos;, &apos;周星驰&apos;]</span><br></pre></td></tr></table></figure></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/03/redis/2014-08-03-Redis应用之自动补完/" data-id="cjpduxrbs005pajcpv5xqwmft" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" data-id="cjpduyilg0029kqcpjpnrop7u" class="article-share-link">Share</a>
       
       
     </footer>
@@ -294,7 +294,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/02/redis/2014-08-02-Redis应用之翻页/" data-id="cjpduxrbr005najcpmmzfda3b" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/02/redis/2014-08-02-Redis应用之翻页/" data-id="cjpduyimr005jkqcpqsbwjkry" class="article-share-link">Share</a>
       
       
     </footer>
@@ -386,7 +386,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" data-id="cjpduxrb0003lajcpl0igmj58" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" data-id="cjpduyild0025kqcp3mtqaa0s" class="article-share-link">Share</a>
       
       
     </footer>
@@ -450,7 +450,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" data-id="cjpduxraz003jajcprs224cin" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" data-id="cjpduyild0027kqcp55k4uib7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -492,7 +492,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/01/redis/2014-08-01-Redis应用之排行榜/" data-id="cjpduxrbq005lajcpam82q0lr" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/01/redis/2014-08-01-Redis应用之排行榜/" data-id="cjpduyimq005hkqcpwcff67pp" class="article-share-link">Share</a>
       
       
     </footer>
@@ -550,7 +550,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/30/mysql/2014-7-30-MySQL优化/" data-id="cjpduxray003hajcpxjo9bx1b" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/30/mysql/2014-7-30-MySQL优化/" data-id="cjpduyilc0022kqcpsaby9cj9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -608,7 +608,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/29/mysql/2014-7-29-行级锁定/" data-id="cjpduxray003fajcpuk9uk7gm" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/29/mysql/2014-7-29-行级锁定/" data-id="cjpduyila001xkqcp03o21q4d" class="article-share-link">Share</a>
       
       
     </footer>
