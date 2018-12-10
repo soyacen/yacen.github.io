@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>RedisLua脚本 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Lua脚本 使用脚本可以直接在服 务器端执行 Redis 命令,一般的数据 处理操作可以直接使用 Lua 语言或者 Lua 解释器提供的函数 库来完成,不必再返回 给客户端进行处理。  所有脚本都是以事 务的形式来执行的,脚本在 执行过程中不会被其他工作打断,也不会引起任何 竞争条件,完全可以使用 Lua 脚本来代替事 务和乐观锁。  所有脚本都是可重用的,也即是 说,重复执行相同的操作 时,只要">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RedisLua脚本">
+<meta property="og:url" content="http://yacen.github.io/2014/12/17/redis/2014-12-17-RedisLua脚本/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="Lua脚本 使用脚本可以直接在服 务器端执行 Redis 命令,一般的数据 处理操作可以直接使用 Lua 语言或者 Lua 解释器提供的函数 库来完成,不必再返回 给客户端进行处理。  所有脚本都是以事 务的形式来执行的,脚本在 执行过程中不会被其他工作打断,也不会引起任何 竞争条件,完全可以使用 Lua 脚本来代替事 务和乐观锁。  所有脚本都是可重用的,也即是 说,重复执行相同的操作 时,只要">
+<meta property="og:locale" content="Zh">
+<meta property="og:updated_time" content="2018-12-08T08:48:03.714Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RedisLua脚本">
+<meta name="twitter:description" content="Lua脚本 使用脚本可以直接在服 务器端执行 Redis 命令,一般的数据 处理操作可以直接使用 Lua 语言或者 Lua 解释器提供的函数 库来完成,不必再返回 给客户端进行处理。  所有脚本都是以事 务的形式来执行的,脚本在 执行过程中不会被其他工作打断,也不会引起任何 竞争条件,完全可以使用 Lua 脚本来代替事 务和乐观锁。  所有脚本都是可重用的,也即是 说,重复执行相同的操作 时,只要">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录平时可能用到的资料</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-redis/2014-12-17-RedisLua脚本" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/17/redis/2014-12-17-RedisLua脚本/" class="article-date">
+  <time datetime="2014-12-16T16:00:00.000Z" itemprop="datePublished">2014-12-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      RedisLua脚本
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Lua脚本"><a href="#Lua脚本" class="headerlink" title="Lua脚本"></a>Lua脚本</h2><ol>
+<li><p>使用脚本可以直接在服 务器端执行 Redis 命令,一般的数据 处理操作可以直接使用 Lua 语言或者 Lua 解释器提供的函数 库来完成,不必再返回 给客户端进行处理。</p>
+</li>
+<li><p>所有脚本都是以事 务的形式来执行的,脚本在 执行过程中不会被其他工作打断,也不会引起任何 竞争条件,完全可以使用 Lua 脚本来代替事 务和乐观锁。</p>
+</li>
+<li><p>所有脚本都是可重用的,也即是 说,重复执行相同的操作 时,只要调用储存在服务器内部的脚本 缓存就可以了,不用重新 发送整个脚本,从而尽可能地 节约网络资源。</p>
+</li>
+</ol>
+<h2 id="执行-Lua-脚本"><a href="#执行-Lua-脚本" class="headerlink" title="执行 Lua 脚本"></a>执行 Lua 脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVAL script numkeys key [key ...] arg [arg ...]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>script 参数是要执行的 Lua 脚本。</li>
+<li>numkeys 是脚本要处理的数据库键的数量,之后的 key [key …] 参数指定了脚本要 处理的数据库键,被传入的键可以在脚本里面通 过访问 KEYS 数组来取得,比如 KEYS[1] 就取出第一个 输入的键,KEYS[2] 取出第二个输入的键,诸如此类。</li>
+<li>arg [arg …] 参数指定了脚本要用到的参数,在脚本里面可以通 过访问 ARGV 数组来获取这些参数。显式地指定脚本里面用到的 键是为了配合 Redis 集群对键的检查,如果不这样做的话,在集群里面使用脚本可能会出 错。</li>
+</ul>
+<p>另外,通过显式地指定脚本要用到的数据 库键以及相关参数,而不是将数据 库键和参数硬写在脚本里面,用户可以更方便地重用同一个脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;PING&apos;)&quot; 0   # 在 Lua 脚本里面执行 PING 命令</span><br><span class="line">PONG</span><br><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;DBSIZE&apos;)&quot; 0  # 在 Lua 脚本里面执行 DBSIZE 命令</span><br><span class="line">(integer) 4</span><br><span class="line"></span><br><span class="line"># 在 Lua 脚本里面执行 GET 命令,取出键 msg 的值,并对值进行字符串拼接操作</span><br><span class="line">redis&gt; SET msg &quot;hello world&quot;</span><br><span class="line">OK</span><br><span class="line">redis&gt; EVAL &quot;return &apos;The message is: &apos; .. redis.call(&apos;GET&apos;, KEYS[1]) &apos;&quot; 1 msg</span><br><span class="line">&quot;The message is: hello world&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="redis-call-和-redis-pcall-的区别"><a href="#redis-call-和-redis-pcall-的区别" class="headerlink" title="redis.call() 和 redis.pcall() 的区别"></a>redis.call() 和 redis.pcall() 的区别</h2><p>redis.call() 和 redis.pcall() 都可以用来执行 Redis 命令,它们的不同之处在于，当被执行的脚本出错时：</p>
+<ul>
+<li>redis.call() 会返回出错脚本的名字以及 EVAL 命令的错误信息</li>
+<li>redis.pcall() 只返回 EVAL 命令的错误信息。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;NotExistsCommand&apos;)&quot; 0</span><br><span class="line">(error) ERR Error running script (call to f_ddabd662fa0a8e105765181ee7606562c1e6f1ce):</span><br><span class="line">@user_script:1: @user_script: 1: Unknown Redis command called from Lua script</span><br><span class="line"></span><br><span class="line">redis&gt; EVAL &quot;return redis.pcall(&apos;NotExistsCommand&apos;)&quot; 0</span><br><span class="line">(error) @user_script: 1: Unknown Redis command called from Lua script</span><br></pre></td></tr></table></figure>
+<p>换句话来说,在被执行的脚本出错时, redis.call() 可以提供更详细的错误信息,方便进行查错。</p>
+<h2 id="使用-EVALSHA-来减少网络资源损耗"><a href="#使用-EVALSHA-来减少网络资源损耗" class="headerlink" title="使用 EVALSHA 来减少网络资源损耗"></a>使用 EVALSHA 来减少网络资源损耗</h2><p>任何 Lua 脚本,只要被 EVAL 命令执行过一次,就会被 储存到服务器的脚本缓存里面,用户只要通过 EVALSHA 命令,指定被 缓存脚本的 SHA1 值,就可以在不 发送脚本的情况下,再次 执行脚本:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVALSHA sha1 numkeys key [key ...] arg [arg ...]</span><br></pre></td></tr></table></figure></p>
+<p>通过 SHA1 值来重用返回 ‘hello world’ 信息的脚本:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return &apos;hello world&apos;&quot; 0</span><br><span class="line">&quot;hello world&quot;</span><br><span class="line">redis&gt; EVALSHA 5332031c6b470dc5a0dd9b4bf2030dea6d65de91 0</span><br><span class="line">&quot;hello world&quot;</span><br></pre></td></tr></table></figure></p>
+<p>通过 SHA1 值来重用之前实现的 ZDECRBY 命令,这样就不用每次都 发送整个脚本了:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVALSHA 918130cae39ff0759b8256948742f77300a91cb2 1 salary 500 peter</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure></p>
+<h2 id="脚本管理命令"><a href="#脚本管理命令" class="headerlink" title="脚本管理命令"></a>脚本管理命令</h2><p>检查 sha1 值所代表的脚本是否已经被加入到脚本缓存里面,是的话返回 1 ,不是的话返回 0 。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT EXISTS sha1 [sha1 ...]</span><br></pre></td></tr></table></figure></p>
+<p>将脚本储存到脚本缓存里面,等待将来 EVALSHA 使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT LOAD script</span><br></pre></td></tr></table></figure></p>
+<p>清除脚本缓存储存的所有脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT FLUSH</span><br></pre></td></tr></table></figure></p>
+<p>杀死运行超时的脚本。如果脚本已经执行过写入操作,那么还需要使用 SHUTDOWN NOSAVE 命令来强制服务器不保存数据,以免错误的数据被保存到数据库里面。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT KILL</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/17/redis/2014-12-17-RedisLua脚本/" data-id="cjpi4wo1q0061f9cpt07a0k6x" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nodejs的path模块源码解读
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Redis运行时更改master-slave</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

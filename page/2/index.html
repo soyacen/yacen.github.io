@@ -70,6 +70,72 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-nginx/2018-08-18-Nginx性能优化之tcp延迟" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/" class="article-date">
+  <time datetime="2018-08-17T16:00:00.000Z" itemprop="datePublished">2018-08-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/">2Nginx性能优化之tcp延迟</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="tcp-nodelay"><a href="#tcp-nodelay" class="headerlink" title="tcp_nodelay"></a>tcp_nodelay</h2><p>在 TCP 发展早期，工程师需要面对流量冲突和堵塞的问题，其中涌现了大批的解决方案，其中之一是由 John Nagle 提出的算法。</p>
+<p>Nagle 的算法旨在防止通讯被大量的小包淹没。该理论不涉及全尺寸 tcp 包（最大报文长度，简称 MSS）的处理。只针对比 MSS 小的包，只有当接收方成功地将以前的包(ACK)的所有确认发送回来时，这些包才会被发送。在等待期间，发送方可以缓冲更多的数据之后再发送。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if package.size &gt;= MSS.size</span><br><span class="line">  send(package)</span><br><span class="line">elsif acks.all_received?</span><br><span class="line">  send(package)</span><br><span class="line">else</span><br><span class="line">  # acumulate data</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
+<p>与此同时，诞生了另一个理论，延时 ACK</p>
+<p>在 TCP 通讯中，在发送数据后，需要接收回应包(ACK)来确认数据被成功传达。</p>
+<p>延时 ACK 旨在解决线路被大量的 ACK 包拥堵的状况。为了减少 ACK 包的数量，接收者等待需要回传的数据加上 ACK 包回传给发送方，如果没有数据需要回传，必须在至少每 2 个 MSS，或每 200 至 500 毫秒内发送 ACK（以防我们不再收到包）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if packages.any?</span><br><span class="line">  send</span><br><span class="line">elsif last_ack_send_more_than_2MSS_ago? || 200_ms_timer.finished?</span><br><span class="line">  send</span><br><span class="line">else</span><br><span class="line">  # wait</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
+<p>正如你可能在一开始就注意到的那样 —— 这可能会导致在持久连接上的一些暂时的死锁。让我们重现它！</p>
+<p>假设：</p>
+<ul>
+<li>初始拥塞窗口等于 2。拥塞窗口是另一个 TCP 机制的一部分，称为慢启动。细节现在并不重要，只要记住它限制了一次可以发送多少个包。在第一次往返中，我们可以发送 2 个 MSS 包。在第二次发送中：4 个 MSS 包，第三次发送中：8 个MSS，依此类推。</li>
+<li>4 个已缓存的等待发送的数据包：A, B, C, D</li>
+<li>A, B, C是 MSS 包</li>
+<li>D 是一个小包</li>
+</ul>
+<p>场景：</p>
+<ul>
+<li>由于是初始的拥塞窗口，发送端被允许传送两个包：A 和 B</li>
+<li>接收端在成功获得这两个包之后，发送一个 ACK</li>
+<li>发件端发送 C 包。然而，Nagle 却阻止它发送 D 包（包长度太小，等待 C 的ACK）</li>
+<li>在接收端，延迟 ACK 使他无法发送 ACK（每隔 2 个包或每隔 200 毫秒发送一次）</li>
+<li>在 200ms 之后，接收器发送 C 包的 ACK</li>
+<li>发送端收到 ACK 并发送 D 包</li>
+</ul>
+<p>在这个数据交换过程中，由于 Nagel 和延迟 ACK 之间的死锁，引入了 200ms 的延迟。</p>
+<p>Nagle 算法是当时真正的救世主，而且目前仍然具有极大的价值。但在大多数情况下，我们不会在我们的网站上使用它，因此可以通过添加 TCP_NODELAY 标志来安全地关闭它。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcp_nodelay on;     # sets TCP_NODELAY flag, used on keep-alive connections</span><br></pre></td></tr></table></figure>
+<p>享受这200ms提速吧！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/" data-id="cjpi4wo0l003kf9cpims5c6p6" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-nginx/2018-08-14-Nginx优化" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/08/14/nginx/2018-08-14-Nginx优化/" class="article-date">
@@ -157,7 +223,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/08/14/nginx/2018-08-14-Nginx优化/" data-id="cjpduyilt003ekqcpz5kfxz8x" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/14/nginx/2018-08-14-Nginx优化/" data-id="cjpi4wo0i003ef9cpbqtyo6v0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -231,7 +297,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/08/06/nginx/2018-08-06-Nginx负载均衡/" data-id="cjpduyils003ckqcpyths1owa" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/06/nginx/2018-08-06-Nginx负载均衡/" data-id="cjpi4wo0h003cf9cpsli0w4xp" class="article-share-link">Share</a>
       
       
     </footer>
@@ -297,7 +363,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/07/28/nginx/2018-07-28-Nginx反向代理/" data-id="cjpduyilr003akqcpz364pj87" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/07/28/nginx/2018-07-28-Nginx反向代理/" data-id="cjpi4wo0k003gf9cp5a3lqvoh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -369,7 +435,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/07/05/nginx/2018-07-05-Nginx设置https/" data-id="cjpduyilr0038kqcps9j6i44k" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/07/05/nginx/2018-07-05-Nginx设置https/" data-id="cjpi4wo0k003if9cp09qmmpvx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -471,7 +537,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/06/16/nginx/2018-06-16-Nginx重写rewrite/" data-id="cjpduyilq0036kqcp1w7gzt0e" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/06/16/nginx/2018-06-16-Nginx重写rewrite/" data-id="cjpi4wo0h003af9cpx4g9s2ih" class="article-share-link">Share</a>
       
       
     </footer>
@@ -539,7 +605,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/06/08/nginx/2018-06-08-Nginx定位location/" data-id="cjpduyilp0034kqcpq6vsabzd" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/06/08/nginx/2018-06-08-Nginx定位location/" data-id="cjpi4wo0g0038f9cp5xnbiprq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -587,7 +653,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/05/28/nginx/2018-05-28-Nginx日志管理/" data-id="cjpduyilo0031kqcp1k8mx6an" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/05/28/nginx/2018-05-28-Nginx日志管理/" data-id="cjpi4wo0f0034f9cp7bi31aw1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -679,7 +745,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/05/20/nginx/2018-05-20-Nginx虚拟主机配置/" data-id="cjpduyilo002zkqcp9gegk0nq" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/05/20/nginx/2018-05-20-Nginx虚拟主机配置/" data-id="cjpi4wo0c002wf9cp6m8th7kn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -787,62 +853,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/05/17/egg/2018-5-17-egg-core源码解析/" data-id="cjpduyin6006ekqcp07vlgu7d" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nginx/2018-05-11-Nginx全局配置" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/05/11/nginx/2018-05-11-Nginx全局配置/" class="article-date">
-  <time datetime="2018-05-10T16:00:00.000Z" itemprop="datePublished">2018-05-11</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/11/nginx/2018-05-11-Nginx全局配置/">Nginx配置文件</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="nnginx-的配置文件"><a href="#nnginx-的配置文件" class="headerlink" title="nnginx 的配置文件"></a>nnginx 的配置文件</h2><p>默认的位置包括：</p>
-<ul>
-<li>/etc/nginx/nginx.conf</li>
-<li>/usr/local/etc/nginx/nginx.conf</li>
-<li>/usr/local/nginx/conf/nginx.conf</li>
-</ul>
-<p>打开nginx.conf可看到入下结构<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#user  nobody;</span></span><br><span class="line">worker_processes  1;</span><br><span class="line"></span><br><span class="line"><span class="comment">#error_log  logs/error.log;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="comment">#error_log  logs/error.log  info;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#pid        logs/nginx.pid;</span></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">    use epoll;</span><br><span class="line">&#125;</span><br><span class="line">http &#123;</span><br><span class="line">    server &#123; </span><br><span class="line">        location &#123; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    server &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="user-nobody"><a href="#user-nobody" class="headerlink" title="user  nobody"></a>user  nobody</h2><p>nobody在linux中是一个不能登陆的帐号，一些服务进程如apache，aquid等都采用一些特殊的帐号来运行，这是就可以防止程序本身有安全问题的时候，不会被黑客获得root权限</p>
-<p>这个选项一定程度上保证了服务器安全性，</p>
-<h2 id="worker-processes-1"><a href="#worker-processes-1" class="headerlink" title="worker_processes 1"></a>worker_processes 1</h2><p>定义工作的子进程数量,可以自行修改,但太大无益,因为要争夺CPU,一般设置为 CPU数*核数</p>
-<h2 id="error-log"><a href="#error-log" class="headerlink" title="error_log"></a>error_log</h2><p>错误日志的存放路径，默认是在安装目录的logs下, 可以根据日志级别存放不同文件中。</p>
-<p>error_log 级别分为 debug, info, notice, warn, error, crit  默认为crit</p>
-<h2 id="pid"><a href="#pid" class="headerlink" title="pid"></a>pid</h2><p>存放Nginx运行时的pid信息的文件，默认也是放在logs下</p>
-<h2 id="events"><a href="#events" class="headerlink" title="events"></a>events</h2><p>events块中的 worker_connections定义一个子进程最大允许连接数量，按需定义。定义 4096 能应付大部分公司需求。<br>use kqueue;定义连接处理方法有：[ kqueue | rtsig | epoll | /dev/poll | select | poll ] 详见<a href="http://nginx.org/en/docs/events.html" target="_blank" rel="noopener">Connection processing methods</a></p>
-<h2 id="http"><a href="#http" class="headerlink" title="http"></a>http</h2><p>http块是用来配置http服务器信息的。http.server是定义这是虚拟主机段<br>http.server.location是用来处理特殊路径的。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/05/11/nginx/2018-05-11-Nginx全局配置/" data-id="cjpduyiln002wkqcprchvqezw" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/05/17/egg/2018-5-17-egg-core源码解析/" data-id="cjpi4wo23006if9cp4qe043kr" class="article-share-link">Share</a>
       
       
     </footer>
@@ -856,7 +867,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -913,6 +924,10 @@
           </li>
         
           <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
@@ -922,10 +937,6 @@
         
           <li>
             <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

@@ -70,6 +70,55 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-koa/2017-10-10-compose" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/10/10/koa/2017-10-10-compose/" class="article-date">
+  <time datetime="2017-10-09T16:00:00.000Z" itemprop="datePublished">2017-10-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/10/10/koa/2017-10-10-compose/">koa-compose</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="compose"><a href="#compose" class="headerlink" title="compose()"></a>compose()</h2><p><code>middleware</code>里那么多的中间件，是怎么塞到<code>http</code>回调函数里面的呢？上面说是用<code>compose()</code>函数组装在一起的，怎么实现的呢？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">compose</span> (<span class="params">middleware</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="built_in">Array</span>.isArray(middleware)) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'Middleware stack must be an array!'</span>)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> fn <span class="keyword">of</span> middleware) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> fn !== <span class="string">'function'</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'Middleware must be composed of functions!'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">context, next</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// last called middleware #</span></span><br><span class="line">    <span class="keyword">let</span> index = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">return</span> dispatch(<span class="number">0</span>);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">dispatch</span> (<span class="params">i</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (i &lt;= index) <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'next() called multiple times'</span>))</span><br><span class="line">      index = i</span><br><span class="line">      <span class="keyword">let</span> fn = middleware[i]</span><br><span class="line">      <span class="keyword">if</span> (i === middleware.length) fn = next</span><br><span class="line">      <span class="keyword">if</span> (!fn) <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve()</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(fn(context, <span class="function"><span class="keyword">function</span> <span class="title">next</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> dispatch(i + <span class="number">1</span>)</span><br><span class="line">        &#125;))</span><br><span class="line">      &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(err)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>首先判断<code>middleware</code>是不是数组，不是个数组就抛错，</p>
+<p>然后循环<code>middleware</code>,只要有一个元素不是<code>function</code>也抛错，</p>
+<p>最后返回一个匿名函数<code>function(context,next)</code>，形成个闭包,这个匿名函数就是封装了所有<code>middleware</code>中间件函数，也就是<code>handleRequest(ctx, fnMiddleware)</code>里的<code>fnMiddleware</code>。当执行<code>fnMiddleware(ctx).then(handleResponse).catch(onerror);</code>也就执行了<code>middleware</code>里的中间件函数了。</p>
+<p>执行逻辑封装在<code>dispatch (i) {...}</code>函数里，<code>index</code>是记录当前执行的中间件函数的下标。</p>
+<p>首先<code>dispatch(0);</code>执行第一个 ====&gt; <code>0 &gt; -1</code>所以不会返回一个失败的<code>Promise</code> ====&gt; <code>index=0</code> ====&gt; <code>fn = middleware[i]</code> ====&gt; 两个<code>if</code>都不会执行，最后执行<code>fn</code>并返回<code>Promise</code>；执行<code>dispatch(1)</code>…<code>dispatch(2)</code>…。</p>
+<p>最终<code>i===middleware.length</code>，<code>fn = next</code>，执行<code>next</code>,因为<code>fnMiddleware(ctx)</code>没有传，所以直接返回<code>return Promise.resolve()</code>,中间件执行结束。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2017/10/10/koa/2017-10-10-compose/" data-id="cjpi4wnz70006f9cpvob45awe" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-分布式/2017-07-05-分布式锁" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/07/05/分布式/2017-07-05-分布式锁/" class="article-date">
@@ -126,7 +175,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/07/05/分布式/2017-07-05-分布式锁/" data-id="cjpduyimx0063kqcpm01ihlts" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2017/07/05/分布式/2017-07-05-分布式锁/" data-id="cjpi4wo1s0067f9cpvih546j6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -169,7 +218,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2016/07/25/request/2015-07-25-request-分析3/" data-id="cjpduyinc006qkqcpnnq16rly" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2016/07/25/request/2015-07-25-request-分析3/" data-id="cjpi4wo29006tf9cprotextcf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -255,7 +304,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2016/07/15/request/2015-07-15-request-分析2/" data-id="cjpduyina006jkqcp7exdyqip" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2016/07/15/request/2015-07-15-request-分析2/" data-id="cjpi4wo25006mf9cp57wi25fh" class="article-share-link">Share</a>
       
       
     </footer>
@@ -296,7 +345,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/07/26/other/2015-07-26-使用js-yaml在Node.js中开始使用YAML/" data-id="cjpduyim40044kqcp8rl7s52f" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/07/26/other/2015-07-26-使用js-yaml在Node.js中开始使用YAML/" data-id="cjpi4wo0u0044f9cpm8mb4tqy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -364,7 +413,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/07/05/request/2015-07-05-request-分析1/" data-id="cjpduyimw0061kqcpcr7h8u2l" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/07/05/request/2015-07-05-request-分析1/" data-id="cjpi4wo0v0046f9cpkovl56tc" class="article-share-link">Share</a>
       
       
     </footer>
@@ -412,7 +461,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/06/04/nodejs/2015-06-04-nodejs卸载模块/" data-id="cjpduyim30042kqcp8xn7m9za" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/06/04/nodejs/2015-06-04-nodejs卸载模块/" data-id="cjpi4wo07002mf9cpoix82by2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
@@ -471,7 +520,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/05/07/nodejs/2015-05-07-nodejs执行浅析/" data-id="cjpduyin9006hkqcppz6ncrje" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/05/07/nodejs/2015-05-07-nodejs执行浅析/" data-id="cjpi4wo24006kf9cp2cgrlpp6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
@@ -532,7 +581,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/" data-id="cjpduyim30040kqcpdlsxnnio" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/" data-id="cjpi4wo09002rf9cpoes1emzu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -584,76 +633,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" data-id="cjpduyim2003ykqcp04wgpozl" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-12-14-Redis运行时更改master-slave" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" class="article-date">
-  <time datetime="2014-12-13T16:00:00.000Z" itemprop="datePublished">2014-12-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/">Redis运行时更改master-slave</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="运行时更改master-slave"><a href="#运行时更改master-slave" class="headerlink" title="运行时更改master-slave"></a>运行时更改master-slave</h2><ol>
-<li><p>修改一台slave(设为A)为new master </p>
-<ol>
-<li>命令该服务不做其他redis服务的slave <ul>
-<li>命令: <code>slaveof no one</code> </li>
-</ul>
-</li>
-<li>修改其readonly为yes</li>
-</ol>
-</li>
-<li><p>其他的slave再指向new master A</p>
-<ol>
-<li>命令该服务为new master A的slave<ul>
-<li>命令格式 <code>slaveof IP port</code></li>
-</ul>
-</li>
-</ol>
-</li>
-</ol>
-<h2 id="监控工具-sentinel"><a href="#监控工具-sentinel" class="headerlink" title="监控工具 sentinel"></a>监控工具 sentinel</h2><ul>
-<li>Sentinel不断与master通信,获取master的slave信息.</li>
-<li>监听master与slave的状态</li>
-<li>如果某slave失效,直接通知master去除该slave.</li>
-<li>如果master失效,,是按照slave优先级(可配置), 选取1个slave做 new master,把其他slave–&gt; new master</li>
-</ul>
-<h2 id="疑问-sentinel与master通信-如果某次因为master-IO操作频繁-导致超时"><a href="#疑问-sentinel与master通信-如果某次因为master-IO操作频繁-导致超时" class="headerlink" title="疑问: sentinel与master通信,如果某次因为master IO操作频繁,导致超时,"></a>疑问: sentinel与master通信,如果某次因为master IO操作频繁,导致超时,</h2><ul>
-<li>此时,认为master失效,很武断.</li>
-<li>解决: sentnel允许多个实例看守1个master, 当N台(N可设置)sentinel都认为master失效,才正式失效.</li>
-</ul>
-<h2 id="Sentinel选项配置"><a href="#Sentinel选项配置" class="headerlink" title="Sentinel选项配置"></a>Sentinel选项配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">port 26379 # 端口</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2 # 给主机起的名字(不重即可), 当2个sentinel实例都认为master失效时,正式失效</span><br><span class="line"></span><br><span class="line">sentinel down-after-milliseconds mymaster 30000  # 多少毫秒后连接不到master认为断开</span><br><span class="line">sentinel can-failover mymaster yes #是否允许sentinel修改slave-&gt;master. 如为no,则只能监控,无权修改./</span><br><span class="line">sentinel parallel-syncs mymaster 1 # 一次性修改几个slave指向新的new master.</span><br><span class="line">sentinel client-reconfig-script mymaster /var/redis/reconfig.sh # 在重新配置new master,new slave过程,可以触发的脚本</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" data-id="cjpduyimw005zkqcpzncxvomq" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" data-id="cjpi4wo07002kf9cpfq5iwnr2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -667,7 +647,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -724,6 +704,10 @@
           </li>
         
           <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
@@ -733,10 +717,6 @@
         
           <li>
             <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

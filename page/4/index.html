@@ -70,6 +70,59 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-lodash/2018-3-15-lodash-array-compact、concat函数实现" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/03/15/lodash/2018-3-15-lodash-array-compact、concat函数实现/" class="article-date">
+  <time datetime="2018-03-14T16:00:00.000Z" itemprop="datePublished">2018-03-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/03/15/lodash/2018-3-15-lodash-array-compact、concat函数实现/">lodash-array-compact()/concat()函数实现</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天讲的是<code>compact()</code>/<code>concat()</code>函数。</p>
+<h2 id="compact"><a href="#compact" class="headerlink" title="compact()"></a>compact()</h2><p>创建一个新数组，包含原数组中所有的非假值元素。例如false, null, 0, “”, undefined, 和 NaN 都是被认为是“假值”。</p>
+<h3 id="我的实现是"><a href="#我的实现是" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">compact</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array || !<span class="built_in">Array</span>.isArray(array) || array.length&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> [];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> array.filter(<span class="function"><span class="keyword">function</span> (<span class="params">value</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(value) <span class="keyword">return</span> value;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我只是调用了es6语法中Array的filter实例方法，实现起来比较简单</p>
+<h3 id="lodash的实现是："><a href="#lodash的实现是：" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">compact</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> index = <span class="number">-1</span>,</span><br><span class="line">      length = array == <span class="literal">null</span> ? <span class="number">0</span> : array.length,</span><br><span class="line">      resIndex = <span class="number">0</span>,</span><br><span class="line">      result = [];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (++index &lt; length) &#123;</span><br><span class="line">    <span class="keyword">var</span> value = array[index];</span><br><span class="line">    <span class="keyword">if</span> (value) &#123;</span><br><span class="line">      result[resIndex++] = value;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它是遍历整个数组，如果元素非假，就加入到<code>result</code>数组，最后返回<code>result</code>。</p>
+<h2 id="concat"><a href="#concat" class="headerlink" title="concat()"></a>concat()</h2><p>创建一个新数组，将array与任何数组 或 值连接在一起。</p>
+<h3 id="我的实现是-1"><a href="#我的实现是-1" class="headerlink" title="我的实现是"></a>我的实现是</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">concat</span>(<span class="params">array</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!array || !<span class="built_in">Array</span>.isArray(array)|| array.length&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> [];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">arguments</span>.length&lt;=<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> array.concat();</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> args=<span class="built_in">Array</span>.from(<span class="built_in">arguments</span>);</span><br><span class="line">        <span class="keyword">var</span> arg= args.splice(<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line">        args[<span class="number">0</span>]=array.concat(arg);</span><br><span class="line">        <span class="keyword">return</span> concat.apply(<span class="keyword">this</span>,args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我是用递归方法，每次通过<code>arguments</code>得到一个要连接的参数<code>arg</code>并移除，然后调用<code>array.concat(arg)</code>生成新的<code>array</code>，通过<code>concat.apply()</code>递归调用，直到没有要连接的参数为止。</p>
+<h3 id="lodash的实现是：-1"><a href="#lodash的实现是：-1" class="headerlink" title="lodash的实现是："></a>lodash的实现是：</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">concat</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> length = <span class="built_in">arguments</span>.length;</span><br><span class="line">  <span class="keyword">if</span> (!length) &#123;</span><br><span class="line">    <span class="keyword">return</span> [];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> args = <span class="built_in">Array</span>(length - <span class="number">1</span>),</span><br><span class="line">      array = <span class="built_in">arguments</span>[<span class="number">0</span>],</span><br><span class="line">      index = length;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (index--) &#123;</span><br><span class="line">    args[index - <span class="number">1</span>] = <span class="built_in">arguments</span>[index];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> arrayPush(isArray(array) ? copyArray(array) : [array], baseFlatten(args, <span class="number">1</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">arrayPush</span>(<span class="params">array, values</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> index = <span class="number">-1</span>,</span><br><span class="line">      length = values.length,</span><br><span class="line">      offset = array.length;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span> (++index &lt; length) &#123;</span><br><span class="line">    array[offset + index] = values[index];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> array;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它没有用递归，主要逻辑在最后,先拷贝一份<code>array</code>，调用<code>arrayPush()</code>函数，<code>arrayPush()</code>函数的作用用一个循环，就往<code>array</code>上一个一个追加<code>values</code>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/03/15/lodash/2018-3-15-lodash-array-compact、concat函数实现/" data-id="cjpi4wnzi000mf9cpd0rdt25u" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lodash/">lodash</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-lodash/2018-3-14-lodash-array-chunk函数实现" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/03/14/lodash/2018-3-14-lodash-array-chunk函数实现/" class="article-date">
@@ -114,7 +167,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/03/14/lodash/2018-3-14-lodash-array-chunk函数实现/" data-id="cjpduyiks000fkqcp6idbe3vq" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/03/14/lodash/2018-3-14-lodash-array-chunk函数实现/" data-id="cjpi4wnzg000ff9cpg5nmqxvv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lodash/">lodash</a></li></ul>
@@ -169,7 +222,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/03/06/nginx/2018-03-06-Nginx安装/" data-id="cjpduyill002pkqcpkj8ly8ba" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/03/06/nginx/2018-03-06-Nginx安装/" data-id="cjpi4wo0e0032f9cp5s4i3wjn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -227,7 +280,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/03/02/lodash/2018-3-21-lodash-array-fromPairs、flatten函数实现/" data-id="cjpduyikz0012kqcpoc7ahaal" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/03/02/lodash/2018-3-21-lodash-array-fromPairs、flatten函数实现/" data-id="cjpi4wnzm0010f9cpvqq7wfzv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lodash/">lodash</a></li></ul>
@@ -274,7 +327,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/02/28/nginx/2018-03-00-Nginx介绍/" data-id="cjpduyilk002nkqcp9pp1u9yq" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/02/28/nginx/2018-03-00-Nginx介绍/" data-id="cjpi4wo08002of9cp7uwpm3ct" class="article-share-link">Share</a>
       
       
     </footer>
@@ -331,7 +384,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/30/koa/2017-10-30-Response/" data-id="cjpduyikq000bkqcpcg6p802j" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2017/10/30/koa/2017-10-30-Response/" data-id="cjpi4wnzc000bf9cp5kqqhud1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
@@ -413,7 +466,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/29/koa/2017-10-29-koa-Request/" data-id="cjpduyin7006fkqcpwnmu9nsi" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2017/10/29/koa/2017-10-29-koa-Request/" data-id="cjpi4wo22006hf9cpn5k9zx0q" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
@@ -464,7 +517,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/28/koa/2017-10-28-koa-Context/" data-id="cjpduyikp000akqcp2vhkpw08" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2017/10/28/koa/2017-10-28-koa-Context/" data-id="cjpi4wnzb000af9cp0ukegc68" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
@@ -535,7 +588,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/17/koa/2017-10-17-koa-Application/" data-id="cjpduyikm0006kqcpjn83d6nm" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2017/10/17/koa/2017-10-17-koa-Application/" data-id="cjpi4wnza0009f9cpvnjr1yma" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
@@ -581,56 +634,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/15/koa/2017-10-15-convert/" data-id="cjpduyiko0009kqcpq2vxvjq4" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-koa/2017-10-10-compose" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/10/koa/2017-10-10-compose/" class="article-date">
-  <time datetime="2017-10-09T16:00:00.000Z" itemprop="datePublished">2017-10-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/10/koa/2017-10-10-compose/">koa-compose</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="compose"><a href="#compose" class="headerlink" title="compose()"></a>compose()</h2><p><code>middleware</code>里那么多的中间件，是怎么塞到<code>http</code>回调函数里面的呢？上面说是用<code>compose()</code>函数组装在一起的，怎么实现的呢？<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">compose</span> (<span class="params">middleware</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="built_in">Array</span>.isArray(middleware)) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'Middleware stack must be an array!'</span>)</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> fn <span class="keyword">of</span> middleware) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> fn !== <span class="string">'function'</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'Middleware must be composed of functions!'</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">context, next</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// last called middleware #</span></span><br><span class="line">    <span class="keyword">let</span> index = <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">return</span> dispatch(<span class="number">0</span>);</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">dispatch</span> (<span class="params">i</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (i &lt;= index) <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'next() called multiple times'</span>))</span><br><span class="line">      index = i</span><br><span class="line">      <span class="keyword">let</span> fn = middleware[i]</span><br><span class="line">      <span class="keyword">if</span> (i === middleware.length) fn = next</span><br><span class="line">      <span class="keyword">if</span> (!fn) <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve()</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(fn(context, <span class="function"><span class="keyword">function</span> <span class="title">next</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">          <span class="keyword">return</span> dispatch(i + <span class="number">1</span>)</span><br><span class="line">        &#125;))</span><br><span class="line">      &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Promise</span>.reject(err)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>首先判断<code>middleware</code>是不是数组，不是个数组就抛错，</p>
-<p>然后循环<code>middleware</code>,只要有一个元素不是<code>function</code>也抛错，</p>
-<p>最后返回一个匿名函数<code>function(context,next)</code>，形成个闭包,这个匿名函数就是封装了所有<code>middleware</code>中间件函数，也就是<code>handleRequest(ctx, fnMiddleware)</code>里的<code>fnMiddleware</code>。当执行<code>fnMiddleware(ctx).then(handleResponse).catch(onerror);</code>也就执行了<code>middleware</code>里的中间件函数了。</p>
-<p>执行逻辑封装在<code>dispatch (i) {...}</code>函数里，<code>index</code>是记录当前执行的中间件函数的下标。</p>
-<p>首先<code>dispatch(0);</code>执行第一个 ====&gt; <code>0 &gt; -1</code>所以不会返回一个失败的<code>Promise</code> ====&gt; <code>index=0</code> ====&gt; <code>fn = middleware[i]</code> ====&gt; 两个<code>if</code>都不会执行，最后执行<code>fn</code>并返回<code>Promise</code>；执行<code>dispatch(1)</code>…<code>dispatch(2)</code>…。</p>
-<p>最终<code>i===middleware.length</code>，<code>fn = next</code>，执行<code>next</code>,因为<code>fnMiddleware(ctx)</code>没有传，所以直接返回<code>return Promise.resolve()</code>,中间件执行结束。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2017/10/10/koa/2017-10-10-compose/" data-id="cjpduyikk0005kqcp7l8zlcl7" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2017/10/15/koa/2017-10-15-convert/" data-id="cjpi4wnz50005f9cp0zzy1tg5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/koa/">koa</a></li></ul>
@@ -646,7 +650,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -703,6 +707,10 @@
           </li>
         
           <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
@@ -712,10 +720,6 @@
         
           <li>
             <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

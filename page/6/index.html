@@ -70,6 +70,144 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-redis/2014-12-17-RedisLua脚本" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/17/redis/2014-12-17-RedisLua脚本/" class="article-date">
+  <time datetime="2014-12-16T16:00:00.000Z" itemprop="datePublished">2014-12-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/17/redis/2014-12-17-RedisLua脚本/">RedisLua脚本</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Lua脚本"><a href="#Lua脚本" class="headerlink" title="Lua脚本"></a>Lua脚本</h2><ol>
+<li><p>使用脚本可以直接在服 务器端执行 Redis 命令,一般的数据 处理操作可以直接使用 Lua 语言或者 Lua 解释器提供的函数 库来完成,不必再返回 给客户端进行处理。</p>
+</li>
+<li><p>所有脚本都是以事 务的形式来执行的,脚本在 执行过程中不会被其他工作打断,也不会引起任何 竞争条件,完全可以使用 Lua 脚本来代替事 务和乐观锁。</p>
+</li>
+<li><p>所有脚本都是可重用的,也即是 说,重复执行相同的操作 时,只要调用储存在服务器内部的脚本 缓存就可以了,不用重新 发送整个脚本,从而尽可能地 节约网络资源。</p>
+</li>
+</ol>
+<h2 id="执行-Lua-脚本"><a href="#执行-Lua-脚本" class="headerlink" title="执行 Lua 脚本"></a>执行 Lua 脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVAL script numkeys key [key ...] arg [arg ...]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>script 参数是要执行的 Lua 脚本。</li>
+<li>numkeys 是脚本要处理的数据库键的数量,之后的 key [key …] 参数指定了脚本要 处理的数据库键,被传入的键可以在脚本里面通 过访问 KEYS 数组来取得,比如 KEYS[1] 就取出第一个 输入的键,KEYS[2] 取出第二个输入的键,诸如此类。</li>
+<li>arg [arg …] 参数指定了脚本要用到的参数,在脚本里面可以通 过访问 ARGV 数组来获取这些参数。显式地指定脚本里面用到的 键是为了配合 Redis 集群对键的检查,如果不这样做的话,在集群里面使用脚本可能会出 错。</li>
+</ul>
+<p>另外,通过显式地指定脚本要用到的数据 库键以及相关参数,而不是将数据 库键和参数硬写在脚本里面,用户可以更方便地重用同一个脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;PING&apos;)&quot; 0   # 在 Lua 脚本里面执行 PING 命令</span><br><span class="line">PONG</span><br><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;DBSIZE&apos;)&quot; 0  # 在 Lua 脚本里面执行 DBSIZE 命令</span><br><span class="line">(integer) 4</span><br><span class="line"></span><br><span class="line"># 在 Lua 脚本里面执行 GET 命令,取出键 msg 的值,并对值进行字符串拼接操作</span><br><span class="line">redis&gt; SET msg &quot;hello world&quot;</span><br><span class="line">OK</span><br><span class="line">redis&gt; EVAL &quot;return &apos;The message is: &apos; .. redis.call(&apos;GET&apos;, KEYS[1]) &apos;&quot; 1 msg</span><br><span class="line">&quot;The message is: hello world&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="redis-call-和-redis-pcall-的区别"><a href="#redis-call-和-redis-pcall-的区别" class="headerlink" title="redis.call() 和 redis.pcall() 的区别"></a>redis.call() 和 redis.pcall() 的区别</h2><p>redis.call() 和 redis.pcall() 都可以用来执行 Redis 命令,它们的不同之处在于，当被执行的脚本出错时：</p>
+<ul>
+<li>redis.call() 会返回出错脚本的名字以及 EVAL 命令的错误信息</li>
+<li>redis.pcall() 只返回 EVAL 命令的错误信息。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;NotExistsCommand&apos;)&quot; 0</span><br><span class="line">(error) ERR Error running script (call to f_ddabd662fa0a8e105765181ee7606562c1e6f1ce):</span><br><span class="line">@user_script:1: @user_script: 1: Unknown Redis command called from Lua script</span><br><span class="line"></span><br><span class="line">redis&gt; EVAL &quot;return redis.pcall(&apos;NotExistsCommand&apos;)&quot; 0</span><br><span class="line">(error) @user_script: 1: Unknown Redis command called from Lua script</span><br></pre></td></tr></table></figure>
+<p>换句话来说,在被执行的脚本出错时, redis.call() 可以提供更详细的错误信息,方便进行查错。</p>
+<h2 id="使用-EVALSHA-来减少网络资源损耗"><a href="#使用-EVALSHA-来减少网络资源损耗" class="headerlink" title="使用 EVALSHA 来减少网络资源损耗"></a>使用 EVALSHA 来减少网络资源损耗</h2><p>任何 Lua 脚本,只要被 EVAL 命令执行过一次,就会被 储存到服务器的脚本缓存里面,用户只要通过 EVALSHA 命令,指定被 缓存脚本的 SHA1 值,就可以在不 发送脚本的情况下,再次 执行脚本:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVALSHA sha1 numkeys key [key ...] arg [arg ...]</span><br></pre></td></tr></table></figure></p>
+<p>通过 SHA1 值来重用返回 ‘hello world’ 信息的脚本:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return &apos;hello world&apos;&quot; 0</span><br><span class="line">&quot;hello world&quot;</span><br><span class="line">redis&gt; EVALSHA 5332031c6b470dc5a0dd9b4bf2030dea6d65de91 0</span><br><span class="line">&quot;hello world&quot;</span><br></pre></td></tr></table></figure></p>
+<p>通过 SHA1 值来重用之前实现的 ZDECRBY 命令,这样就不用每次都 发送整个脚本了:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVALSHA 918130cae39ff0759b8256948742f77300a91cb2 1 salary 500 peter</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure></p>
+<h2 id="脚本管理命令"><a href="#脚本管理命令" class="headerlink" title="脚本管理命令"></a>脚本管理命令</h2><p>检查 sha1 值所代表的脚本是否已经被加入到脚本缓存里面,是的话返回 1 ,不是的话返回 0 。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT EXISTS sha1 [sha1 ...]</span><br></pre></td></tr></table></figure></p>
+<p>将脚本储存到脚本缓存里面,等待将来 EVALSHA 使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT LOAD script</span><br></pre></td></tr></table></figure></p>
+<p>清除脚本缓存储存的所有脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT FLUSH</span><br></pre></td></tr></table></figure></p>
+<p>杀死运行超时的脚本。如果脚本已经执行过写入操作,那么还需要使用 SHUTDOWN NOSAVE 命令来强制服务器不保存数据,以免错误的数据被保存到数据库里面。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT KILL</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/17/redis/2014-12-17-RedisLua脚本/" data-id="cjpi4wo1q0061f9cpt07a0k6x" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-12-14-Redis运行时更改master-slave" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" class="article-date">
+  <time datetime="2014-12-13T16:00:00.000Z" itemprop="datePublished">2014-12-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/">Redis运行时更改master-slave</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="运行时更改master-slave"><a href="#运行时更改master-slave" class="headerlink" title="运行时更改master-slave"></a>运行时更改master-slave</h2><ol>
+<li><p>修改一台slave(设为A)为new master </p>
+<ol>
+<li>命令该服务不做其他redis服务的slave <ul>
+<li>命令: <code>slaveof no one</code> </li>
+</ul>
+</li>
+<li>修改其readonly为yes</li>
+</ol>
+</li>
+<li><p>其他的slave再指向new master A</p>
+<ol>
+<li>命令该服务为new master A的slave<ul>
+<li>命令格式 <code>slaveof IP port</code></li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="监控工具-sentinel"><a href="#监控工具-sentinel" class="headerlink" title="监控工具 sentinel"></a>监控工具 sentinel</h2><ul>
+<li>Sentinel不断与master通信,获取master的slave信息.</li>
+<li>监听master与slave的状态</li>
+<li>如果某slave失效,直接通知master去除该slave.</li>
+<li>如果master失效,,是按照slave优先级(可配置), 选取1个slave做 new master,把其他slave–&gt; new master</li>
+</ul>
+<h2 id="疑问-sentinel与master通信-如果某次因为master-IO操作频繁-导致超时"><a href="#疑问-sentinel与master通信-如果某次因为master-IO操作频繁-导致超时" class="headerlink" title="疑问: sentinel与master通信,如果某次因为master IO操作频繁,导致超时,"></a>疑问: sentinel与master通信,如果某次因为master IO操作频繁,导致超时,</h2><ul>
+<li>此时,认为master失效,很武断.</li>
+<li>解决: sentnel允许多个实例看守1个master, 当N台(N可设置)sentinel都认为master失效,才正式失效.</li>
+</ul>
+<h2 id="Sentinel选项配置"><a href="#Sentinel选项配置" class="headerlink" title="Sentinel选项配置"></a>Sentinel选项配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">port 26379 # 端口</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2 # 给主机起的名字(不重即可), 当2个sentinel实例都认为master失效时,正式失效</span><br><span class="line"></span><br><span class="line">sentinel down-after-milliseconds mymaster 30000  # 多少毫秒后连接不到master认为断开</span><br><span class="line">sentinel can-failover mymaster yes #是否允许sentinel修改slave-&gt;master. 如为no,则只能监控,无权修改./</span><br><span class="line">sentinel parallel-syncs mymaster 1 # 一次性修改几个slave指向新的new master.</span><br><span class="line">sentinel client-reconfig-script mymaster /var/redis/reconfig.sh # 在重新配置new master,new slave过程,可以触发的脚本</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" data-id="cjpi4wo1r0065f9cprluq5dct" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-redis/2014-12-13-Redis服务端命令" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/12/13/redis/2014-12-13-Redis服务端命令/" class="article-date">
@@ -139,7 +277,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpduyimv005xkqcprk3a9lrj" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpi4wo1r0063f9cp3s6271bv" class="article-share-link">Share</a>
       
       
     </footer>
@@ -202,7 +340,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" data-id="cjpduyimu005vkqcp2jickrpw" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" data-id="cjpi4wo1o005xf9cpfj2rw012" class="article-share-link">Share</a>
       
       
     </footer>
@@ -277,7 +415,65 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjpduyimu005tkqcp48t1hplv" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjpi4wo1p005zf9cp9p2iihl8" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-12-Redis应用之评论" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/12/redis/2014-08-12-Redis应用之评论/" class="article-date">
+  <time datetime="2014-08-11T16:00:00.000Z" itemprop="datePublished">2014-08-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/12/redis/2014-08-12-Redis应用之评论/">Redis应用之评论</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="评论"><a href="#评论" class="headerlink" title="评论"></a>评论</h2><p>用户可以对每条微博进行评论。</p>
+<p>对于每条评论,程序都会分配一个唯一的 评论 ID ,并使用格式为 weibo:comment:<id> 的散列键来储存评论的发布者、发布时间和内容。</id></p>
+<p>对于每条微博,程序都会使用一个列表来 储存该微博获得的所有评论的 ID ,列表的键名格式为 weibo:message:<id>:comments 。</id></p>
+<p>每当微博有新的 评论出现时,程序就会将新 评论的 ID推入到列表里面。</p>
+<h2 id="写评论"><a href="#写评论" class="headerlink" title="写评论"></a>写评论</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">commentid = incr global:weibo:comment</span><br><span class="line">HMSET weibo::comment:[commentid]</span><br><span class="line">                          author 10086</span><br><span class="line">                          content “nice post”</span><br><span class="line">                          time 1410123456</span><br></pre></td></tr></table></figure>
+<h2 id="获取评论"><a href="#获取评论" class="headerlink" title="获取评论"></a>获取评论</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HMGET weibo:comment:[commentid] id author content time</span><br></pre></td></tr></table></figure>
+<h2 id="把评论放入微博id为weiboid评论列表"><a href="#把评论放入微博id为weiboid评论列表" class="headerlink" title="把评论放入微博id为weiboid评论列表"></a>把评论放入微博id为weiboid评论列表</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LPUSH weibo:[weiboid]:comments [commentid]</span><br></pre></td></tr></table></figure>
+<h2 id="获取评论列表"><a href="#获取评论列表" class="headerlink" title="获取评论列表"></a>获取评论列表</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LRANGE weibo:[weiboid]:comments 0 -1</span><br></pre></td></tr></table></figure>
+<h2 id="评论数量"><a href="#评论数量" class="headerlink" title="评论数量"></a>评论数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LLEN weibo:[weiboid]:comments</span><br></pre></td></tr></table></figure>
+<p>每个直播间都有一个播主和多个听众。</p>
+<p>播主只要在直播间播放一首歌,那么所有听众都会听到相同的歌曲。</p>
+<h2 id="使用发布与订阅功能实现直播间"><a href="#使用发布与订阅功能实现直播间" class="headerlink" title="使用发布与订阅功能实现直播间"></a>使用发布与订阅功能实现直播间</h2><p>要使用 Redis 实现类似的直播间,我们可以为每个直播间设置一个频道,每个直播间的听众都是频道的订阅者,而播主则通过向频道发送消息来告诉大家要播放哪首歌。</p>
+<p>比如说,假设用户 peter 正在进行直播,他的直播间的频道为 peter::live::room ,当 peter要播放 ID 为 10086 的歌曲时,他会执行命令 PUBLISH peter::live::room “play_song::<br>10086” 。</p>
+<p>而所有听众在接收到 这条消息时,只需要分析出里面的指令( play_song)和要播放的歌曲 ID (10086),就可以播放 peter 指定的歌<br>曲了。</p>
+<h2 id="播主功能，播放-ID-为-song-id-的歌曲。"><a href="#播主功能，播放-ID-为-song-id-的歌曲。" class="headerlink" title="播主功能，播放 ID 为 song_id 的歌曲。"></a>播主功能，播放 ID 为 song_id 的歌曲。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">publish live:room:[roomid] &quot;song is song_id&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="听众功能，收听直播间。"><a href="#听众功能，收听直播间。" class="headerlink" title="听众功能，收听直播间。"></a>听众功能，收听直播间。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">subscribe live:room:[roomid]</span><br></pre></td></tr></table></figure>
+<h2 id="列出所有直播间"><a href="#列出所有直播间" class="headerlink" title="列出所有直播间"></a>列出所有直播间</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pubsub channels</span><br></pre></td></tr></table></figure>
+<h2 id="听众数量"><a href="#听众数量" class="headerlink" title="听众数量"></a>听众数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pubsub numsub live:room:[roomid]</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/12/redis/2014-08-12-Redis应用之评论/" data-id="cjpi4wo1l005pf9cp4li4tubo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -326,7 +522,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjpduyimt005rkqcp7wujrtpk" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjpi4wo1n005vf9cpn59s8b1t" class="article-share-link">Share</a>
       
       
     </footer>
@@ -375,7 +571,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjpduyilk002lkqcpym0aauxc" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjpi4wo06002if9cpr76d43gn" class="article-share-link">Share</a>
       
       
     </footer>
@@ -425,7 +621,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjpduyilj002jkqcpgl8tbayv" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjpi4wo05002gf9cpvhfe8zm4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -478,175 +674,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjpduyilj002hkqcp8vmbwekd" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-6-MySql数据库索引的优缺点" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" class="article-date">
-  <time datetime="2014-08-05T16:00:00.000Z" itemprop="datePublished">2014-08-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/">MySql数据库索引的优缺点</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>数据库索引的优势最明显的就是减少I/O，下面分析几种场景。</p>
-<p>对于=条件的字段，可以直接通过查找B+树的方式，通过很少的硬盘读取次数(相当于B+树层高)，就能够到达叶子节点，然后直接定位到数据的位置。</p>
-<p>对于范围的字段，由于B+树里面都是排好序的，范围可以很快的通过树进行定位。</p>
-<p>同理对于orderby/group by/distinct/max/min，由于B+树是排好序的，也是能够很快的得到结果的。</p>
-<p>还有一个常见的场景称为索引覆盖数据。例如A, B两个字段作为条件字段，常出现A=a AND B=b，同时select C, D时候，往往会建联合索引(A, B)，是一个二级索引，所以搜索的时候，通过二级索引的B+树能够很快的找到相应的叶子节点和记录，但是记录中有的是聚簇索引的ID，所以还需要查找一次聚簇索引的B+树，找到真正的表中的记录，然后在记录中，将C,D读取出来。如果建立联合索引的时候为(A, B, C, D)，则在二级索引的B+树中就有了所有的数据，可以直接返回了，减少了一次搜索树的过程。</p>
-<p>当然索引肯定是有代价的，天下没有免费的午餐。</p>
-<p>索引带来的好处多是读的效率的提高，而索引带来的代价就是写的效率的降低。</p>
-<p>插入和修改数据，都有可能意味着索引的改变。</p>
-<p>插入的时候，往往会在主键上建设聚簇索引，因而主键最好使用自增长，这样插入的数据就总是在最后，而且是顺序的，效率比较高。主键不要使用UUID，这样顺序比较随机，会带来随机的写入，效率比较差。主键不要使用和业务有关，因为与业务相关意味着会被更新，将面临着一次删除和重新插入，效率会比较差。</p>
-<p>通过上面对于B+树的原理的介绍，我们可以看出B+树的分裂代价还是比较大的，而分裂往往就产生于插入的过程中。</p>
-<p>而对于数据的修改，则基本相当于删除再插入，代价也比较大。</p>
-<p>对于一些字符串的列的二级索引，往往会造成随机的写入和读取，对I/O的压力也比较大。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjpduyili002fkqcpz09a3tzq" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-5-MySql数据库索引的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" class="article-date">
-  <time datetime="2014-08-04T16:00:00.000Z" itemprop="datePublished">2014-08-05</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/">MySql数据库索引的原理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在整个过程中，最容易称为瓶颈点的是数据的读写，往往意味着要顺序或者随机读写磁盘，而读写磁盘的速度往往是比较慢的。</p>
-<p>如果加快这个过程呢？相信大家都猜到了就是建立索引。</p>
-<p>为什么索引能够加快这个过程呢？</p>
-<p>相信大家都逛过美食城，里面众多家餐馆琳琅满目，如果你不着急呢，肚子不饿，对搜索的性能没有要求，就可以在商场里面慢慢逛，逛一家看一家，知道找到自己想吃的餐馆。但是当你饿了，或者你们约好了餐馆，你一定想直奔那个餐馆，这个时候，你往往会去看楼层的索引图，快速的查找你目标餐馆的位置，找到后，直奔主题，就会大大节约时间，这就是索引的作用。</p>
-<p>所以索引就是通过值，快速的找到它的位置，从而可以快速的访问。</p>
-<p>索引的另外一个作用就是不用真正的查看数据，就能够做一些判断，例如商场里面有没有某个餐馆，你看一下索引就知道了，不必真的到商场里面逛一圈，再如找出所有的川菜馆，也是只要看索引就可以了，不用一家一家川菜馆跑。</p>
-<p>那么在Mysql中，索引是如何工作的呢？</p>
-<p>Mysql的索引结构，往往是一棵B+树。</p>
-<p>一棵m阶B+树具有如下的性质：</p>
-<ol>
-<li><p>节点分索引节点和数据节点。索引节点相当于B树的内部节点，所有的索引节点组成一棵B树，具有B树的所有的特性。在索引节点中，存放着Key和指针，并不存放具体的元素。数据节点相当与B树的外部节点，B树的外部节点为空，在B+树中被利用了起来，用于存放真正的数据元素，里面包含了Key和元素的其他信息，但是没有指针。</p>
-</li>
-<li><p>整棵索引节点组成的B树仅仅用来查找具有某个Key的数据元素位于哪个外部节点。在索引节点中找到了Key，事情没有结束，要继续找到数据节点，然后将数据节点中的元素读出来，或者二分查找，或者顺序扫描来寻找真正的数据元素。</p>
-</li>
-<li><p>M这个阶数仅仅用来控制索引节点部分的度，至于每个数据节点包含多少元素，与m无关。</p>
-</li>
-<li><p>另外有一个链表，将所有的数据节点串起来，可以顺序访问。</p>
-</li>
-</ol>
-<p>这个定义的比较抽象，我们来看一个具体的例子。</p>
-<p><img src="mysql4.png" alt="mysql4"></p>
-<p>从图中我们可以看出，这是一个3阶B+树，而一个外部数据节点最多包含5项。如果插入的数据在数据节点，如果不引起分裂和合并，则索引节点组成的B树就不会变。</p>
-<p>如果在71到75的外部节点插入一项76，则引起分裂，71,72,73成为一个数据节点，74,75,76成为一个数据节点，而对于索引节点来讲相当于插入一个Key为74的过程。</p>
-<p>如果在41到43的外部节点中删除43，则引起合并，41,42,61,62,63合并成一个节点，对于索引节点来讲，相当于删除Key为60的过程。</p>
-<p>查找的时候，由于B+树层高很小，所以能够比较快速的定位，例如我们要查找值62，在根节点发现大于40则访问右面，小于70则访问左面，大于60则访问右面，在叶子节点的第二个，就找到了62，成功定位。</p>
-<p>在Mysql的InnoDB中，有两种类型的B+树索引，一种称为聚簇索引，一种称为二级索引。</p>
-<p>聚簇索引的叶子节点就是数据节点，往往是主键作为聚簇索引，二级索引的叶子节点存放的是KEY字段加主键值。因而通过二级索引访问数据，要访问两次索引。</p>
-<p><img src="mysql5.png" alt="mysql5"></p>
-<p>还有一种索引的形式称为组合索引，或者复合索引，可以在多个列上建立索引。</p>
-<p><img src="mysql6.png" alt="mysql6"></p>
-<p>这种索引的排序规则为，先比较第一列，在第一列相等的情况下，比较第二列，以此类推。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjpduyilh002dkqcpgp0kwsdt" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-08-05-Redis应用之Session" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/05/redis/2014-08-05-Redis应用之Session/" class="article-date">
-  <time datetime="2014-08-04T16:00:00.000Z" itemprop="datePublished">2014-08-05</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/05/redis/2014-08-05-Redis应用之Session/">Redis应用之Session</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><p>用户 Session (会话)是一种验证用户身份的手段,通常会分 别储存在服务器端和客户端,一般由用户ID(uid)和 Session ID (sid)组成。</p>
-<p>当用户成功登录网站之后,网 页浏览器会把网站返回的 Session 储存起来,之后每次 浏览器查看网站的某个页面时,浏览器都会把 Session 里面储存的信息连同网页请求一并发送给网站,使得网站可以检查这个客户端是否已经登录,以及是否为指定的用户,等等。</p>
-<p>Session 一般每过一周或者一个月就会自 动过期,强制用户再次登录,以防用户遗忘密码,或者Session ID 遭人破解。</p>
-<h2 id="设置Session"><a href="#设置Session" class="headerlink" title="设置Session"></a>设置Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set key info PX [expireTime|1000 * 60 * 60 * 24]</span><br></pre></td></tr></table></figure>
-<h2 id="获取Session"><a href="#获取Session" class="headerlink" title="获取Session"></a>获取Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get key</span><br></pre></td></tr></table></figure>
-<h2 id="销毁Session"><a href="#销毁Session" class="headerlink" title="销毁Session"></a>销毁Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">del key</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjpduyimt005pkqcpkm8ujymo" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjpi4wo05002ef9cplp5c34m6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -660,7 +688,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -717,6 +745,10 @@
           </li>
         
           <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
@@ -726,10 +758,6 @@
         
           <li>
             <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

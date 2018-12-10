@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
 <meta property="og:description" content="注册123456789incr global:userid                  # 产生唯一useridset user:userid:1:username zhansan  # 设置userid为1的用户的用户名set user:userid:1:password 111111   # 设置userid为1的用户的密码set user:username:zhansan:userid">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-12-06T08:00:48.344Z">
+<meta property="og:updated_time" content="2018-12-08T09:37:26.255Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis应用之微博">
 <meta name="twitter:description" content="注册123456789incr global:userid                  # 产生唯一useridset user:userid:1:username zhansan  # 设置userid为1的用户的用户名set user:userid:1:password 111111   # 设置userid为1的用户的密码set user:username:zhansan:userid">
@@ -117,7 +117,7 @@
 <h2 id="获取关注者数"><a href="#获取关注者数" class="headerlink" title="获取关注者数"></a>获取关注者数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard following:myuserid</span><br></pre></td></tr></table></figure>
 <h2 id="发微博-push-方式"><a href="#发微博-push-方式" class="headerlink" title="发微博(push 方式)"></a>发微博(push 方式)</h2><ol>
 <li><p>写微博</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incr global:postid</span><br><span class="line">hmset post:postid:2 time 1405987200 userid 1 content &quot;this is my home&quot; username &quot;Jax&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">incr global:postid</span><br><span class="line">hmset post:postid:2 time 1405987200 userid 1 content &quot;this is my home&quot; username &quot;Jax&quot;</span><br><span class="line">lpush recievepost:userid postid</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>把微博推给粉丝</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fans = smembers fans:userid</span><br><span class="line">for fansuserid in fans &#123;</span><br><span class="line">	lpush recievepost:fansuserid postid</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -157,11 +157,14 @@
 </li>
 </ol>
 <h2 id="与某个明星starid共同关注"><a href="#与某个明星starid共同关注" class="headerlink" title="与某个明星starid共同关注"></a>与某个明星starid共同关注</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sinterstore common:concern myuserid starid</span><br></pre></td></tr></table></figure>
+<h2 id="转发微博"><a href="#转发微博" class="headerlink" title="转发微博"></a>转发微博</h2><p>普通微博和转发产生的微博之间的唯一区别就是,转发产生的微博会引用另一条微博 。</p>
+<p>因此,为了实现转发功能,我们需要添加一个origin_id 属性 ,这个属性记录了被转发微博的 ID,通过这个 ID 可以找到被转发微博的详细信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incr global:postid</span><br><span class="line">hmset post:postid:3 time 1405987200 userid 1 content &quot;this is my home&quot; username &quot;Jax&quot; origin_id 2</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjpduyimj004zkqcpbcpoh6uu" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjpi4wo13004qf9cp9vddbad2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -170,7 +173,7 @@
     
 <nav id="article-nav">
   
-    <a href="/2014/07/23/mysql/2014-7-23-MySql面试题-4/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2014/07/22/mysql/2014-7-22-MySql面试题-3/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
@@ -180,9 +183,9 @@
     </a>
   
   
-    <a href="/2014/07/22/mysql/2014-7-22-MySql面试题-3/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">MySql面试题</div>
+      <div class="article-nav-title">Redis应用之标签系统</div>
     </a>
   
 </nav>
@@ -244,6 +247,10 @@
           </li>
         
           <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
@@ -253,10 +260,6 @@
         
           <li>
             <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

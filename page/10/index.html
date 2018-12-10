@@ -70,6 +70,289 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mysql/2014-7-21-MySql面试题-2" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/21/mysql/2014-7-21-MySql面试题-2/" class="article-date">
+  <time datetime="2014-07-20T16:00:00.000Z" itemprop="datePublished">2014-07-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/21/mysql/2014-7-21-MySql面试题-2/">MySql面试题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="11、CHAR和VARCHAR的区别？"><a href="#11、CHAR和VARCHAR的区别？" class="headerlink" title="11、CHAR和VARCHAR的区别？"></a>11、CHAR和VARCHAR的区别？</h2><ul>
+<li>char：定长，效率高，一般用于固定长度的表单提交数据存储；例如：身份证号，手机号，电话，密码等</li>
+<li><p>varchar：不定长，效率偏低</p>
+</li>
+<li><p>长度的区别，char范围是0～255，varchar最长是64k，但是注意这里的64k是整个row的长度，要考虑到其它的 column，还有如果存在not null的时候也会占用一位，对不同的字符集，有效长度还不一样，比如utf8的，最多21845，还要除去别的column，但是varchar在一般 情况下存储都够用了。如果遇到了大文本，考虑使用text，最大能到4G。</p>
+</li>
+<li><p>效率来说基本是char&gt;varchar&gt;text，但是如果使用的是Innodb引擎的话，推荐使用varchar代替char。</p>
+</li>
+<li>char和varchar可以有默认值，text不能指定默认值。</li>
+</ul>
+<p>数据库选择合适的数据类型存储还是很有必要的，对性能有一定影响。这里在零碎记录两笔，对于int类型的，如果不需要存取负值，最好加上unsigned；对于经常出现在where语句中的字段，考虑加索引，整形的尤其适合加索引。</p>
+<h2 id="12、列的字符串类型可以是什么？"><a href="#12、列的字符串类型可以是什么？" class="headerlink" title="12、列的字符串类型可以是什么？"></a>12、列的字符串类型可以是什么？</h2><p>CHAR、VARCHAR、BINARY、VARBINARY、BLOB、TEXT、ENUM和SET。</p>
+<h2 id="13、如何获取当前的mysql版本？"><a href="#13、如何获取当前的mysql版本？" class="headerlink" title="13、如何获取当前的mysql版本？"></a>13、如何获取当前的mysql版本？</h2><p>mysql -V</p>
+<h2 id="14、mysql中使用什么存储引擎？"><a href="#14、mysql中使用什么存储引擎？" class="headerlink" title="14、mysql中使用什么存储引擎？"></a>14、mysql中使用什么存储引擎？</h2><h3 id="（1）InnoDB存储引擎"><a href="#（1）InnoDB存储引擎" class="headerlink" title="（1）InnoDB存储引擎"></a>（1）InnoDB存储引擎</h3><p>该存储引擎提供了具有提交、回滚和崩溃恢复能力的事务安全。但是对比MyISAM引擎，写的处理效率会差一些，并且会占用更多的磁盘空间以保留数据和索引。<br>InnoDB存储引擎的特点：支持自动增长列，支持外键约束</p>
+<h3 id="（2）MyISAM存储引擎"><a href="#（2）MyISAM存储引擎" class="headerlink" title="（2）MyISAM存储引擎"></a>（2）MyISAM存储引擎</h3><ul>
+<li>不支持事务</li>
+<li>不支持外键，</li>
+<li>访问速度快，</li>
+<li>对事务完整性没有要求或者以select，insert为主的应用基本上可以用这个引擎来创建表</li>
+<li>支持3种不同的存储格式，分别是：静态表；动态表；压缩表<ul>
+<li>静态表：表中的字段都是非变长字段，这样每个记录都是固定长度的，优点存储非常迅速，容易缓存，出现故障容易恢复；缺点是占用的空间通常比动态表多（因为存储时会按照列的宽度定义补足空格）ps：在取数据的时候，默认会把字段后面的空格去掉，如果不注意会把数据本身带的空格也会忽略。</li>
+<li>动态表：记录不是固定长度的，这样存储的优点是占用的空间相对较少；缺点：频繁的更新、删除数据容易产生碎片，需要定期执行OPTIMIZE TABLE或者myisamchk-r命令来改善性能</li>
+<li>压缩表：因为每个记录是被单独压缩的，所以只有非常小的访问开支</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-MEMORY存储引擎"><a href="#3-MEMORY存储引擎" class="headerlink" title="(3) MEMORY存储引擎"></a>(3) MEMORY存储引擎</h3><p>Memory存储引擎使用存在于内存中的内容来创建表。每个memory表只实际对应一个磁盘文件，格式是.frm。memory类型的表访问非常的快，因为它的数据是放在内存中的，并且默认使用HASH索引，但是一旦服务关闭，表中的数据就会丢失掉。 </p>
+<p>MEMORY存储引擎的表可以选择使用BTREE索引或者HASH索引，两种不同类型的索引有其不同的使用范围 </p>
+<p>Hash索引优点：<br>Hash 索引结构的特殊性，其检索效率非常高，索引的检索可以一次定位，不像B-Tree 索引需要从根节点到枝节点，最后才能访问到页节点这样多次的IO访问，所以 Hash 索引的查询效率要远高于 B-Tree 索引。 </p>
+<p>Hash索引缺点： 那么不精确查找呢，也很明显，因为hash算法是基于等值计算的，所以对于“like”等范围查找hash索引无效，不支持；</p>
+<p>Memory类型的存储引擎主要用于哪些内容变化不频繁的代码表，或者作为统计操作的中间结果表，便于高效地对中间结果进行分析并得到最终的统计结果，。对存储引擎为memory的表进行更新操作要谨慎，因为数据并没有实际写入到磁盘中，所以一定要对下次重新启动服务后如何获得这些修改后的数据有所考虑。</p>
+<h3 id="4-MERGE存储引擎"><a href="#4-MERGE存储引擎" class="headerlink" title="(4) MERGE存储引擎"></a>(4) MERGE存储引擎</h3><p>Merge存储引擎是一组MyISAM表的组合，这些MyISAM表必须结构完全相同，merge表本身并没有数据，对merge类型的表可以进行查询，更新，删除操作，这些操作实际上是对内部的MyISAM表进行的。</p>
+<h2 id="15、mysql驱动程序是什么？"><a href="#15、mysql驱动程序是什么？" class="headerlink" title="15、mysql驱动程序是什么？"></a>15、mysql驱动程序是什么？</h2><p>ODBC</p>
+<h2 id="16、TIMESTAMP在UPDATE-CURRENT-TIMESTAMP数据类型上做什么？"><a href="#16、TIMESTAMP在UPDATE-CURRENT-TIMESTAMP数据类型上做什么？" class="headerlink" title="16、TIMESTAMP在UPDATE　CURRENT_TIMESTAMP数据类型上做什么？"></a>16、TIMESTAMP在UPDATE　CURRENT_TIMESTAMP数据类型上做什么？</h2><h2 id="17、主键和候选键有什么区别？"><a href="#17、主键和候选键有什么区别？" class="headerlink" title="17、主键和候选键有什么区别？"></a>17、主键和候选键有什么区别？</h2><ol>
+<li>超键：在关系模式中，能唯一标识元组的属性集称为超键。</li>
+<li>候选键 :如果一个属性集能唯一标识元组，且有不包含多余属性，那么这个属性集称为候选键；也即：候选键是没有多余属性的超键。<br>那么超键可以看作是带有其他有多余属性的候选键，也即候选键带上任意个其他属性可被视为超键。</li>
+<li>主键：关系模式中用户正在使用的候选键称主键(primary key)。一般，如不加说明，键是指主键。</li>
+<li>外键：在关系模式R中，如果某属性集是其他模式的候选键，那么该属性集对模式R来说就是外键。</li>
+</ol>
+<h2 id="18、如何使用Unix-shell登录mysql？"><a href="#18、如何使用Unix-shell登录mysql？" class="headerlink" title="18、如何使用Unix shell登录mysql？"></a>18、如何使用Unix shell登录mysql？</h2><p>mysql -hlocalhost -uroot -p</p>
+<h2 id="19、-myisamchk是用来做什么的？"><a href="#19、-myisamchk是用来做什么的？" class="headerlink" title="19、 myisamchk是用来做什么的？"></a>19、 myisamchk是用来做什么的？</h2><p>Myisamchk是MyISAM表维护的一个非常实用的工具。可以使用myisamchk实用程序来获得有关数据库表的信息或检查、修复、优化他们。myisamchk适用MyISAM表(对应.MYI和.MYD文件的表)。</p>
+<h2 id="20、mysql数据库服务器性能分析的方法命令有哪些"><a href="#20、mysql数据库服务器性能分析的方法命令有哪些" class="headerlink" title="20、mysql数据库服务器性能分析的方法命令有哪些?"></a>20、mysql数据库服务器性能分析的方法命令有哪些?</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/21/mysql/2014-7-21-MySql面试题-2/" data-id="cjpi4wo1n005tf9cp54mxkfoj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-20-Redis应用之多人在线聊天(消息队列)" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天(消息队列)/" class="article-date">
+  <time datetime="2014-07-19T16:00:00.000Z" itemprop="datePublished">2014-07-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天(消息队列)/">Redis应用之多人在线聊天(消息队列)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="发送端发送消息"><a href="#发送端发送消息" class="headerlink" title="发送端发送消息"></a>发送端发送消息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush chat:userid:123:userid:456 hello</span><br></pre></td></tr></table></figure>
+<h2 id="接收端接受消息"><a href="#接收端接受消息" class="headerlink" title="接收端接受消息"></a>接收端接受消息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brpop chat:userid:123:userid:456 30000</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天(消息队列)/" data-id="cjpi4wo16004yf9cpa9cya5ce" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-7-20-MySql面试题-1" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/20/mysql/2014-7-20-MySql面试题-1/" class="article-date">
+  <time datetime="2014-07-19T16:00:00.000Z" itemprop="datePublished">2014-07-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/20/mysql/2014-7-20-MySql面试题-1/">MySql面试题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1、一张表里面有ID自增主键，当insert了17条记录之后，删除了第15-16-17条记录，再把mysql重启，再insert一条记录，这条记录的ID是18还是15-？"><a href="#1、一张表里面有ID自增主键，当insert了17条记录之后，删除了第15-16-17条记录，再把mysql重启，再insert一条记录，这条记录的ID是18还是15-？" class="headerlink" title="1、一张表里面有ID自增主键，当insert了17条记录之后，删除了第15,16,17条记录，再把mysql重启，再insert一条记录，这条记录的ID是18还是15 ？"></a>1、一张表里面有ID自增主键，当insert了17条记录之后，删除了第15,16,17条记录，再把mysql重启，再insert一条记录，这条记录的ID是18还是15 ？</h2><p>一般情况下，我们创建的表的类型是InnoDB，如果新增一条记录（不重启mysql的情况下），这条记录的id是18；但是如果重启（文中提到的）MySQL的话，这条记录的ID是15。因为InnoDB表只把自增主键的最大ID记录到内存中，所以重启数据库或者对表OPTIMIZE操作，都会使最大ID丢失。</p>
+<p>但是，如果我们使用表的类型是MylSAM，那么这条记录的ID就是18。因为MylSAM表会把自增主键的最大ID记录到数据文件里面，重启MYSQL后，自增主键的最大ID也不会丢失。</p>
+<p>注：如果在这17条记录里面删除的是中间的几个记录（比如删除的是10,11,12三条记录），重启MySQL数据库后，insert一条记录后，ID都是18。因为内存或者数据库文件存储都是自增主键最大ID</p>
+<h2 id="2、mysql的技术特点是什么？"><a href="#2、mysql的技术特点是什么？" class="headerlink" title="2、mysql的技术特点是什么？"></a>2、mysql的技术特点是什么？</h2><ol>
+<li>速度；它使用的核心线程是完全多线程，支持多处理器。</li>
+<li>可靠性；有多种列类型</li>
+<li>适应性；MySQL可以工作在不同的平台上</li>
+<li>健壮；它通过一个高度优化的类库实现SQL函数库并像他们能达到的一样快速，通常在查询初始化后不该有任何内存分配。没有内存漏洞。</li>
+<li>易用；全面支持SQL,</li>
+</ol>
+<h2 id="3、Heap表是什么？"><a href="#3、Heap表是什么？" class="headerlink" title="3、Heap表是什么？"></a>3、Heap表是什么？</h2><p>内存表，就是放在内存中的表，所使用内存的大小可通过My.cnf中的max_heap_table_size指定，如max_heap_table_size=1024M，内存表与临时表并不相同，临时表也是存放在内存中，临时表最大所需内存需要通过tmp_table_size = 128M设定。当数据超过临时表的最大值设定时，自动转为磁盘表，此时因需要进行IO操作，性能会大大下降，而内存表不会，内存表满后，会提示数据满错误。</p>
+<p>临时表和内存表都可以人工创建，但临时表更多的作用是系统自己创建后，组织数据以提升性能，如子查询，临时表在多个连接之间不能共享。这里只讨论内存表</p>
+<p>创建表是，用engine=heap可创建（mysql5.5中已经不支持type，以后都用engine，形成习惯）。<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">test</span></span><br><span class="line">(</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">unsigned</span> <span class="keyword">not</span> <span class="literal">null</span> auto_increment primary <span class="keyword">key</span>,</span><br><span class="line">    state <span class="built_in">char</span>(<span class="number">10</span>),</span><br><span class="line">    <span class="keyword">type</span> <span class="built_in">char</span>(<span class="number">20</span>),</span><br><span class="line">    <span class="built_in">date</span> <span class="built_in">char</span>(<span class="number">30</span>)</span><br><span class="line">)<span class="keyword">ENGINE</span>=<span class="keyword">MEMORY</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8;</span><br></pre></td></tr></table></figure></p>
+<h3 id="内存表的特性"><a href="#内存表的特性" class="headerlink" title="内存表的特性"></a>内存表的特性</h3><ol>
+<li>内存表的表定义是存放在磁盘上的，扩展名为.frm， 所以重启不会丢失。</li>
+<li>内存表的数据是存放在内存中的，所以重启会丢失数据。</li>
+<li>内存表使用一个固定的记录长度格式。</li>
+<li>内存表不支持BLOB或TEXT列，比如varchar与text字段就不会被支持。</li>
+<li>内存表支持AUTO_INCREMENT列和对可包含NULL值的列的索引（网上大多说不支持，这是错误的）。内存表支持大于(&gt;) 小于( &lt;)操作，网上也说不支持。</li>
+<li>mysql重启后，主键、自增、索引仍然存在，只是数据丢失。这也是对网上的一些错误文字纠正。</li>
+<li>内存表表在所有客户端之间共享（就像其它任何非TEMPORARY表）。</li>
+<li><p>MEMORY存储引擎执行HASH和BTREE索引。你可以通过添加一个如下所示的USING子句为给定的索引指定一个或另一个：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> lookup</span><br><span class="line">(<span class="keyword">id</span> <span class="built_in">INT</span>, <span class="keyword">INDEX</span> <span class="keyword">USING</span> <span class="keyword">HASH</span> (<span class="keyword">id</span>))</span><br><span class="line"><span class="keyword">ENGINE</span> = <span class="keyword">MEMORY</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> lookup</span><br><span class="line">(<span class="keyword">id</span> <span class="built_in">INT</span>, <span class="keyword">INDEX</span> <span class="keyword">USING</span> BTREE (<span class="keyword">id</span>))</span><br><span class="line"><span class="keyword">ENGINE</span> = <span class="keyword">MEMORY</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>内存表初始化，可以使用–init-file来初始化，避免重启mysql后数据被清空。比如–init-file=”/data/mysql/init.sql”, init.sql格式为：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> db_test;</span><br><span class="line"><span class="keyword">select</span> *** <span class="keyword">into</span> m_table;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在数据库复制时，如果主机当掉，则会在binLog中自动加入delete from [内存表]，将slave的数据也删除掉，以保证两边的数据一致性。</p>
+</li>
+<li>内存表不支持事务。</li>
+<li>内存表是表锁，当修改频繁时，性能可能会下降。</li>
+</ol>
+<h3 id="内存表的使用"><a href="#内存表的使用" class="headerlink" title="内存表的使用"></a>内存表的使用</h3><p>内存表使用哈希散列索引把数据保存在内存中，因此具有极快的速度，适合缓存中小型数据库，但是使用上受到一些限制。</p>
+<ol>
+<li>heap对所有用户的连接是可见的，这使得它非常适合做缓存。</li>
+<li>仅适合使用的场合。heap不允许使用xxxTEXT和xxxBLOB数据类型。注：操作符 “&lt;=&gt;” 说明：NULL-safe equal.这个操作符和“=”操作符执行相同的比较操作，不过在两个操作码均为NULL时，其所得值为1而不为NULL，而当一个操作码为NULL时，其所得值为0而不为NULL。</li>
+<li>一旦服务器重启，所有heap表数据丢失，但是heap表结构仍然存在，因为heap表结构是存放在实际数据库路径下的，不会自动删除。重启之后，heap将被清空，这时候对heap的查询结果都是空的。</li>
+<li>如果heap是复制的某数据表，则复制之后所有主键、索引、自增等格式将不复存在，需要重新添加主键和索引，如果需要的话。</li>
+<li>对于重启造成的数据丢失，有以下的解决办法：<ul>
+<li>在任何查询之前，执行一次简单的查询，判断heap表是否存在数据，如果不存在，则把数据重新写入，或者DROP表重新复制某张表。这需要多做一次查询。不过可以写成include文件，在需要用该heap表的页面随时调用，比较方便。</li>
+<li>对于需要该heap表的页面，在该页面第一次且仅在第一次查询该表时，对数据集结果进行判断，如果结果为空，则需要重新写入数据。这样可以节省一次查询。</li>
+<li>更好的办法是在mysql每次重新启动时自动写入数据到heap，但是需要配置服务器，过程比较复杂，通用性受到限制。</li>
+</ul>
+</li>
+</ol>
+<p>小记录，MyISAM与InnoDB互转<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// InnoDB转MyISAM</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> <span class="string">`tablename`</span> <span class="keyword">ENGINE</span> = MYISAM</span><br><span class="line">// MyISAM转<span class="keyword">InnoDB</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tablename <span class="keyword">type</span>=<span class="keyword">innodb</span>;</span><br><span class="line"><span class="keyword">ALTER</span> <span class="keyword">TABLE</span> <span class="string">`tablename`</span> <span class="keyword">ENGINE</span> = <span class="keyword">InnoDB</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="4、如何控制HEAP表的最大尺寸？"><a href="#4、如何控制HEAP表的最大尺寸？" class="headerlink" title="4、如何控制HEAP表的最大尺寸？"></a>4、如何控制HEAP表的最大尺寸？</h2><p>大小可通过My.cnf中的max_heap_table_size指定，如max_heap_table_size=1024M</p>
+<h2 id="5、与Oracle相比，mysql有什么优势？"><a href="#5、与Oracle相比，mysql有什么优势？" class="headerlink" title="5、与Oracle相比，mysql有什么优势？"></a>5、与Oracle相比，mysql有什么优势？</h2><p>MySql能够运行在绝大部分的主流操作系统中，并且被广泛应用在网络应用的开发中，深得互联网公司的喜爱，因为是它是开源的，MySql社区版是免费提供给开发人员使用的，尽管其被Oracle收购后提供了一些扩展的商业版本，但开源的版本也是可以使用的。</p>
+<ul>
+<li>支持5000万条记录的数据仓库</li>
+<li>适应于所有的平台</li>
+<li>是开源软件，版本更新较快</li>
+<li>性能很出色。纯粹就性能而言，MySQL是相当出色的，因为它包含一个缺省桌面格式MyISAM。MyISAM 数据库与磁盘非常地兼容而不占用过多的CPU和内存。MySQL可以运行于Windows系统而不会发生冲突，在UNIX或类似UNIX系统上运行则更好。你还可以通过使用64位处理器来获取额外的一些性能。因为MySQL在内部里很多时候都使用64位的整数处理。</li>
+<li>价格便宜</li>
+</ul>
+<h2 id="6、如何区分FLOAT和DOUBLE？"><a href="#6、如何区分FLOAT和DOUBLE？" class="headerlink" title="6、如何区分FLOAT和DOUBLE？"></a>6、如何区分FLOAT和DOUBLE？</h2><p>前几天解决了一个这样的问题：数据是从一个地方爬取过来的，爬取前显示的数据是 901.63  ；然后，爬取数据脚本最后计算的总和也是901.63 一切都没有问题；</p>
+<p>但是，我们通过自己的数据库mysql计算出来的值就是601.62。查看了数据条数和对应的值都是对的，把数据导出到Excel后，数据求和也是 901.63，这不是怪了。</p>
+<p>最后发现是 mysql数据库字段设置了Float搞的鬼。</p>
+<p>其实，这是个老生常谈的问题了，这里做下备注，以便以后查阅</p>
+<p>MySQL中存在Float,Double等非标准数据类型，也有Decimal、Numeric这种标准数据类型。<br>其区别在于，Float，Double等非标准类型，在DB中保存的是近似值，而Decimal则以字符串的形式保存数值。</p>
+<p>Float数值类型用于表示单精度浮点数值，而Double数值类型用于表示双精度浮点数值，Float和Double都是浮点型，而Decimal是定点型；<br>MySQL 浮点型和定点型可以用类型名称后加（M，D）来表示，M表示该值的总共长度，D表示小数点后面的长度，M和D又称为精度和标度，<br>如float(7,4)的 可显示为-999.9999，MySQL保存值时进行四舍五入，如果插入999.00009，则结果为999.0001。<br>Float和Double在不指 定精度时，默认会按照实际的精度来显示，而Decimal在不指定精度时，默认整数为10，小数为0</p>
+<p>同时，对数据求SUM()时会出现不同的结果，Float和Double求SUM都会出现很多小数点，而Decimal求SUM得到的是精准数值：</p>
+<p>decimal 和 numeric 是同义，都是用于精确存储数值 。</p>
+<p>综上所述：</p>
+<p>Mysql 存储小数的时候，大多数和金额有关系。Float和Double存在精度的问题，所以首选还是要用 Decimal和Numeric，就我个人而言  Numeric 用的比较多。</p>
+<h2 id="7、区分CHAR-LENGTH和LENGTH？"><a href="#7、区分CHAR-LENGTH和LENGTH？" class="headerlink" title="7、区分CHAR_LENGTH和LENGTH？"></a>7、区分CHAR_LENGTH和LENGTH？</h2><h3 id="char-length-str"><a href="#char-length-str" class="headerlink" title="char_length(str)"></a>char_length(str)</h3><ol>
+<li>长度的单位为字符，一个多字节字符算作一个单字符</li>
+<li>不管汉字还是数字或者是字母都算是一个字符<h3 id="length-str"><a href="#length-str" class="headerlink" title="length(str)"></a>length(str)</h3></li>
+<li>utf8编码下,一个汉字算三个字符,一个数字或字母算一个字符。</li>
+<li>其他编码下,一个汉字算两个字符, 一个数字或字母算一个字符。</li>
+</ol>
+<h2 id="8、请简洁描述mysql中InnoDB支持的四种事务隔离级别名称，以及逐级之间的区别？"><a href="#8、请简洁描述mysql中InnoDB支持的四种事务隔离级别名称，以及逐级之间的区别？" class="headerlink" title="8、请简洁描述mysql中InnoDB支持的四种事务隔离级别名称，以及逐级之间的区别？"></a>8、请简洁描述mysql中InnoDB支持的四种事务隔离级别名称，以及逐级之间的区别？</h2><p>四种隔离级别说明</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读（Dirty Read）</th>
+<th>不可重复读（NonRepeatable Read）</th>
+<th>幻读（Phantom Read）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>未提交读（Read uncommitted） |     可能     |  可能     |  可能<br>已提交读（Read committed） |     不可能 |     可能 |     可能<br>可重复读（Repeatable read） |     不可能 |     不可能 |     可能<br>可串行化（SERIALIZABLE） |     不可能 |     不可能 |     不可能</p>
+<ul>
+<li>脏读 :一个事务读取到另一事务未提交的更新数据</li>
+<li>不可重复读 : 在同一事务中,多次读取同一数据返回的结果有所不同, 换句话说, 后续读取可以读到另一事务已提交的更新数据. 相反, “可重复读”在同一事务中多次读取数据时, 能够保证所读数据一样, 也就是后续读取不能读到另一事务已提交的更新数据。</li>
+<li>幻读 :一个事务读到另一个事务已提交的insert数据</li>
+</ul>
+<h2 id="9、在mysql中ENUM的用法是什么？"><a href="#9、在mysql中ENUM的用法是什么？" class="headerlink" title="9、在mysql中ENUM的用法是什么？"></a>9、在mysql中ENUM的用法是什么？</h2><p>MySQL数据库提供针对字符串存储的一种特殊数据类型：枚举类型ENUM，这种数据类型可以给予我们更多提高性能、降低存储容量和降低程序代码理解的技巧，前面介绍了首先介绍了四种数据类型的特性总结，其后又分别介绍了布尔类型BOOL或称布尔类型BOOLEAN，以及后续会再单独介绍集合类型SET。</p>
+<h3 id="数据库表mysqlops-enum结构"><a href="#数据库表mysqlops-enum结构" class="headerlink" title="数据库表mysqlops_enum结构"></a>数据库表mysqlops_enum结构</h3><p>执行数据库表mysqlops_enum创建的SQL语句：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Mysqlops_enum(</span><br><span class="line">    <span class="keyword">ID</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">    Job_type    ENUM(<span class="string">'DBA'</span>,<span class="string">'SA'</span>,<span class="string">'Coding Engineer'</span>,<span class="string">'JavaScript'</span>,<span class="string">'NA'</span>,<span class="string">'QA'</span>,<span class="string">''</span>,<span class="string">'other'</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">    Work_City ENUM(<span class="string">'shanghai'</span>,<span class="string">'beijing'</span>,<span class="string">'hangzhou'</span>,<span class="string">'shenzhen'</span>,<span class="string">'guangzhou'</span>,<span class="string">'other'</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'shanghai'</span>,</span><br><span class="line">    PRIMARY <span class="keyword">KEY</span>(<span class="keyword">ID</span>)</span><br><span class="line">)<span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="built_in">CHARACTER</span> <span class="keyword">SET</span> <span class="string">'utf8'</span> <span class="keyword">COLLATE</span> <span class="string">'utf8_general_ci'</span>;</span><br><span class="line"> </span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+<p>小结：<br>     为方便测试枚举类型，如何处理字段定义的默认值、是否允许为NULL和空值的情况，我们定义了2个枚举类型的字段名，经过对比创建与查询数据库中表的结构信息，没有发现MySQL数据库默认修改任何信息。</p>
+<h3 id="写入不同类型的测试数据"><a href="#写入不同类型的测试数据" class="headerlink" title="写入不同类型的测试数据"></a>写入不同类型的测试数据</h3><p>写入一条符合枚举类型定义的记录值：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Mysqlops_enum(<span class="keyword">ID</span>,Job_type,Work_City) <span class="keyword">VALUES</span>(<span class="number">1</span>,<span class="string">'QA'</span>,<span class="string">'shanghai'</span>); </span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+<p>测试第二个枚举类型字Work_City是否允许为空记录值：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Mysqlops_enum(<span class="keyword">ID</span>,Job_type,Work_City) <span class="keyword">VALUES</span>(<span class="number">2</span>,<span class="string">'NA'</span>,<span class="string">''</span>); </span><br><span class="line">Query OK, 1 row affected, 1 warning (0.00 sec)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">WARNINGS</span>;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">---------+------+------------------------------------------------+</span></span><br><span class="line"> </span><br><span class="line">| Level   | Code | Message              |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">---------+------+------------------------------------------------+</span></span><br><span class="line"> </span><br><span class="line">| Warning | 1265 | Data truncated for column 'Work_City' at row 1 |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">---------+------+------------------------------------------------+</span></span><br><span class="line"> </span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></p>
+<p>测试第二个枚举类型字段Work_City是否允许存储NULL值：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Mysqlops_enum(<span class="keyword">ID</span>,Job_type,Work_City) <span class="keyword">VALUES</span>(<span class="number">3</span>,<span class="string">'Other'</span>,<span class="literal">NULL</span>); </span><br><span class="line">ERROR 1048 (23000): Column 'Work_City' cannot be null</span><br></pre></td></tr></table></figure></p>
+<p>测试第一个枚举类型字段Job_type是否可以存储空白值：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Mysqlops_enum(<span class="keyword">ID</span>,Job_type,Work_City) <span class="keyword">VALUES</span>(<span class="number">4</span>,<span class="string">''</span>,<span class="string">'hangzhou'</span>); </span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+<p>测试第二个枚举类型字段Job_City如何处理没有在定义中描述的值域第一个枚举类型字段Work_Type的默认值没指定情况下，会默认填写那个值：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Mysqlops_enum(<span class="keyword">ID</span>,Work_City) <span class="keyword">VALUES</span>(<span class="number">5</span>,<span class="string">'ningbo'</span>); </span><br><span class="line">Query OK, 1 row affected, 1 warning (0.00 sec)</span><br><span class="line"> </span><br><span class="line"><span class="keyword">SHOW</span> <span class="keyword">WARNINGS</span>;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">---------+------+------------------------------------------------+</span></span><br><span class="line"> </span><br><span class="line">| Level   | Code | Message              |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">---------+------+------------------------------------------------+</span></span><br><span class="line"> </span><br><span class="line">| Warning | 1265 | Data truncated for column 'Work_City' at row 1 |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">---------+------+------------------------------------------------+</span></span><br><span class="line"> </span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></p>
+<p>测试第二个枚举类型字段未插入数据的情况下，是否能使用上字段定义中指定的默认值：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> Mysqlops_enum(<span class="keyword">ID</span>,Job_type) <span class="keyword">VALUES</span>(<span class="number">6</span>,<span class="string">'DBA'</span>); </span><br><span class="line">Query OK, 1 row affected (0.00 sec)</span><br></pre></td></tr></table></figure></p>
+<p>小结：</p>
+<ul>
+<li>若是枚举类型字段定义为非NULL，默认的SQL_MODE模式下，插入NULL值则会报错，导致SQL语句执行失败；若是没有明确申明非NULL，则允许插入NULL值；</li>
+<li>若是枚举类型字段的枚举值中，没有指定空格字符值，插入空格字符数据时，会出现数据截断的警告信息，但是SQL语句依然执行成功；</li>
+<li>若是向枚举类型字段插入未在定义列表中出现的数据，则会出现数据截断的警告信息，但是SQL语句依然执行成功；</li>
+<li>若是枚举类型定义为非NULL，向数据库表中插入新数据，但未指定枚举类型字段的值，则使用枚举类型字段定义申明的默认值，若是无显示申明则是采用枚举类型字段的枚举列表中第一个值作为默认值；</li>
+</ul>
+<h3 id="查询数据库表mysqlops-enum的数据"><a href="#查询数据库表mysqlops-enum的数据" class="headerlink" title="查询数据库表mysqlops_enum的数据"></a>查询数据库表mysqlops_enum的数据</h3><p>查询枚举类型数据库表Mysqlops_enum所有的数据（注释：两个枚举类型字段都是非NULL，所以截断后的值为空格）：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : test 11:23:24&gt; SELECT * FROM Mysqlops_enum;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">| ID | Job_type | Work_City |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">|  1 | QA       | shanghai  |</span><br><span class="line"> </span><br><span class="line">|  2 | NA       |           |</span><br><span class="line"> </span><br><span class="line">|  4 |          | hangzhou  |</span><br><span class="line"> </span><br><span class="line">|  5 | DBA      |           |</span><br><span class="line"> </span><br><span class="line">|  6 | DBA      | shanghai  |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">5 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></p>
+<p>验证枚举类型字段存储的是数据对应的序列编号，而不是真实的字符串值，且序列号是与枚举类型字段值域列表中的顺序有关：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : test 11:23:57&gt; SELECT * FROM Mysqlops_enum WHERE Work_City=0;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">| ID | Job_type | Work_City |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">|  2 | NA       |           |</span><br><span class="line"> </span><br><span class="line">|  5 | DBA      |           |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"> </span><br><span class="line">root@localhost : <span class="keyword">test</span> <span class="number">01</span>:<span class="number">22</span>:<span class="number">08</span>&gt; <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Mysqlops_enum <span class="keyword">WHERE</span> Work_City=<span class="number">1</span>;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">| ID | Job_type | Work_City |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">|  1 | QA       | shanghai  |</span><br><span class="line"> </span><br><span class="line">|  6 | DBA      | shanghai  |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"> </span><br><span class="line">root@localhost : <span class="keyword">test</span> <span class="number">02</span>:<span class="number">40</span>:<span class="number">31</span>&gt; <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Mysqlops_enum <span class="keyword">WHERE</span> Work_City=<span class="number">2</span>;</span><br><span class="line"> </span><br><span class="line">Empty <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"> </span><br><span class="line">root@localhost : <span class="keyword">test</span> <span class="number">02</span>:<span class="number">40</span>:<span class="number">33</span>&gt; <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Mysqlops_enum <span class="keyword">WHERE</span> Work_City=<span class="number">3</span>;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">| ID | Job_type | Work_City |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">|  4 |          | hangzhou  |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.01</span> sec)</span><br><span class="line"> </span><br><span class="line">root@localhost : <span class="keyword">test</span> <span class="number">02</span>:<span class="number">40</span>:<span class="number">34</span>&gt; <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Mysqlops_enum <span class="keyword">WHERE</span> Work_City=<span class="number">4</span>;</span><br><span class="line"> </span><br><span class="line">Empty <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"> </span><br><span class="line">root@localhost : <span class="keyword">test</span> <span class="number">02</span>:<span class="number">40</span>:<span class="number">36</span>&gt; <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Mysqlops_enum <span class="keyword">WHERE</span> Work_City=<span class="number">5</span>;</span><br><span class="line"> </span><br><span class="line">Empty <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"> </span><br><span class="line">root@localhost : <span class="keyword">test</span> <span class="number">02</span>:<span class="number">40</span>:<span class="number">37</span>&gt; <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Mysqlops_enum <span class="keyword">WHERE</span> Work_City=<span class="number">6</span>;</span><br><span class="line"> </span><br><span class="line">Empty <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"> </span><br><span class="line">root@localhost : <span class="keyword">test</span> <span class="number">04</span>:<span class="number">29</span>:<span class="number">07</span>&gt; <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Mysqlops_enum <span class="keyword">WHERE</span> Job_type=<span class="number">7</span>;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">| ID | Job_type | Work_City |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">|  4 |          | hangzhou  |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure></p>
+<p>枚举类型数据小结：</p>
+<ul>
+<li>枚举类型字段定义必须为确定的值，不能为变量、函数、表达式等；</li>
+<li>若是向枚举类型字段插入NULL值，且枚举类型的字段定义为非NULL，SQL语句会执行失败；</li>
+<li>若是向枚举类型字段插入，其枚举列表值域中不存在的值，则会发生字段值的截断，并且用空格字符串值替代，其存储的序列编号为0；</li>
+<li>若是枚举类型字段定义的枚举列表值域中存在空字符串值，该枚举类型字段发生字段值截断，则是会用空格值替代，但是其存储的序列号与枚举列表中存储的序列号不同，也即参考事例所示：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">root@localhost : test 04:37:32&gt; SELECT * FROM Mysqlops_enum WHERE Job_type=0;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">| ID | Job_type | Work_City |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">|  8 |          | hangzhou  |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">1 row in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br><span class="line"> </span><br><span class="line">root@localhost : <span class="keyword">test</span> <span class="number">04</span>:<span class="number">37</span>:<span class="number">35</span>&gt; <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> Mysqlops_enum <span class="keyword">WHERE</span> Job_type=<span class="string">''</span>;</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">| ID | Job_type | Work_City |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">|  4 |          | hangzhou  |</span><br><span class="line"> </span><br><span class="line">|  8 |          | hangzhou  |</span><br><span class="line"> </span><br><span class="line">+<span class="comment">----+----------+-----------+</span></span><br><span class="line"> </span><br><span class="line">2 rows in <span class="keyword">set</span> (<span class="number">0.00</span> sec)</span><br></pre></td></tr></table></figure>
+<p>若是枚举类型字段定义为非NULL，且没有为该字段指定值的方式插入数据行，则把字段定义显式申明的默认值作为字段默认值，没有显式申明则把枚举列值域表中第一个值作为默认值；<br>若是枚举类型字段允许插入NULL值，则NULL值对应存储的序列号为NULL；</p>
+<h2 id="10、如何定义REGEXP？"><a href="#10、如何定义REGEXP？" class="headerlink" title="10、如何定义REGEXP？"></a>10、如何定义REGEXP？</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="keyword">users</span> <span class="keyword">WHERE</span> email <span class="keyword">NOT</span> REGEXP  <span class="string">'^[A-Z0-9._%-]+@[A-Z0-9.-]+.[A-Z]&#123;2,4&#125;$'</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/20/mysql/2014-7-20-MySql面试题-1/" data-id="cjpi4wo28006sf9cpuq8xm0l8" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-redis/2014-07-18-Redis应用之任务队列" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" class="article-date">
@@ -103,7 +386,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" data-id="cjpduyimf004skqcpeut65sck" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" data-id="cjpi4wo14004tf9cpx3afdhy0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -154,7 +437,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjpduyimd004pkqcpg5x5slub" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjpi4wo12004pf9cp9fg8rh85" class="article-share-link">Share</a>
       
       
     </footer>
@@ -198,49 +481,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" data-id="cjpduyimc004nkqcpvzmnwtzg" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-14-Redis一般命令" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/14/redis/2014-07-14-Redis一般命令/" class="article-date">
-  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis一般命令/">Redis一般命令</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://redis.io/commands" target="_blank" rel="noopener">英文版</a></p>
-<p><a href="http://doc.redisfans.com/#" target="_blank" rel="noopener">中文版</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis一般命令/" data-id="cjpduyimb004ikqcpppwwmuih" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" data-id="cjpi4wo11004mf9cp2u07wa64" class="article-share-link">Share</a>
       
       
     </footer>
@@ -287,7 +528,49 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis应用之缓存/" data-id="cjpduyimb004kkqcpal2hwg2x" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis应用之缓存/" data-id="cjpi4wo10004if9cp5l8ynn24" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-14-Redis一般命令" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/14/redis/2014-07-14-Redis一般命令/" class="article-date">
+  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis一般命令/">Redis一般命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://redis.io/commands" target="_blank" rel="noopener">英文版</a></p>
+<p><a href="http://doc.redisfans.com/#" target="_blank" rel="noopener">中文版</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis一般命令/" data-id="cjpi4wo11004lf9cp3u2cfrzt" class="article-share-link">Share</a>
       
       
     </footer>
@@ -345,7 +628,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/13/redis/2014-07-13-Redis适用场合/" data-id="cjpduyim8004fkqcp7ocq94wu" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/13/redis/2014-07-13-Redis适用场合/" data-id="cjpi4wo0x004bf9cpv9dqfyw6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -396,136 +679,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/" data-id="cjpduyim7004ckqcp529jnwdx" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-03-Redis安装与使用" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/03/redis/2014-07-03-Redis安装与使用/" class="article-date">
-  <time datetime="2014-07-02T16:00:00.000Z" itemprop="datePublished">2014-07-03</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/03/redis/2014-07-03-Redis安装与使用/">Redis安装与使用</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="redis安装"><a href="#redis安装" class="headerlink" title="redis安装"></a>redis安装</h2><p>redis有几种安装方法：</p>
-<ol>
-<li>apt/yum install redis</li>
-<li>源码安装</li>
-</ol>
-<h2 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h2><ol>
-<li>官网下载<a href="https://redis.io/" target="_blank" rel="noopener">压缩包</a></li>
-<li><code>tar -xzf XXX.tar.gz</code></li>
-<li><code>cd redis_dir</code></li>
-<li><code>make PREFIX=/usr/local/redis &amp;&amp; make install</code></li>
-<li><code>cp *.conf /usr/local/redis/conf</code></li>
-</ol>
-<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><p><code>/usr/local/redis/bin/redis-server  /usr/local/redis/conf/redis.conf</code></p>
-<h2 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h2><p><code>/usr/local/redis/bin/redis-cli [-h localhost -p 6379 ]</code></p>
-<h2 id="让redis以后台进程的形式运行"><a href="#让redis以后台进程的形式运行" class="headerlink" title="让redis以后台进程的形式运行"></a>让redis以后台进程的形式运行</h2><p>编辑conf配置文件,修改如下内容:</p>
-<p><code>daemonize yes</code></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/03/redis/2014-07-03-Redis安装与使用/" data-id="cjpduyim6004akqcpoo97h9bm" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-06-03-Redis特点" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/06/03/redis/2014-06-03-Redis特点/" class="article-date">
-  <time datetime="2014-06-02T16:00:00.000Z" itemprop="datePublished">2014-06-03</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/06/03/redis/2014-06-03-Redis特点/">Redis特点</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="redis和memcached相比-的独特之处"><a href="#redis和memcached相比-的独特之处" class="headerlink" title="redis和memcached相比,的独特之处:"></a>redis和memcached相比,的独特之处:</h2><ol>
-<li><p>redis可以用来做存储(storge), 而memccached是用来做缓存(cache)，这个特点主要因为其有”持久化”的功能.</p>
-</li>
-<li><p>存储的数据有”结构”,对于memcached来说,存储的数据,只有1种类型”字符串”,而redis则可以存储字符串,链表,哈希结构,集合,有序集合.</p>
-</li>
-</ol>
-<h2 id="Redis特点"><a href="#Redis特点" class="headerlink" title="Redis特点"></a>Redis特点</h2><ol>
-<li>独特的键值对模型，五种数据结构</li>
-<li>内存存储，速度极快</li>
-<li>丰富的附加功能<ul>
-<li>持久化功能:将储存在内存里面的数据保存到硬 盘里面,保障数据安全,方便 进行数据备份和恢复。</li>
-<li>发布与订阅功能:将消息同时分发给多个客户端,用于构建广播系统。</li>
-<li>过期键功能:为键设置一个过期时间,让它在指定的时间之后自动被删除。</li>
-<li>事务功能:原子地执行多个操作,并提供乐观锁功能,保证处理数据时的安全性。</li>
-<li>脚本功能:在服务器端原子地执行多个操作,完成复杂的功能,并减少客户端与服务器之间的通信往返次数。</li>
-<li>复制:为指定的 Redis 服务器创建一个或多个复制品,用于提升数据安全性,并分担 读请求的负载。</li>
-<li>Sentinel:监控 Redis 服务器的状态,并在服务器发生故障时,进行自动故障转移。</li>
-<li>集群:创建分布式数据库,每个服务器分别执行一部分写操作和读操作。</li>
-</ul>
-</li>
-<li>完善的文档</li>
-<li>良好的支持</li>
-<li>广泛的使用<ul>
-<li>twitter 使用 Redis 来储存用户时间线(user timeline)。</li>
-<li>StackOverflow 使用 Redis 来进行缓存和消息分发。</li>
-<li>Pinterest 使用 Redis 来构建关注模型( follow model)和兴趣图谱(interest graph)。</li>
-<li>Flickr 使用 Redis 来构建队列。</li>
-<li>Github 使用 Redis 作为持久化的键值对数据库,并使用 Resque 来实现消息队列。</li>
-<li>新浪微博使用 Redis 来实现计数器、反向索引、排行榜、消息 队列,并储存用户关系。</li>
-<li>知乎使用 Redis 来进行计数、缓存、消息分发和任务调度。</li>
-</ul>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/06/03/redis/2014-06-03-Redis特点/" data-id="cjpduyim50047kqcpspn09ok8" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/" data-id="cjpi4wo0y004gf9cpecake0ou" class="article-share-link">Share</a>
       
       
     </footer>
@@ -539,7 +693,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span>
+    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -596,6 +750,10 @@
           </li>
         
           <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
@@ -605,10 +763,6 @@
         
           <li>
             <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>

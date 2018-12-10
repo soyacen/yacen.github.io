@@ -86,7 +86,52 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/11/28/egg/egg-特性/" data-id="cjpduyik40002kqcphzcph8dl" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/11/28/egg/egg-特性/" data-id="cjpi4wnz20004f9cp87vyq6or" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-nginx/2018-09-20-Nginx错误之13Permission denied" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/" class="article-date">
+  <time datetime="2018-09-19T16:00:00.000Z" itemprop="datePublished">2018-09-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="条件不允许的情况下（不能随意重启计算机）执行下列代码："><a href="#条件不允许的情况下（不能随意重启计算机）执行下列代码：" class="headerlink" title="条件不允许的情况下（不能随意重启计算机）执行下列代码："></a>条件不允许的情况下（不能随意重启计算机）执行下列代码：</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setsebool -P httpd_can_network_connect 1</span><br></pre></td></tr></table></figure>
+<h2 id="其他情况下获取root权限"><a href="#其他情况下获取root权限" class="headerlink" title="其他情况下获取root权限"></a>其他情况下获取root权限</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/selinux/config</span><br></pre></td></tr></table></figure>
+<p>找到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELINUX=enforcing</span><br></pre></td></tr></table></figure></p>
+<p>改为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELINUX=disabled</span><br></pre></td></tr></table></figure></p>
+<p>更多setbool的使用查看<br><a href="http://blog.chinaunix.net/uid-26727991-id-3235275.html" target="_blank" rel="noopener">setsebool命令和设置命令</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/" data-id="cjpi4wo0q003wf9cpudg1g1oo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -153,7 +198,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/" data-id="cjpduyim1003wkqcpgglhx646" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/" data-id="cjpi4wo0p003uf9cpkorqqfj7" class="article-share-link">Share</a>
       
       
     </footer>
@@ -198,7 +243,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/" data-id="cjpduyim0003ukqcphr3yb2g3" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/" data-id="cjpi4wo0o003sf9cpou0s2m8n" class="article-share-link">Share</a>
       
       
     </footer>
@@ -241,7 +286,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/" data-id="cjpduyim0003skqcpfod0n974" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/" data-id="cjpi4wo0r0040f9cpuzpbkvew" class="article-share-link">Share</a>
       
       
     </footer>
@@ -317,7 +362,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/" data-id="cjpduyilz003qkqcpntcuh8ni" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/" data-id="cjpi4wo0t0042f9cp08eukykp" class="article-share-link">Share</a>
       
       
     </footer>
@@ -381,7 +426,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/08/28/nginx/2018-08-28-Nginx性能优化之压缩gzip/" data-id="cjpduyily003okqcp5ms9d2cy" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/28/nginx/2018-08-28-Nginx性能优化之压缩gzip/" data-id="cjpi4wo0r003yf9cpq4reibgf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -429,7 +474,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/08/26/nginx/2018-08-26-Nginx性能优化之进程数配置/" data-id="cjpduyilx003mkqcpewx92w29" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/26/nginx/2018-08-26-Nginx性能优化之进程数配置/" data-id="cjpi4wo0m003of9cpfrb6nqa0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -480,7 +525,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/08/24/nginx/2018-08-24-Nginx性能优化之tcp一次性发送/" data-id="cjpduyilw003kkqcppnioc9xs" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/24/nginx/2018-08-24-Nginx性能优化之tcp一次性发送/" data-id="cjpi4wo0n003qf9cpfrbokzoj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -533,73 +578,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/08/22/nginx/2018-08-22-Nginx性能优化之文件发送/" data-id="cjpduyilv003ikqcpkoe1jgme" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-nginx/2018-08-18-Nginx性能优化之tcp延迟" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/" class="article-date">
-  <time datetime="2018-08-17T16:00:00.000Z" itemprop="datePublished">2018-08-18</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Nginx/">Nginx</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/">2Nginx性能优化之tcp延迟</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="tcp-nodelay"><a href="#tcp-nodelay" class="headerlink" title="tcp_nodelay"></a>tcp_nodelay</h2><p>在 TCP 发展早期，工程师需要面对流量冲突和堵塞的问题，其中涌现了大批的解决方案，其中之一是由 John Nagle 提出的算法。</p>
-<p>Nagle 的算法旨在防止通讯被大量的小包淹没。该理论不涉及全尺寸 tcp 包（最大报文长度，简称 MSS）的处理。只针对比 MSS 小的包，只有当接收方成功地将以前的包(ACK)的所有确认发送回来时，这些包才会被发送。在等待期间，发送方可以缓冲更多的数据之后再发送。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if package.size &gt;= MSS.size</span><br><span class="line">  send(package)</span><br><span class="line">elsif acks.all_received?</span><br><span class="line">  send(package)</span><br><span class="line">else</span><br><span class="line">  # acumulate data</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
-<p>与此同时，诞生了另一个理论，延时 ACK</p>
-<p>在 TCP 通讯中，在发送数据后，需要接收回应包(ACK)来确认数据被成功传达。</p>
-<p>延时 ACK 旨在解决线路被大量的 ACK 包拥堵的状况。为了减少 ACK 包的数量，接收者等待需要回传的数据加上 ACK 包回传给发送方，如果没有数据需要回传，必须在至少每 2 个 MSS，或每 200 至 500 毫秒内发送 ACK（以防我们不再收到包）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if packages.any?</span><br><span class="line">  send</span><br><span class="line">elsif last_ack_send_more_than_2MSS_ago? || 200_ms_timer.finished?</span><br><span class="line">  send</span><br><span class="line">else</span><br><span class="line">  # wait</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
-<p>正如你可能在一开始就注意到的那样 —— 这可能会导致在持久连接上的一些暂时的死锁。让我们重现它！</p>
-<p>假设：</p>
-<ul>
-<li>初始拥塞窗口等于 2。拥塞窗口是另一个 TCP 机制的一部分，称为慢启动。细节现在并不重要，只要记住它限制了一次可以发送多少个包。在第一次往返中，我们可以发送 2 个 MSS 包。在第二次发送中：4 个 MSS 包，第三次发送中：8 个MSS，依此类推。</li>
-<li>4 个已缓存的等待发送的数据包：A, B, C, D</li>
-<li>A, B, C是 MSS 包</li>
-<li>D 是一个小包</li>
-</ul>
-<p>场景：</p>
-<ul>
-<li>由于是初始的拥塞窗口，发送端被允许传送两个包：A 和 B</li>
-<li>接收端在成功获得这两个包之后，发送一个 ACK</li>
-<li>发件端发送 C 包。然而，Nagle 却阻止它发送 D 包（包长度太小，等待 C 的ACK）</li>
-<li>在接收端，延迟 ACK 使他无法发送 ACK（每隔 2 个包或每隔 200 毫秒发送一次）</li>
-<li>在 200ms 之后，接收器发送 C 包的 ACK</li>
-<li>发送端收到 ACK 并发送 D 包</li>
-</ul>
-<p>在这个数据交换过程中，由于 Nagel 和延迟 ACK 之间的死锁，引入了 200ms 的延迟。</p>
-<p>Nagle 算法是当时真正的救世主，而且目前仍然具有极大的价值。但在大多数情况下，我们不会在我们的网站上使用它，因此可以通过添加 TCP_NODELAY 标志来安全地关闭它。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcp_nodelay on;     # sets TCP_NODELAY flag, used on keep-alive connections</span><br></pre></td></tr></table></figure>
-<p>享受这200ms提速吧！</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2018/08/18/nginx/2018-08-18-Nginx性能优化之tcp延迟/" data-id="cjpduyilu003gkqcpxvm8llzt" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2018/08/22/nginx/2018-08-22-Nginx性能优化之文件发送/" data-id="cjpi4wo0m003mf9cpyofyrb5z" class="article-share-link">Share</a>
       
       
     </footer>
@@ -613,7 +592,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -670,6 +649,10 @@
           </li>
         
           <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
             <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
           </li>
         
@@ -679,10 +662,6 @@
         
           <li>
             <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
-          </li>
-        
-          <li>
-            <a href="/2018/08/30/nginx/2018-08-30-Nginx性能优化之缓存/">Nginx性能优化之缓存</a>
           </li>
         
       </ul>
