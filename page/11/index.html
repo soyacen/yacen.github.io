@@ -70,6 +70,261 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-redis/2014-07-15-Redis应用之秒杀" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" class="article-date">
+  <time datetime="2014-07-14T16:00:00.000Z" itemprop="datePublished">2014-07-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/15/redis/2014-07-15-Redis应用之秒杀/">Redis应用之秒杀</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>秒杀时一般请求量都很大，所以不太可能直接往数据库中存</p>
+<p>一般用户是抢到购买的资格，随后在下单购买。</p>
+<p>后台一般采用<code>INCR</code>命令来生成购买资格<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INCR good:xxx:miaosha</span><br></pre></td></tr></table></figure></p>
+<p>判断用户得到的自增值是否大于秒杀总数，小于就有资格购买，大于就暂时没有资格。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" data-id="cjptlhd9w004zcxcpqmmm9iau" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-14-Redis一般命令" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/14/redis/2014-07-14-Redis一般命令/" class="article-date">
+  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis一般命令/">Redis一般命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://redis.io/commands" target="_blank" rel="noopener">英文版</a></p>
+<p><a href="http://doc.redisfans.com/#" target="_blank" rel="noopener">中文版</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis一般命令/" data-id="cjptlhd9s004pcxcps99qi2wz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-14-Redis应用之缓存" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/14/redis/2014-07-14-Redis应用之缓存/" class="article-date">
+  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis应用之缓存/">Redis应用之缓存</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="缓存数据"><a href="#缓存数据" class="headerlink" title="缓存数据"></a>缓存数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET key value [EX seconds] [PX milliseconds] [NX|XX]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>EX second ：设置键的过期时间为 second 秒。 SET key value EX second 效果等同于 SETEX key second value 。</li>
+<li>PX millisecond ：设置键的过期时间为 millisecond 毫秒。 SET key value PX millisecond 效果等同于 PSETEX key millisecond value 。</li>
+<li>NX ：只在键不存在时，才对键进行设置操作。 SET key value NX 效果等同于 SETNX key value 。</li>
+<li>XX ：只在键已经存在时，才对键进行设置操作。<h2 id="获取缓存数据"><a href="#获取缓存数据" class="headerlink" title="获取缓存数据"></a>获取缓存数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET key</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis应用之缓存/" data-id="cjptlhd9u004tcxcpsomcnmxq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-13-Redis适用场合" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/13/redis/2014-07-13-Redis适用场合/" class="article-date">
+  <time datetime="2014-07-12T16:00:00.000Z" itemprop="datePublished">2014-07-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/13/redis/2014-07-13-Redis适用场合/">Redis适用场合</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Redis其实开创了一种新的数据存储思路，使用Redis，我们不用再面对功能单调的数据库时，把精力放在如何把大象放进冰箱的问题，而是利用Redis提供的灵活多变的数据结构和数据操作，为不同的大象构建不同的冰箱。</p>
+<p>下面是一些Redis常用的场景：</p>
+<ol>
+<li>关系型数据库缓存</li>
+<li>任务队列(rpoplpush)</li>
+<li>大量数据运算(set,交、差、并,is a)</li>
+<li></li>
+<li>srandmember 随即抽奖</li>
+</ol>
+<h2 id="取最新N个数据的操作"><a href="#取最新N个数据的操作" class="headerlink" title="取最新N个数据的操作"></a>取最新N个数据的操作</h2><p>比如典型的取你网站的最新文章，通过下面方式，我们可以将最新的 5000 条评论的 ID 放在Redis 的 List 集合中，并将超出集合部分从数据库获取。使用 LPUSH latest.comments命令，向 list 集合中插入数据插入完成后再用 LTRIM latest.comments 0 5000 命令使其永远只保存最近 5000 个 ID如果你还有不同的筛选维度，比如某个分类的最新 N 条，那么你可以再建一个按此分类的List，只存 ID 的话，Redis 是非常高效的。</p>
+<h2 id="排行榜应用，取TOP-N操作（排行榜）"><a href="#排行榜应用，取TOP-N操作（排行榜）" class="headerlink" title="排行榜应用，取TOP N操作（排行榜）"></a>排行榜应用，取TOP N操作（排行榜）</h2><p>这个需求与上面需求的不同之处在于，前面操作以时间为权重，这个是以某一个条件为权重，比如按购买的次数或者顶的次数，这时候就需要 sorted set 出马，将你要排序的值设置为sorted set的score，将具体的数据设置为相应的value，每次只需要执行一条ZADD命令即可。</p>
+<h2 id="需要精确设定过期时间的应用"><a href="#需要精确设定过期时间的应用" class="headerlink" title="需要精确设定过期时间的应用"></a>需要精确设定过期时间的应用</h2><p>比如你可以把上面说到的 sorted set 的 score 值设置成过期时间的时间戳，那么就可以简单地通过过期时间排序，定时清除过期数据了，不仅是清除 Redis 中的过期数据，你完全可以把 Redis 里这个过期时间当成是对数据库中数据的索引，用 Redis 来找出哪些数据需要过期删除，然后再精准地从数据库中删除相应的记录。</p>
+<h2 id="计数器应用"><a href="#计数器应用" class="headerlink" title="计数器应用"></a>计数器应用</h2><p>Redis的命令是原子性的，你可以轻松利用INCR、DECR命令来构建计数器系统（底层的写入是单线程模型，并发写会按到位顺序执行）</p>
+<h2 id="Unique-操作，获取某段时间所有数据去重值"><a href="#Unique-操作，获取某段时间所有数据去重值" class="headerlink" title="Unique 操作，获取某段时间所有数据去重值"></a>Unique 操作，获取某段时间所有数据去重值</h2><p>这个使用Redis的Set数据结构最合适，只需要不断将数据往Set中扔就行，set就是集合，会自动去重</p>
+<h2 id="实时系统、发垃圾系统"><a href="#实时系统、发垃圾系统" class="headerlink" title="实时系统、发垃圾系统"></a>实时系统、发垃圾系统</h2><p>通过上面说到的 set 功能，你可以知道一个终端用户是否进行了某个操作，可以找到其操作的集合并进行分析统计对比等。没有做不到，只有想不到。</p>
+<h2 id="Pub、Sub-构建实时消息系统"><a href="#Pub、Sub-构建实时消息系统" class="headerlink" title="Pub、Sub 构建实时消息系统"></a>Pub、Sub 构建实时消息系统</h2><p>Redis 的 Pub/Sub 系统可以构建实时的消息系统，比如很多用 Pub/Sub 构建的实时聊天系统的例子。</p>
+<h2 id="构建队列系统"><a href="#构建队列系统" class="headerlink" title="构建队列系统"></a>构建队列系统</h2><p>使用list可以构建队列系统，使用sorted set 甚至可以构建有优先级的队列系统。</p>
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>性能优于Memcached，并且更优秀的在于数据结构更加多样化</p>
+<h2 id="抽奖"><a href="#抽奖" class="headerlink" title="抽奖"></a>抽奖</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/13/redis/2014-07-13-Redis适用场合/" data-id="cjptlhd9t004rcxcponyloh9o" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-04-Redis配置文件" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/04/redis/2014-07-04-Redis配置文件/" class="article-date">
+  <time datetime="2014-07-03T16:00:00.000Z" itemprop="datePublished">2014-07-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/04/redis/2014-07-04-Redis配置文件/">Redis配置文件</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="三种设置配置选项的方法"><a href="#三种设置配置选项的方法" class="headerlink" title="三种设置配置选项的方法:"></a>三种设置配置选项的方法:</h2><ol>
+<li><p>服务器启动时通过参数来设置,格式为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-server --&lt;option&gt; &lt;value&gt; 。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>服务器启动时通过指定配置文件来 设置,格式为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-server &lt;path-to-config-file&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在服务器运行时,通过 <code>CONFIG SET &lt;option&gt; &lt;value&gt;</code> 命令来设置。</p>
+</li>
+</ol>
+<p>需要注意的是,并不是所有配置 选项都可以使用 <code>CONFIG SET</code> 来修改,有些选项只能在服务器启动时设置,并且在不使用 <code>CONFIG REWRITE</code> 的情况下, <code>CONFIG SET</code> 设置的选项值在服务器关闭之后就会丢失。</p>
+<p>使用 <code>CONFIG GET &lt;option&gt;</code>命令可以获取配置选项的当前值。</p>
+<p>如果服务器在启动时载入了配置文件,并且在服 务器运行的过程中,用户使用 <code>CONFIG SET</code> 修改了某些选项的值,那么只要使用 <code>CONFIG REWRITE</code> 命令,就可以将 <code>CONFIG SET</code> 的修改记录到配置文件里面,以便服务器下次启动时使用。</p>
+<h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">daemonize no # 是否以后台进程启动</span><br><span class="line">databases 16 # 创建database的数量(默认选中的是database 0)</span><br></pre></td></tr></table></figure>
+<h2 id="rdb"><a href="#rdb" class="headerlink" title="rdb"></a>rdb</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    #刷新快照到硬盘中，必须满足两者要求才会触发，即900秒之后至少1个关键字发生变化。</span><br><span class="line">save 300 10   #必须是300秒之后至少10个关键字发生变化。</span><br><span class="line">save 60 10000 #必须是60秒之后至少10000个关键字发生变化。</span><br><span class="line">stop-writes-on-bgsave-error yes    #后台存储错误停止写。</span><br><span class="line">rdbcompression yes    #使用LZF压缩rdb文件。</span><br><span class="line">rdbchecksum yes       #存储和加载rdb文件时校验。</span><br><span class="line">dbfilename dump.rdb   #设置rdb文件名。</span><br><span class="line">dir ./    #设置工作目录，rdb文件会写入该目录。</span><br></pre></td></tr></table></figure>
+<h2 id="主从配置"><a href="#主从配置" class="headerlink" title="主从配置"></a>主从配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">slaveof &lt;masterip&gt; &lt;masterport&gt; # 设为某台机器的从服务器</span><br><span class="line">masterauth &lt;master-password&gt;    # 连接主服务器的密码</span><br><span class="line">slave-serve-stale-data yes      # 当主从断开或正在复制中,从服务器是否应答</span><br><span class="line">slave-read-only yes #从服务器只读</span><br><span class="line">repl-ping-slave-period 10       # 从ping主的时间间隔,秒为单位</span><br><span class="line">repl-timeout 60                 # 主从超时时间(超时认为断线了),要比period大</span><br><span class="line">slave-priority 100              # 如果master不能再正常工作，那么会在多个slave中，选择优先值最小的一个slave提升为master，优先值为0表示不能提升为master。</span><br><span class="line"></span><br><span class="line">repl-disable-tcp-nodelay no     # 主端是否合并数据,大块发送给slave</span><br><span class="line">slave-priority 100              # 从服务器的优先级,当主服挂了,会自动挑slave priority最小的为主服</span><br></pre></td></tr></table></figure>
+<h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">requirepass foobared # 需要密码</span><br><span class="line">rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52 #如果公共环境,可以重命名部分敏感命令 如config</span><br></pre></td></tr></table></figure>
+<h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">maxclients 10000              # 最大连接数</span><br><span class="line">maxmemory &lt;bytes&gt;             # 最大使用内存</span><br><span class="line"></span><br><span class="line">maxmemory-policy volatile-lru # 内存到极限后的处理</span><br><span class="line">volatile-lru -&gt; LRU算法删除过期key</span><br><span class="line">allkeys-lru -&gt; LRU算法删除key(不区分过不过期)</span><br><span class="line">volatile-random -&gt; 随机删除过期key</span><br><span class="line">allkeys-random -&gt; 随机删除key(不区分过不过期)</span><br><span class="line">volatile-ttl -&gt; 删除快过期的key</span><br><span class="line">noeviction -&gt; 不删除,返回错误信息</span><br></pre></td></tr></table></figure>
+<p><em>解释</em> LRU ttl 都是近似算法,可以选N个,再比较最适宜T踢出的数据</p>
+<p>maxmemory-samples 3</p>
+<h2 id="日志模式"><a href="#日志模式" class="headerlink" title="日志模式"></a>日志模式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">appendonly no #是否仅要日志</span><br><span class="line">appendfsync no # 系统缓冲,统一写,速度快</span><br><span class="line">appendfsync always # 系统不缓冲,直接写,慢,丢失数据少</span><br><span class="line">appendfsync everysec #折衷,每秒写1次</span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no #为yes,则其他线程的数据放内存里,合并写入(速度快,容易丢失的多)</span><br><span class="line">auto-AOF-rewrite-percentage 100 当前aof文件是上次重写是大N%时重写</span><br><span class="line">auto-AOF-rewrite-min-size 64mb aof重写至少要达到的大小</span><br></pre></td></tr></table></figure>
+<h2 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">slowlog-log-slower-than 10000 # 记录响应时间大于10000微秒的慢查询</span><br><span class="line">slowlog-max-len 128   # 最多记录128条</span><br></pre></td></tr></table></figure>
+<h2 id="服务端命令"><a href="#服务端命令" class="headerlink" title="服务端命令"></a>服务端命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">time  返回时间戳+微秒</span><br><span class="line">dbsize 返回key的数量</span><br><span class="line">bgrewriteaof 重写aof</span><br><span class="line">bgsave 后台开启子进程dump数据</span><br><span class="line">save 阻塞进程dump数据</span><br><span class="line">lastsave </span><br><span class="line"></span><br><span class="line">slaveof host port 做host port的从服务器(数据清空,复制新主内容)</span><br><span class="line">slaveof no one 变成主服务器(原数据不丢失,一般用于主服失败后)</span><br><span class="line"></span><br><span class="line">flushdb  清空当前数据库的所有数据</span><br><span class="line">flushall 清空所有数据库的所有数据(误用了怎么办?)</span><br><span class="line"></span><br><span class="line">shutdown [save/nosave] 关闭服务器,保存数据,修改AOF(如果设置)</span><br><span class="line"></span><br><span class="line">slowlog get 获取慢查询日志</span><br><span class="line">slowlog len 获取慢查询日志条数</span><br><span class="line">slowlog reset 清空慢查询</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">info []</span><br><span class="line"></span><br><span class="line">config get 选项(支持*通配)</span><br><span class="line">config set 选项 值</span><br><span class="line">config rewrite 把值写到配置文件</span><br><span class="line">config restart 更新info命令的信息</span><br><span class="line"></span><br><span class="line">debug object key #调试选项,看一个key的情况</span><br><span class="line">debug segfault #模拟段错误,让服务器崩溃</span><br><span class="line">object key (refcount|encoding|idletime)</span><br><span class="line">monitor #打开控制台,观察命令(调试用)</span><br><span class="line">client list #列出所有连接</span><br><span class="line">client kill #杀死某个连接  CLIENT KILL 127.0.0.1:43501</span><br><span class="line">client getname #获取连接的名称 默认nil</span><br><span class="line">client setname &quot;名称&quot; #设置连接名称,便于调试</span><br></pre></td></tr></table></figure>
+<h2 id="连接命令"><a href="#连接命令" class="headerlink" title="连接命令"></a>连接命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">auth 密码 #密码登陆(如果有密码)</span><br><span class="line">ping #测试服务器是否可用</span><br><span class="line">echo &quot;some content&quot; #测试服务器是否正常交互</span><br><span class="line">select 0/1/2... #选择数据库</span><br><span class="line">quit #退出连接</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/" data-id="cjptlhd9v004vcxcp3vqv6nbu" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-redis/2014-07-03-Redis安装与使用" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/07/03/redis/2014-07-03-Redis安装与使用/" class="article-date">
@@ -116,7 +371,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/03/redis/2014-07-03-Redis安装与使用/" data-id="cjpi4wo0y004df9cpc0ufugbn" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/03/redis/2014-07-03-Redis安装与使用/" data-id="cjptlhd9m004acxcp205uubpc" class="article-share-link">Share</a>
       
       
     </footer>
@@ -189,7 +444,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/06/03/redis/2014-06-03-Redis特点/" data-id="cjpi4wo0w0049f9cp2yz9ms1a" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/06/03/redis/2014-06-03-Redis特点/" data-id="cjptlhd9o004fcxcpk7cdjyre" class="article-share-link">Share</a>
       
       
     </footer>

@@ -7,18 +7,18 @@
   
   <title>Redis服务端命令 | 蓦然回首，bug依然在灯火阑珊处</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="time显示服务器时间 , 时间戳(秒), 微秒数123redis 127.0.0.1:6380&amp;gt; time 1) &amp;quot;1375270361&amp;quot;2) &amp;quot;504511&amp;quot; dbsize 当前数据库的key的数量12redis 127.0.0.1:6380&amp;gt; dbsize(integer) 2 BGREWRITEAOF后台进程重写AOF BGSAVE 后台">
+  <meta name="description" content="ping检查网络连接以及服务器是否正常运作。 time显示服务器时间 , 时间戳(秒), 微秒数123redis 127.0.0.1:6380&amp;gt; time 1) &amp;quot;1375270361&amp;quot;2) &amp;quot;504511&amp;quot; dbsize 当前数据库的key的数量12redis 127.0.0.1:6380&amp;gt; dbsize(integer) 2 BGREWRIT">
 <meta name="keywords" content="后端 Node.js go golang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis服务端命令">
 <meta property="og:url" content="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/index.html">
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
-<meta property="og:description" content="time显示服务器时间 , 时间戳(秒), 微秒数123redis 127.0.0.1:6380&amp;gt; time 1) &amp;quot;1375270361&amp;quot;2) &amp;quot;504511&amp;quot; dbsize 当前数据库的key的数量12redis 127.0.0.1:6380&amp;gt; dbsize(integer) 2 BGREWRITEAOF后台进程重写AOF BGSAVE 后台">
+<meta property="og:description" content="ping检查网络连接以及服务器是否正常运作。 time显示服务器时间 , 时间戳(秒), 微秒数123redis 127.0.0.1:6380&amp;gt; time 1) &amp;quot;1375270361&amp;quot;2) &amp;quot;504511&amp;quot; dbsize 当前数据库的key的数量12redis 127.0.0.1:6380&amp;gt; dbsize(integer) 2 BGREWRIT">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-12-04T07:15:28.527Z">
+<meta property="og:updated_time" content="2018-12-17T10:14:05.734Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis服务端命令">
-<meta name="twitter:description" content="time显示服务器时间 , 时间戳(秒), 微秒数123redis 127.0.0.1:6380&amp;gt; time 1) &amp;quot;1375270361&amp;quot;2) &amp;quot;504511&amp;quot; dbsize 当前数据库的key的数量12redis 127.0.0.1:6380&amp;gt; dbsize(integer) 2 BGREWRITEAOF后台进程重写AOF BGSAVE 后台">
+<meta name="twitter:description" content="ping检查网络连接以及服务器是否正常运作。 time显示服务器时间 , 时间戳(秒), 微秒数123redis 127.0.0.1:6380&amp;gt; time 1) &amp;quot;1375270361&amp;quot;2) &amp;quot;504511&amp;quot; dbsize 当前数据库的key的数量12redis 127.0.0.1:6380&amp;gt; dbsize(integer) 2 BGREWRIT">
   
     <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
   
@@ -95,7 +95,8 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="time"><a href="#time" class="headerlink" title="time"></a>time</h2><p>显示服务器时间 , 时间戳(秒), 微秒数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; time </span><br><span class="line">1) &quot;1375270361&quot;</span><br><span class="line">2) &quot;504511&quot;</span><br></pre></td></tr></table></figure></p>
+        <h2 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h2><p>检查网络连接以及服务器是否正常运作。</p>
+<h2 id="time"><a href="#time" class="headerlink" title="time"></a>time</h2><p>显示服务器时间 , 时间戳(秒), 微秒数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; time </span><br><span class="line">1) &quot;1375270361&quot;</span><br><span class="line">2) &quot;504511&quot;</span><br></pre></td></tr></table></figure></p>
 <h2 id="dbsize"><a href="#dbsize" class="headerlink" title="dbsize"></a>dbsize</h2><p> 当前数据库的key的数量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; dbsize</span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure></p>
 <h2 id="BGREWRITEAOF"><a href="#BGREWRITEAOF" class="headerlink" title="BGREWRITEAOF"></a>BGREWRITEAOF</h2><p>后台进程重写AOF</p>
 <h2 id="BGSAVE"><a href="#BGSAVE" class="headerlink" title="BGSAVE"></a>BGSAVE</h2><p> 后台保存rdb快照</p>
@@ -117,28 +118,86 @@
 <h2 id="Config-get-配置项"><a href="#Config-get-配置项" class="headerlink" title="Config get 配置项"></a>Config get 配置项</h2><h2 id="Config-set-配置项-值"><a href="#Config-set-配置项-值" class="headerlink" title="Config set 配置项 值"></a>Config set 配置项 值</h2><ul>
 <li>特殊的选项,不允许用此命令设置,如slave-of, 需要用单独的slaveof命令来设置</li>
 </ul>
-<h1 id="Redis运维时需要注意的参数"><a href="#Redis运维时需要注意的参数" class="headerlink" title="Redis运维时需要注意的参数"></a>Redis运维时需要注意的参数</h1><h2 id="1-内存"><a href="#1-内存" class="headerlink" title="1: 内存"></a>1: 内存</h2><ul>
+<h1 id="Redis运维时需要注意的参数"><a href="#Redis运维时需要注意的参数" class="headerlink" title="Redis运维时需要注意的参数"></a>Redis运维时需要注意的参数</h1><h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><p>内存信息,比如内存占用数量、使用的内存分配器等等。</p>
+<ul>
 <li><code>info Memory</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">used_memory:859192 数据结构的空间</span><br><span class="line">used_memory_rss:7634944 实占空间</span><br><span class="line">mem_fragmentation_ratio:8.89 前2者的比例,1.N为佳,如果此值过大,说明redis的内存的碎片化严重,可以导出再导入一次.</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<h2 id="2-主从复制"><a href="#2-主从复制" class="headerlink" title="2: 主从复制"></a>2: 主从复制</h2><ul>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><p>和主从复制有关的信息,比如服 务器的角色、主从服 务器的连接状态是否正常等等。</p>
+<ul>
 <li><code>info Replication</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">role:slave</span><br><span class="line">master_host:192.168.1.128</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<h2 id="3-持久化"><a href="#3-持久化" class="headerlink" title="3: 持久化"></a>3: 持久化</h2><ul>
+<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>和 RDB 持久化以及 AOF 持久化有关的信息,比如 RDB 持久化是否正在 进行、AOF 文件重写是否正在 进行等等。</p>
+<ul>
 <li><code>info Persistence</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdb_changes_since_last_save:0</span><br><span class="line">rdb_last_save_time:1375224063</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<h2 id="4-fork耗时"><a href="#4-fork耗时" class="headerlink" title="4: fork耗时"></a>4: fork耗时</h2><ul>
+<h2 id="fork耗时"><a href="#fork耗时" class="headerlink" title="fork耗时"></a>fork耗时</h2><ul>
 <li><code>info Status</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">latest_fork_usec:936  上次导出rdb快照,持久化花费微秒</span><br><span class="line">注意: 如果某实例有10G内容,导出需要2分钟,</span><br><span class="line">每分钟写入10000次,导致不断的rdb导出,磁盘始处于高IO状态.</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<h2 id="5-慢日志"><a href="#5-慢日志" class="headerlink" title="5: 慢日志"></a>5: 慢日志</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config get/set slowlog-log-slower-than</span><br><span class="line">CONFIG get/SET slowlog-max-len </span><br><span class="line">slowlog get N 获取慢日志</span><br></pre></td></tr></table></figure>
+<h2 id="server"><a href="#server" class="headerlink" title="server"></a>server</h2><p>服务器本身的信息,比如版本号、 监听端口号、服 务器 ID 等等。</p>
+<ul>
+<li><code>info Server</code></li>
+</ul>
+<h2 id="clients"><a href="#clients" class="headerlink" title="clients"></a>clients</h2><p>已连接客户端的信息,比如已 连接客户端的数量、正在被阻塞的客 户端数量等等。</p>
+<ul>
+<li><code>info Clients</code></li>
+</ul>
+<h2 id="stats"><a href="#stats" class="headerlink" title="stats"></a>stats</h2><p>服务器的统计信息,比如已 处理的命令请求数量、每秒 钟处理的命令请求数量等等。</p>
+<ul>
+<li><code>info Stats</code></li>
+</ul>
+<h2 id="cpu"><a href="#cpu" class="headerlink" title="cpu"></a>cpu</h2><p>服务器的系统 CPU 占用量和用户 CPU 占用量。</p>
+<ul>
+<li><code>info Cpu</code></li>
+</ul>
+<h2 id="commandstats"><a href="#commandstats" class="headerlink" title="commandstats"></a>commandstats</h2><p>命令执行的统计信息,比如命令 执行的次数、命令耗 费的 CPU 时间、执行每个命令耗费的平均 CPU 时间等等。</p>
+<ul>
+<li><code>info commandstats</code></li>
+</ul>
+<h2 id="cluster"><a href="#cluster" class="headerlink" title="cluster"></a>cluster</h2><p>集群功能的相关信息。</p>
+<ul>
+<li><code>info cluster</code></li>
+</ul>
+<h2 id="keyspace"><a href="#keyspace" class="headerlink" title="keyspace"></a>keyspace</h2><p>和数据库键空间有关的信息,比如数据库的键数量、数据库已经被删除的过期键数量等等。</p>
+<ul>
+<li><code>info keyspace</code></li>
+</ul>
+<h2 id="查看服务器正在执行的命令"><a href="#查看服务器正在执行的命令" class="headerlink" title="查看服务器正在执行的命令"></a>查看服务器正在执行的命令</h2><ul>
+<li><code>MONITOR</code><br>实时地打印出 Redis 服务器接收到的命令,格式 为“时间戳 [数据库号码 IP地址和端口号 ] 被执行的命<br>令”。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; MONITOR</span><br><span class="line">OK</span><br><span class="line">1378822099.421623 [0 127.0.0.1:56604] &quot;PING&quot;</span><br><span class="line">1378822105.089572 [0 127.0.0.1:56604] &quot;SET&quot; &quot;msg&quot; &quot;hello world&quot;</span><br><span class="line">1378822109.036925 [0 127.0.0.1:56604] &quot;SET&quot; &quot;number&quot; &quot;123&quot;</span><br><span class="line">1378822140.649496 [0 127.0.0.1:56604] &quot;SADD&quot; &quot;fruits&quot; &quot;Apple&quot; &quot;Banana&quot; &quot;Cherry&quot;</span><br><span class="line">1378822154.117160 [0 127.0.0.1:56604] &quot;EXPIRE&quot; &quot;msg&quot; &quot;10086&quot;</span><br><span class="line">1378822257.329412 [0 127.0.0.1:56604] &quot;KEYS&quot; &quot;*&quot;</span><br><span class="line">1378822258.690131 [0 127.0.0.1:56604] &quot;DBSIZE&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="慢日志"><a href="#慢日志" class="headerlink" title="慢日志"></a>慢日志</h2><p>Redis 的慢查询功能用于将执行时间超过指定时长的命令记录起来,并向用 户展示那些被记录的命令,方便用户发现运行缓慢的命令,并 进行针对性的优化。</p>
+<p>慢查询功能可以通过以下两个配置 选项来进行设置:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slowlog-log-slower-than &lt;microseconds&gt;</span><br></pre></td></tr></table></figure></p>
+<p>执行时长超过 microseconds 微秒的命令将被 记录,将这个值设置为负数表示关闭慢查询功能。</p>
+<p>默认值为 10000 ,也即是 1/100 秒,因为 1 秒 = 1 百万微秒。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slowlog-max-len &lt;length&gt;</span><br></pre></td></tr></table></figure></p>
+<p>慢查询日志的最大数量,当 记录的日志超过这个数量时,新日志会覆盖旧日志( FIFO)。默认值为 128 。</p>
+<h3 id="查看慢查询日志"><a href="#查看慢查询日志" class="headerlink" title="查看慢查询日志"></a>查看慢查询日志</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLOWLOG GET [number]</span><br></pre></td></tr></table></figure>
+<p>返回服务器目前记录的慢查询日志。</p>
+<p>如果给定可选的 number 参数,那么只返回最多 number 条日志;否则的话,返回所有慢 查询日志。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 为测试需要,将 slowlog-log-slower-than 设成了 10 微秒</span><br><span class="line">redis&gt; SLOWLOG GET</span><br><span class="line">1) 1) (integer) 12</span><br><span class="line"># 唯一的日志标识符</span><br><span class="line">2) (integer) 1324097834</span><br><span class="line"># 被记录命令的执行时间,以 UNIX 时间戳格式表示</span><br><span class="line">3) (integer) 16</span><br><span class="line"># 命令执行耗费的时长,以微秒为单位</span><br><span class="line">4) 1) &quot;CONFIG&quot;</span><br><span class="line"># 被执行的命令,以数 组的形式排列</span><br><span class="line">2) &quot;GET&quot;</span><br><span class="line"># 这里完整的命令是 CONFIG GET slowlog-log-slower-than</span><br><span class="line">3) &quot;slowlog-log-slower-than&quot;</span><br></pre></td></tr></table></figure></p>
+<h3 id="查看目前已有的慢-查询日志数量。"><a href="#查看目前已有的慢-查询日志数量。" class="headerlink" title="查看目前已有的慢 查询日志数量。"></a>查看目前已有的慢 查询日志数量。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SLOWLOG LEN</span><br><span class="line">(integer) 14</span><br></pre></td></tr></table></figure>
+<h3 id="删除所有慢查询日志。"><a href="#删除所有慢查询日志。" class="headerlink" title="删除所有慢查询日志。"></a>删除所有慢查询日志。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SLOWLOG RESET</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config get/set slowlog-log-slower-than</span><br><span class="line">CONFIG get/SET slowlog-max-len </span><br><span class="line">slowlog get N 获取慢日志</span><br></pre></td></tr></table></figure>
+<h2 id="关闭服务器"><a href="#关闭服务器" class="headerlink" title="关闭服务器"></a>关闭服务器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHUTDOWN [option]</span><br></pre></td></tr></table></figure>
+<p>在不给定 option 参数的情况下,服 务器会先执行持久化操作:</p>
+<ul>
+<li>如果打开了 AOF 持久化,那么 调用 fdatasync ,确保之前执行的命令能够被写入到硬盘。</li>
+<li>如果打开了 RDB 持久化并且数据 库已经发生了变化,那么执行 SAVE 命令。</li>
+</ul>
+<p>在以上操作都完成之后,服 务器关闭。</p>
+<p>在打开了持久化功能的情况下,使用 SHUTDOWN 命令关闭服务器不会丢失任何数据。</p>
+<p>option 选项的值可以是 save 或者 nosave :</p>
+<ul>
+<li>SHUTDOWN save 在关闭之前总是执行 SAVE 命令,用于在没有开启 RDB 持久化的情况下,创建一个 RDB 文件来保存数据;</li>
+<li>SHUTDOWN nosave 在关闭之前不执行 SAVE 命令,用于在数据 库可能已经出错的情况下,避免将错误的数据保存到 RDB 文件里面。</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpi4wo1r0063f9cp3s6271bv" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjptlhdag006bcxcpmqlwh3fn" class="article-share-link">Share</a>
       
       
     </footer>

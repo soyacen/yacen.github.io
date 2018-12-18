@@ -70,6 +70,375 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-mysql/2014-7-24-MySql面试题-5" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/24/mysql/2014-7-24-MySql面试题-5/" class="article-date">
+  <time datetime="2014-07-23T16:00:00.000Z" itemprop="datePublished">2014-07-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/24/mysql/2014-7-24-MySql面试题-5/">MySql面试题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="41、mysql如何优化DISTINCT？"><a href="#41、mysql如何优化DISTINCT？" class="headerlink" title="41、mysql如何优化DISTINCT？"></a>41、mysql如何优化DISTINCT？</h2><p>DISTINCT在所有列上转换为GROUP BY，并与ORDER BY子句结合使用。</p>
+<h2 id="42、如何输入字符为十六进制数字？"><a href="#42、如何输入字符为十六进制数字？" class="headerlink" title="42、如何输入字符为十六进制数字？"></a>42、如何输入字符为十六进制数字？</h2><p>如果想输入字符为十六进制数字，可以输入带有单引号的十六进制数字和前缀(X)，或者只用(Ox)前缀输入十六进制数字。</p>
+<p>如果表达式上下文是字符串，则十六进制数字串将自动转换为字符串。</p>
+<h2 id="43、如何显示前50行？"><a href="#43、如何显示前50行？" class="headerlink" title="43、如何显示前50行？"></a>43、如何显示前50行？</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span>*<span class="keyword">FROM</span></span><br><span class="line">　　<span class="keyword">LIMIT</span> <span class="number">0</span>,<span class="number">50</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="44、可以使用多少列创建索引？"><a href="#44、可以使用多少列创建索引？" class="headerlink" title="44、可以使用多少列创建索引？"></a>44、可以使用多少列创建索引？</h2><p>任何标准表最多可以创建16个索引列。</p>
+<h2 id="45、NOW（）和CURRENT-DATE（）有什么区别？"><a href="#45、NOW（）和CURRENT-DATE（）有什么区别？" class="headerlink" title="45、NOW（）和CURRENT_DATE（）有什么区别？"></a>45、NOW（）和CURRENT_DATE（）有什么区别？</h2><ul>
+<li>NOW()命令用于显示当前年份，月份，日期，小时，分钟和秒。</li>
+<li>CURRENT_DATE()仅显示当前年份，月份和日期。</li>
+</ul>
+<h2 id="46、什么样的对象可以使用CREATE语句创建？"><a href="#46、什么样的对象可以使用CREATE语句创建？" class="headerlink" title="46、什么样的对象可以使用CREATE语句创建？"></a>46、什么样的对象可以使用CREATE语句创建？</h2><p>以下对象是使用CREATE语句创建的：</p>
+<ul>
+<li>DATABASE</li>
+<li>EVENT</li>
+<li>FUNCTION</li>
+<li>INDEX</li>
+<li>PROCEDURE</li>
+<li>TABLE</li>
+<li>TRIGGER</li>
+<li>USER</li>
+<li>VIEW</li>
+</ul>
+<h2 id="47、mysql表中允许有多少个TRIGGERS？"><a href="#47、mysql表中允许有多少个TRIGGERS？" class="headerlink" title="47、mysql表中允许有多少个TRIGGERS？"></a>47、mysql表中允许有多少个TRIGGERS？</h2><p>在MySql表中允许有六个触发器，如下：</p>
+<ul>
+<li>BEFORE INSERT</li>
+<li>AFTER INSERT</li>
+<li>BEFORE UPDATE</li>
+<li>AFTER UPDATE</li>
+<li>BEFORE DELETE and</li>
+<li>AFTER DELETE</li>
+</ul>
+<h2 id="48、什么是非标准字符串类型？"><a href="#48、什么是非标准字符串类型？" class="headerlink" title="48、什么是非标准字符串类型？"></a>48、什么是非标准字符串类型？</h2><p>以下是非标准字符串类型：</p>
+<ul>
+<li>TINYTEXT</li>
+<li>TEXT</li>
+<li>MEDIUMTEXT</li>
+<li>LONGTEXT</li>
+</ul>
+<h2 id="49、什么是通用SQL函数？"><a href="#49、什么是通用SQL函数？" class="headerlink" title="49、什么是通用SQL函数？"></a>49、什么是通用SQL函数？</h2><ul>
+<li>CONCAT(A, B) - 连接两个字符串值以创建单个字符串输出。通常用于将两个或多个字段合并为一个字段。</li>
+<li>FORMAT(X, D)- 格式化数字X到D有效数字。</li>
+<li>CURRDATE(), CURRTIME()- 返回当前日期或时间。</li>
+<li>NOW() - 将当前日期和时间作为一个值返回。</li>
+<li>MONTH()，DAY()，YEAR()，WEEK()，WEEKDAY() - 从日期值中提取给定数据。</li>
+<li>HOUR()，MINUTE()，SECOND() - 从时间值中提取给定数据。</li>
+<li>DATEDIFF(A，B) - 确定两个日期之间的差异，通常用于计算年龄</li>
+<li>SUBTIMES(A，B) - 确定两次之间的差异。</li>
+<li>FROMDAYS(INT) - 将整数天数转换为日期值。</li>
+</ul>
+<h2 id="50、解释访问控制列表"><a href="#50、解释访问控制列表" class="headerlink" title="50、解释访问控制列表"></a>50、解释访问控制列表</h2><p>ACL(访问控制列表)是与对象关联的权限列表。这个列表是MySQL服务器安全模型的基础，它有助于排除用户无法连接的问题。</p>
+<p>MySQL将ACL(也称为授权表)缓存在内存中。当用户尝试认证或运行命令时，MySQL会按照预定的顺序检查ACL的认证信息和权限。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/24/mysql/2014-7-24-MySql面试题-5/" data-id="cjptlhd82001ncxcpwlb6palu" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-7-23-MySql面试题-4" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/23/mysql/2014-7-23-MySql面试题-4/" class="article-date">
+  <time datetime="2014-07-22T16:00:00.000Z" itemprop="datePublished">2014-07-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/23/mysql/2014-7-23-MySql面试题-4/">MySql面试题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="31、我们如何得到受查询影响的行数？"><a href="#31、我们如何得到受查询影响的行数？" class="headerlink" title="31、我们如何得到受查询影响的行数？"></a>31、我们如何得到受查询影响的行数？</h2><p>行数可以通过以下代码获得：<br>SELECT ROW_COUNT();  </p>
+<h2 id="32、mysql查询是否区分大小写？"><a href="#32、mysql查询是否区分大小写？" class="headerlink" title="32、mysql查询是否区分大小写？"></a>32、mysql查询是否区分大小写？</h2><p>不区分</p>
+<ul>
+<li>SELECT VERSION(), CURRENT_DATE;</li>
+<li>SeLect version(), current_date;</li>
+<li>seleCt vErSiOn(), current_DATE;</li>
+</ul>
+<p>所有这些例子都是一样的，MySQL不区分大小写。</p>
+<h2 id="33、LIKE和REGEXP操作有什么区别？"><a href="#33、LIKE和REGEXP操作有什么区别？" class="headerlink" title="33、LIKE和REGEXP操作有什么区别？"></a>33、LIKE和REGEXP操作有什么区别？</h2><h2 id="34、BLOB和TEXT有什么区别？"><a href="#34、BLOB和TEXT有什么区别？" class="headerlink" title="34、BLOB和TEXT有什么区别？"></a>34、BLOB和TEXT有什么区别？</h2><p>TEXT与BLOB的主要差别就是BLOB保存二进制数据，TEXT保存字符数据</p>
+<h2 id="35、mysql-fetch-array和mysql-fetch-object的区别是什么？"><a href="#35、mysql-fetch-array和mysql-fetch-object的区别是什么？" class="headerlink" title="35、mysql_fetch_array和mysql_fetch_object的区别是什么？"></a>35、mysql_fetch_array和mysql_fetch_object的区别是什么？</h2><p>以下是mysql_fetch_array和mysql_fetch_object的区别：</p>
+<ul>
+<li>mysql_fetch_array() - 将结果行作为关联数组或来自数据库的常规数组返回。</li>
+<li>mysql_fetch_object - 从数据库返回结果行作为对象。</li>
+</ul>
+<h2 id="36、我们如何在mysql中运行批处理模式？"><a href="#36、我们如何在mysql中运行批处理模式？" class="headerlink" title="36、我们如何在mysql中运行批处理模式？"></a>36、我们如何在mysql中运行批处理模式？</h2><p>以下命令用于在批处理模式下运行：<br>mysql;<br>mysql mysql.out</p>
+<h2 id="37、MyISAM表格将在哪里存储，并且还提供其存储格式？"><a href="#37、MyISAM表格将在哪里存储，并且还提供其存储格式？" class="headerlink" title="37、MyISAM表格将在哪里存储，并且还提供其存储格式？"></a>37、MyISAM表格将在哪里存储，并且还提供其存储格式？</h2><p>每个MyISAM表格以三种格式存储在磁盘上：</p>
+<ul>
+<li>“.frm”文件存储表定义</li>
+<li>数据文件具有“.MYD”(MYData)扩展名</li>
+<li>索引文件具有“.MYI”(MYIndex)扩展名</li>
+</ul>
+<h2 id="38、mysql中有哪些不同的表格？"><a href="#38、mysql中有哪些不同的表格？" class="headerlink" title="38、mysql中有哪些不同的表格？"></a>38、mysql中有哪些不同的表格？</h2><p>共有5种类型的表格：</p>
+<ul>
+<li>MyISAM</li>
+<li>Heap</li>
+<li>Merge</li>
+<li>INNODB</li>
+<li>ISAM<br>MyISAM是MySQL的默认存储引擎。</li>
+</ul>
+<h2 id="39、ISAM是什么？"><a href="#39、ISAM是什么？" class="headerlink" title="39、ISAM是什么？"></a>39、ISAM是什么？</h2><p>ISAM简称为索引顺序访问方法。它是由IBM开发的，用于在磁带等辅助存储系统上存储和检索数据。</p>
+<h2 id="40、InnoDB是什么？"><a href="#40、InnoDB是什么？" class="headerlink" title="40、InnoDB是什么？"></a>40、InnoDB是什么？</h2><p>lnnoDB是一个由Oracle公司开发的Innobase Oy事务安全存储引擎。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/23/mysql/2014-7-23-MySql面试题-4/" data-id="cjptlhd81001kcxcpvz0cdyu3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-22-Redis应用之微博" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/22/redis/2014-07-22-Redis应用之微博/" class="article-date">
+  <time datetime="2014-07-21T16:00:00.000Z" itemprop="datePublished">2014-07-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/22/redis/2014-07-22-Redis应用之微博/">Redis应用之微博</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">incr global:userid                  # 产生唯一userid</span><br><span class="line">set user:userid:1:username zhansan  # 设置userid为1的用户的用户名</span><br><span class="line">set user:userid:1:password 111111   # 设置userid为1的用户的密码</span><br><span class="line"></span><br><span class="line">set user:username:zhansan:userid 1  # 设置用户名为zhangsan的userid为 1，用于反查，比如查询是否存在和登录</span><br><span class="line"></span><br><span class="line">// 维护 50 个最新用户 列表</span><br><span class="line">lpush newuserlist userid</span><br><span class="line">ltrim newuserlist 0 49</span><br></pre></td></tr></table></figure>
+<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">get user:username:zhangsan:userid   # 根据username获取userid</span><br><span class="line">get user:userid:1:password          # 根据userid获取password，比较传的pwd和password</span><br><span class="line"></span><br><span class="line"># cookie + salt                     # cookie 加 salt，提高安全性</span><br><span class="line">set user:userid:1:authsecret randomstr # 把 salt 信息存入redis</span><br><span class="line"></span><br><span class="line">#：</span><br></pre></td></tr></table></figure>
+<h2 id="判断是否登陆"><a href="#判断是否登陆" class="headerlink" title="判断是否登陆"></a>判断是否登陆</h2><p>取出cookie信息uname ,uid,randomstr，比较三者和redis中存入的是否一样<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">get user:username:zhangsan:userid   # 根据username获取userid</span><br><span class="line">get user:userid:uid:username        # 根据userid获取username</span><br><span class="line">get user:userid:uid:authsecret      # 根据userid获取salt信息</span><br></pre></td></tr></table></figure></p>
+<h2 id="关注"><a href="#关注" class="headerlink" title="关注"></a>关注</h2><ol>
+<li>获取微博主页用户的userid</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">currentuserid = get user:username:currentusername:userid</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li><p>判断是否关注某人(是否显示关注按钮)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sismember following:myuserid currentuserid  # 我关注的集合里是否有这个人</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>关注微博主页用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sadd following:myuserid currentuserid   # 添加到我的关注的集合</span><br><span class="line">sadd fans:currentuserid myuserid        # 添加到被关注人的粉丝集合</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>取消关注</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">srem following:myuserid currentuserid   # 从我的关注集合中移除</span><br><span class="line">srem fans:currentuserid myuserid        # 把我从被关注人的粉丝集合中移除</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="获取粉丝数"><a href="#获取粉丝数" class="headerlink" title="获取粉丝数"></a>获取粉丝数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard fans:myuserid</span><br></pre></td></tr></table></figure>
+<h2 id="获取关注者数"><a href="#获取关注者数" class="headerlink" title="获取关注者数"></a>获取关注者数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard following:myuserid</span><br></pre></td></tr></table></figure>
+<h2 id="发微博-push-方式"><a href="#发微博-push-方式" class="headerlink" title="发微博(push 方式)"></a>发微博(push 方式)</h2><ol>
+<li><p>写微博</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">incr global:postid</span><br><span class="line">hmset post:postid:2 time 1405987200 userid 1 content &quot;this is my home&quot; username &quot;Jax&quot;</span><br><span class="line">lpush recievepost:userid postid</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把微博推给粉丝</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fans = smembers fans:userid</span><br><span class="line">for fansuserid in fans &#123;</span><br><span class="line">	lpush recievepost:fansuserid postid</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="获取微博-push-方式"><a href="#获取微博-push-方式" class="headerlink" title="获取微博(push 方式)"></a>获取微博(push 方式)</h2><ol>
+<li><p>截取最新的50条微博</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ltrim recievepost:myuserid 0 49</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取微博并安postid排序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">posts = sort recievepost:myuserid</span><br><span class="line"></span><br><span class="line">for postid in posts &#123;</span><br><span class="line">  hmget post:postid:[postid] timestamp content userid username</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="发微博-pull-方式"><a href="#发微博-pull-方式" class="headerlink" title="发微博(pull 方式)"></a>发微博(pull 方式)</h2><ol>
+<li><p>写微博</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incr global:postid</span><br><span class="line">hmset post:postid:2 time 1405987200 userid 1 content &quot;this is my home&quot; username &quot;Jax&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把微博放在自己的微博集合中(有序集合)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">zadd postset:userid:myuserid postid postid </span><br><span class="line"></span><br><span class="line">count = zcard postset:userid:myuserid </span><br><span class="line"></span><br><span class="line">if count &gt; 20 &#123;</span><br><span class="line">  # 始终保持只有最新的 20 条微博</span><br><span class="line">  zremrangebyrank postset:userid:myuserid 0, 0 </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="获取微博-pull-方式"><a href="#获取微博-pull-方式" class="headerlink" title="获取微博(pull 方式)"></a>获取微博(pull 方式)</h2><ol>
+<li><p>获取关注人集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stars = smembers following:myuserid</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取上一次拉去的postid</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lastpull = get pastpull:userid:myuserid</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取关注人的微博，从lastpull到最新postid</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">postids = </span><br><span class="line">for staruserid in stars &#123;</span><br><span class="line">  rangebyscore postset:userid:staruserid lastpull MAX_INT</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>程序更具postid排序，更新lastpull</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sort(postids)</span><br><span class="line">set pastpull:userid:myuserid postids[0]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获取微博</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">for postid in postids &#123;</span><br><span class="line">  lpush recivepost:myuserid postid</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">posts = sort recievepost:myuserid</span><br><span class="line"></span><br><span class="line">for postid in posts &#123;</span><br><span class="line">  hmget post:postid:[postid] timestamp content userid username</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="与某个明星starid共同关注"><a href="#与某个明星starid共同关注" class="headerlink" title="与某个明星starid共同关注"></a>与某个明星starid共同关注</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sinterstore common:concern myuserid starid</span><br></pre></td></tr></table></figure>
+<h2 id="转发微博"><a href="#转发微博" class="headerlink" title="转发微博"></a>转发微博</h2><p>普通微博和转发产生的微博之间的唯一区别就是,转发产生的微博会引用另一条微博 。</p>
+<p>因此,为了实现转发功能,我们需要添加一个origin_id 属性 ,这个属性记录了被转发微博的 ID,通过这个 ID 可以找到被转发微博的详细信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">incr global:postid</span><br><span class="line">hmset post:postid:3 time 1405987200 userid 1 content &quot;this is my home&quot; username &quot;Jax&quot; origin_id 2</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjptlhd9x0051cxcpd6g6cyyk" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-mysql/2014-7-22-MySql面试题-3" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/22/mysql/2014-7-22-MySql面试题-3/" class="article-date">
+  <time datetime="2014-07-21T16:00:00.000Z" itemprop="datePublished">2014-07-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/22/mysql/2014-7-22-MySql面试题-3/">MySql面试题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="21、mysql服务器默认端口是什么？"><a href="#21、mysql服务器默认端口是什么？" class="headerlink" title="21、mysql服务器默认端口是什么？"></a>21、mysql服务器默认端口是什么？</h2><p>3306</p>
+<h2 id="22、MyISAM-Static和MyISAM-Dynamic有什么区别？"><a href="#22、MyISAM-Static和MyISAM-Dynamic有什么区别？" class="headerlink" title="22、MyISAM Static和MyISAM Dynamic有什么区别？"></a>22、MyISAM Static和MyISAM Dynamic有什么区别？</h2><p>在MyISAM Static上的所有字段有固定宽度。</p>
+<p>MyISAM Dynamic 表将具有像TEXT，BLOB等字段，以适应不同长度的数据类型。</p>
+<p>MyISAM Static在受损情况下更容易恢复</p>
+<h2 id="23、federated表是什么？"><a href="#23、federated表是什么？" class="headerlink" title="23、federated表是什么？"></a>23、federated表是什么？</h2><p>federated表，允许访问位于其他服务器数据库上的表。</p>
+<h2 id="24、如果一个表有一列定义为TIMESTAMP，将发生什么？"><a href="#24、如果一个表有一列定义为TIMESTAMP，将发生什么？" class="headerlink" title="24、如果一个表有一列定义为TIMESTAMP，将发生什么？"></a>24、如果一个表有一列定义为TIMESTAMP，将发生什么？</h2><p>每当行被更改时，时间戳字段将获取当前时间戳。</p>
+<h2 id="25、列设置为AUTO-INCREMENT时，如果在表中达到最大值，会发生什么情况？"><a href="#25、列设置为AUTO-INCREMENT时，如果在表中达到最大值，会发生什么情况？" class="headerlink" title="25、列设置为AUTO　INCREMENT时，如果在表中达到最大值，会发生什么情况？"></a>25、列设置为AUTO　INCREMENT时，如果在表中达到最大值，会发生什么情况？</h2><p>它会停止递增，任何进一步的插入都将产生错误，因为密钥已被使用。</p>
+<h2 id="26、怎样才能找出最后一次插入时分配了哪个自动增量？"><a href="#26、怎样才能找出最后一次插入时分配了哪个自动增量？" class="headerlink" title="26、怎样才能找出最后一次插入时分配了哪个自动增量？"></a>26、怎样才能找出最后一次插入时分配了哪个自动增量？</h2><p>LAST_INSERT_ID将返回由Auto_increment分配的最后一个值，并且不需要指定表名称。</p>
+<h2 id="27、你怎么看到为表格定义的所有索引？"><a href="#27、你怎么看到为表格定义的所有索引？" class="headerlink" title="27、你怎么看到为表格定义的所有索引？"></a>27、你怎么看到为表格定义的所有索引？</h2><p>索引是通过以下方式为表格定义的：<br>SHOW INDEX FROM <tablename>;</tablename></p>
+<h2 id="28、LIKE声明中的％和-是什么意思？"><a href="#28、LIKE声明中的％和-是什么意思？" class="headerlink" title="28、LIKE声明中的％和_是什么意思？"></a>28、LIKE声明中的％和_是什么意思？</h2><p>%对应于0个或更多字符，_只是LIKE语句中的一个字符。</p>
+<h2 id="29、如何在Unix和mysql时间戳之间进行转换？"><a href="#29、如何在Unix和mysql时间戳之间进行转换？" class="headerlink" title="29、如何在Unix和mysql时间戳之间进行转换？"></a>29、如何在Unix和mysql时间戳之间进行转换？</h2><p>UNIX_TIMESTAMP是从MySQL时间戳转换为Unix时间戳的命令</p>
+<p>FROM_UNIXTIME是从Unix时间戳转换为MySQL时间戳的命令</p>
+<p>30、列对比运算符是什么？<br>在SELECT语句的列比较中使用=，&lt;&gt;，&lt;=，&lt;，&gt; =，&gt;，&lt;&lt;，&gt;&gt;，&lt;=&gt;，AND，OR或LIKE运算符。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/22/mysql/2014-7-22-MySql面试题-3/" data-id="cjptlhd80001hcxcpku3cclit" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-21-Redis应用之标签系统" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" class="article-date">
+  <time datetime="2014-07-20T16:00:00.000Z" itemprop="datePublished">2014-07-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/21/redis/2014-07-21-Redis应用之标签系统/">Redis应用之标签系统</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="添加任意多个标签"><a href="#添加任意多个标签" class="headerlink" title="添加任意多个标签"></a>添加任意多个标签</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sadd Key tag [tag...]</span><br></pre></td></tr></table></figure>
+<h2 id="移除标签"><a href="#移除标签" class="headerlink" title="移除标签"></a>移除标签</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">srem Key tag [tag...]</span><br></pre></td></tr></table></figure>
+<h2 id="检查标签是否存在"><a href="#检查标签是否存在" class="headerlink" title="检查标签是否存在"></a>检查标签是否存在</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sismember Key tag</span><br></pre></td></tr></table></figure>
+<h2 id="返回所有标签"><a href="#返回所有标签" class="headerlink" title="返回所有标签"></a>返回所有标签</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">smembers Key</span><br><span class="line">或</span><br><span class="line">scan Key [cursor]</span><br></pre></td></tr></table></figure>
+<h2 id="返回标签数量"><a href="#返回标签数量" class="headerlink" title="返回标签数量"></a>返回标签数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scard Key</span><br></pre></td></tr></table></figure>
+<h1 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h1><h2 id="创建图书"><a href="#创建图书" class="headerlink" title="创建图书"></a>创建图书</h2><p><code>set book:bookid:name [bookname]</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set book:5:name &apos;PHP圣经&apos;</span><br><span class="line">set book:6:name &apos;ruby实战&apos;</span><br><span class="line">set book:7:name &apos;mysql运难&apos;</span><br><span class="line">set book:8:name &apos;ruby server&apos;</span><br></pre></td></tr></table></figure></p>
+<h2 id="为图书打上标签"><a href="#为图书打上标签" class="headerlink" title="为图书打上标签"></a>为图书打上标签</h2><p><code>sadd tag:tagname [bookid...]</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sadd tag:PHP 5</span><br><span class="line">sadd tag:WEB 5 6</span><br><span class="line">sadd tag:database 7</span><br><span class="line">sadd tag:ruby 6 8</span><br><span class="line">sadd tag:SERVER 8</span><br></pre></td></tr></table></figure></p>
+<h2 id="查-既有PHP-又有WEB的书"><a href="#查-既有PHP-又有WEB的书" class="headerlink" title="查: 既有PHP,又有WEB的书"></a>查: 既有PHP,又有WEB的书</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sinter tag:PHP tag:WEB  #查集合的交集</span><br></pre></td></tr></table></figure>
+<h2 id="查-有PHP或有WEB标签的书"><a href="#查-有PHP或有WEB标签的书" class="headerlink" title="查: 有PHP或有WEB标签的书"></a>查: 有PHP或有WEB标签的书</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sunion tag:PHP tag:WEB</span><br></pre></td></tr></table></figure>
+<h2 id="查-含有ruby-不含WEB标签的书"><a href="#查-含有ruby-不含WEB标签的书" class="headerlink" title="查:含有ruby,不含WEB标签的书"></a>查:含有ruby,不含WEB标签的书</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sdiff tag:ruby tag:WEB #求差集</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" data-id="cjptlhd9y0053cxcp385x8leg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-mysql/2014-7-21-MySql面试题-2" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/07/21/mysql/2014-7-21-MySql面试题-2/" class="article-date">
@@ -141,7 +510,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/21/mysql/2014-7-21-MySql面试题-2/" data-id="cjpi4wo1n005tf9cp54mxkfoj" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/21/mysql/2014-7-21-MySql面试题-2/" data-id="cjptlhd7z001dcxcp3r0r84oy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -183,7 +552,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天(消息队列)/" data-id="cjpi4wo16004yf9cpa9cya5ce" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天(消息队列)/" data-id="cjptlhd9w004xcxcpfajcd16s" class="article-share-link">Share</a>
       
       
     </footer>
@@ -343,7 +712,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/20/mysql/2014-7-20-MySql面试题-1/" data-id="cjpi4wo28006sf9cpuq8xm0l8" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/20/mysql/2014-7-20-MySql面试题-1/" data-id="cjptlhdao006wcxcpq5gd14pp" class="article-share-link">Share</a>
       
       
     </footer>
@@ -386,7 +755,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" data-id="cjpi4wo14004tf9cpx3afdhy0" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" data-id="cjptlhda00057cxcpsjf5ss3a" class="article-share-link">Share</a>
       
       
     </footer>
@@ -437,249 +806,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjpi4wo12004pf9cp9fg8rh85" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-15-Redis应用之秒杀" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" class="article-date">
-  <time datetime="2014-07-14T16:00:00.000Z" itemprop="datePublished">2014-07-15</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/15/redis/2014-07-15-Redis应用之秒杀/">Redis应用之秒杀</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>秒杀时一般请求量都很大，所以不太可能直接往数据库中存</p>
-<p>一般用户是抢到购买的资格，随后在下单购买。</p>
-<p>后台一般采用<code>INCR</code>命令来生成购买资格<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INCR good:xxx:miaosha</span><br></pre></td></tr></table></figure></p>
-<p>判断用户得到的自增值是否大于秒杀总数，小于就有资格购买，大于就暂时没有资格。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" data-id="cjpi4wo11004mf9cp2u07wa64" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-14-Redis应用之缓存" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/14/redis/2014-07-14-Redis应用之缓存/" class="article-date">
-  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis应用之缓存/">Redis应用之缓存</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="缓存数据"><a href="#缓存数据" class="headerlink" title="缓存数据"></a>缓存数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET key value [EX seconds] [PX milliseconds] [NX|XX]</span><br></pre></td></tr></table></figure>
-<ul>
-<li>EX second ：设置键的过期时间为 second 秒。 SET key value EX second 效果等同于 SETEX key second value 。</li>
-<li>PX millisecond ：设置键的过期时间为 millisecond 毫秒。 SET key value PX millisecond 效果等同于 PSETEX key millisecond value 。</li>
-<li>NX ：只在键不存在时，才对键进行设置操作。 SET key value NX 效果等同于 SETNX key value 。</li>
-<li>XX ：只在键已经存在时，才对键进行设置操作。<h2 id="获取缓存数据"><a href="#获取缓存数据" class="headerlink" title="获取缓存数据"></a>获取缓存数据</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET key</span><br></pre></td></tr></table></figure></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis应用之缓存/" data-id="cjpi4wo10004if9cp5l8ynn24" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-14-Redis一般命令" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/14/redis/2014-07-14-Redis一般命令/" class="article-date">
-  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis一般命令/">Redis一般命令</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://redis.io/commands" target="_blank" rel="noopener">英文版</a></p>
-<p><a href="http://doc.redisfans.com/#" target="_blank" rel="noopener">中文版</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis一般命令/" data-id="cjpi4wo11004lf9cp3u2cfrzt" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-13-Redis适用场合" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/13/redis/2014-07-13-Redis适用场合/" class="article-date">
-  <time datetime="2014-07-12T16:00:00.000Z" itemprop="datePublished">2014-07-13</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/13/redis/2014-07-13-Redis适用场合/">Redis适用场合</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Redis其实开创了一种新的数据存储思路，使用Redis，我们不用再面对功能单调的数据库时，把精力放在如何把大象放进冰箱的问题，而是利用Redis提供的灵活多变的数据结构和数据操作，为不同的大象构建不同的冰箱。</p>
-<p>下面是一些Redis常用的场景：</p>
-<ol>
-<li>关系型数据库缓存</li>
-<li>任务队列(rpoplpush)</li>
-<li>大量数据运算(set,交、差、并,is a)</li>
-<li></li>
-<li>srandmember 随即抽奖</li>
-</ol>
-<h2 id="取最新N个数据的操作"><a href="#取最新N个数据的操作" class="headerlink" title="取最新N个数据的操作"></a>取最新N个数据的操作</h2><p>比如典型的取你网站的最新文章，通过下面方式，我们可以将最新的 5000 条评论的 ID 放在Redis 的 List 集合中，并将超出集合部分从数据库获取。使用 LPUSH latest.comments命令，向 list 集合中插入数据插入完成后再用 LTRIM latest.comments 0 5000 命令使其永远只保存最近 5000 个 ID如果你还有不同的筛选维度，比如某个分类的最新 N 条，那么你可以再建一个按此分类的List，只存 ID 的话，Redis 是非常高效的。</p>
-<h2 id="排行榜应用，取TOP-N操作（排行榜）"><a href="#排行榜应用，取TOP-N操作（排行榜）" class="headerlink" title="排行榜应用，取TOP N操作（排行榜）"></a>排行榜应用，取TOP N操作（排行榜）</h2><p>这个需求与上面需求的不同之处在于，前面操作以时间为权重，这个是以某一个条件为权重，比如按购买的次数或者顶的次数，这时候就需要 sorted set 出马，将你要排序的值设置为sorted set的score，将具体的数据设置为相应的value，每次只需要执行一条ZADD命令即可。</p>
-<h2 id="需要精确设定过期时间的应用"><a href="#需要精确设定过期时间的应用" class="headerlink" title="需要精确设定过期时间的应用"></a>需要精确设定过期时间的应用</h2><p>比如你可以把上面说到的 sorted set 的 score 值设置成过期时间的时间戳，那么就可以简单地通过过期时间排序，定时清除过期数据了，不仅是清除 Redis 中的过期数据，你完全可以把 Redis 里这个过期时间当成是对数据库中数据的索引，用 Redis 来找出哪些数据需要过期删除，然后再精准地从数据库中删除相应的记录。</p>
-<h2 id="计数器应用"><a href="#计数器应用" class="headerlink" title="计数器应用"></a>计数器应用</h2><p>Redis的命令是原子性的，你可以轻松利用INCR、DECR命令来构建计数器系统（底层的写入是单线程模型，并发写会按到位顺序执行）</p>
-<h2 id="Unique-操作，获取某段时间所有数据去重值"><a href="#Unique-操作，获取某段时间所有数据去重值" class="headerlink" title="Unique 操作，获取某段时间所有数据去重值"></a>Unique 操作，获取某段时间所有数据去重值</h2><p>这个使用Redis的Set数据结构最合适，只需要不断将数据往Set中扔就行，set就是集合，会自动去重</p>
-<h2 id="实时系统、发垃圾系统"><a href="#实时系统、发垃圾系统" class="headerlink" title="实时系统、发垃圾系统"></a>实时系统、发垃圾系统</h2><p>通过上面说到的 set 功能，你可以知道一个终端用户是否进行了某个操作，可以找到其操作的集合并进行分析统计对比等。没有做不到，只有想不到。</p>
-<h2 id="Pub、Sub-构建实时消息系统"><a href="#Pub、Sub-构建实时消息系统" class="headerlink" title="Pub、Sub 构建实时消息系统"></a>Pub、Sub 构建实时消息系统</h2><p>Redis 的 Pub/Sub 系统可以构建实时的消息系统，比如很多用 Pub/Sub 构建的实时聊天系统的例子。</p>
-<h2 id="构建队列系统"><a href="#构建队列系统" class="headerlink" title="构建队列系统"></a>构建队列系统</h2><p>使用list可以构建队列系统，使用sorted set 甚至可以构建有优先级的队列系统。</p>
-<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>性能优于Memcached，并且更优秀的在于数据结构更加多样化</p>
-<h2 id="抽奖"><a href="#抽奖" class="headerlink" title="抽奖"></a>抽奖</h2>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/13/redis/2014-07-13-Redis适用场合/" data-id="cjpi4wo0x004bf9cpv9dqfyw6" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-04-Redis配置文件" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/04/redis/2014-07-04-Redis配置文件/" class="article-date">
-  <time datetime="2014-07-03T16:00:00.000Z" itemprop="datePublished">2014-07-04</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/04/redis/2014-07-04-Redis配置文件/">Redis配置文件</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">daemonize no # 是否以后台进程启动</span><br><span class="line">databases 16 # 创建database的数量(默认选中的是database 0)</span><br></pre></td></tr></table></figure>
-<h2 id="rdb"><a href="#rdb" class="headerlink" title="rdb"></a>rdb</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    #刷新快照到硬盘中，必须满足两者要求才会触发，即900秒之后至少1个关键字发生变化。</span><br><span class="line">save 300 10   #必须是300秒之后至少10个关键字发生变化。</span><br><span class="line">save 60 10000 #必须是60秒之后至少10000个关键字发生变化。</span><br><span class="line">stop-writes-on-bgsave-error yes    #后台存储错误停止写。</span><br><span class="line">rdbcompression yes    #使用LZF压缩rdb文件。</span><br><span class="line">rdbchecksum yes       #存储和加载rdb文件时校验。</span><br><span class="line">dbfilename dump.rdb   #设置rdb文件名。</span><br><span class="line">dir ./    #设置工作目录，rdb文件会写入该目录。</span><br></pre></td></tr></table></figure>
-<h2 id="主从配置"><a href="#主从配置" class="headerlink" title="主从配置"></a>主从配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">slaveof &lt;masterip&gt; &lt;masterport&gt; # 设为某台机器的从服务器</span><br><span class="line">masterauth &lt;master-password&gt;    # 连接主服务器的密码</span><br><span class="line">slave-serve-stale-data yes      # 当主从断开或正在复制中,从服务器是否应答</span><br><span class="line">slave-read-only yes #从服务器只读</span><br><span class="line">repl-ping-slave-period 10       # 从ping主的时间间隔,秒为单位</span><br><span class="line">repl-timeout 60                 # 主从超时时间(超时认为断线了),要比period大</span><br><span class="line">slave-priority 100              # 如果master不能再正常工作，那么会在多个slave中，选择优先值最小的一个slave提升为master，优先值为0表示不能提升为master。</span><br><span class="line"></span><br><span class="line">repl-disable-tcp-nodelay no     # 主端是否合并数据,大块发送给slave</span><br><span class="line">slave-priority 100              # 从服务器的优先级,当主服挂了,会自动挑slave priority最小的为主服</span><br></pre></td></tr></table></figure>
-<h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">requirepass foobared # 需要密码</span><br><span class="line">rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52 #如果公共环境,可以重命名部分敏感命令 如config</span><br></pre></td></tr></table></figure>
-<h2 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">maxclients 10000              # 最大连接数</span><br><span class="line">maxmemory &lt;bytes&gt;             # 最大使用内存</span><br><span class="line"></span><br><span class="line">maxmemory-policy volatile-lru # 内存到极限后的处理</span><br><span class="line">volatile-lru -&gt; LRU算法删除过期key</span><br><span class="line">allkeys-lru -&gt; LRU算法删除key(不区分过不过期)</span><br><span class="line">volatile-random -&gt; 随机删除过期key</span><br><span class="line">allkeys-random -&gt; 随机删除key(不区分过不过期)</span><br><span class="line">volatile-ttl -&gt; 删除快过期的key</span><br><span class="line">noeviction -&gt; 不删除,返回错误信息</span><br></pre></td></tr></table></figure>
-<p><em>解释</em> LRU ttl 都是近似算法,可以选N个,再比较最适宜T踢出的数据</p>
-<p>maxmemory-samples 3</p>
-<h2 id="日志模式"><a href="#日志模式" class="headerlink" title="日志模式"></a>日志模式</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">appendonly no #是否仅要日志</span><br><span class="line">appendfsync no # 系统缓冲,统一写,速度快</span><br><span class="line">appendfsync always # 系统不缓冲,直接写,慢,丢失数据少</span><br><span class="line">appendfsync everysec #折衷,每秒写1次</span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no #为yes,则其他线程的数据放内存里,合并写入(速度快,容易丢失的多)</span><br><span class="line">auto-AOF-rewrite-percentage 100 当前aof文件是上次重写是大N%时重写</span><br><span class="line">auto-AOF-rewrite-min-size 64mb aof重写至少要达到的大小</span><br></pre></td></tr></table></figure>
-<h2 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">slowlog-log-slower-than 10000 # 记录响应时间大于10000微秒的慢查询</span><br><span class="line">slowlog-max-len 128   # 最多记录128条</span><br></pre></td></tr></table></figure>
-<h2 id="服务端命令"><a href="#服务端命令" class="headerlink" title="服务端命令"></a>服务端命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">time  返回时间戳+微秒</span><br><span class="line">dbsize 返回key的数量</span><br><span class="line">bgrewriteaof 重写aof</span><br><span class="line">bgsave 后台开启子进程dump数据</span><br><span class="line">save 阻塞进程dump数据</span><br><span class="line">lastsave </span><br><span class="line"></span><br><span class="line">slaveof host port 做host port的从服务器(数据清空,复制新主内容)</span><br><span class="line">slaveof no one 变成主服务器(原数据不丢失,一般用于主服失败后)</span><br><span class="line"></span><br><span class="line">flushdb  清空当前数据库的所有数据</span><br><span class="line">flushall 清空所有数据库的所有数据(误用了怎么办?)</span><br><span class="line"></span><br><span class="line">shutdown [save/nosave] 关闭服务器,保存数据,修改AOF(如果设置)</span><br><span class="line"></span><br><span class="line">slowlog get 获取慢查询日志</span><br><span class="line">slowlog len 获取慢查询日志条数</span><br><span class="line">slowlog reset 清空慢查询</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">info []</span><br><span class="line"></span><br><span class="line">config get 选项(支持*通配)</span><br><span class="line">config set 选项 值</span><br><span class="line">config rewrite 把值写到配置文件</span><br><span class="line">config restart 更新info命令的信息</span><br><span class="line"></span><br><span class="line">debug object key #调试选项,看一个key的情况</span><br><span class="line">debug segfault #模拟段错误,让服务器崩溃</span><br><span class="line">object key (refcount|encoding|idletime)</span><br><span class="line">monitor #打开控制台,观察命令(调试用)</span><br><span class="line">client list #列出所有连接</span><br><span class="line">client kill #杀死某个连接  CLIENT KILL 127.0.0.1:43501</span><br><span class="line">client getname #获取连接的名称 默认nil</span><br><span class="line">client setname &quot;名称&quot; #设置连接名称,便于调试</span><br></pre></td></tr></table></figure>
-<h2 id="连接命令"><a href="#连接命令" class="headerlink" title="连接命令"></a>连接命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">auth 密码 #密码登陆(如果有密码)</span><br><span class="line">ping #测试服务器是否可用</span><br><span class="line">echo &quot;some content&quot; #测试服务器是否正常交互</span><br><span class="line">select 0/1/2... #选择数据库</span><br><span class="line">quit #退出连接</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/" data-id="cjpi4wo0y004gf9cpecake0ou" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjptlhd9z0055cxcpcb081xto" class="article-share-link">Share</a>
       
       
     </footer>

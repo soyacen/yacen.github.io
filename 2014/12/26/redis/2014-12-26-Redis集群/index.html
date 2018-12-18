@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Redis集群 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="集群Redis 的分布式数据 库实现 Redis 集群是一个由多个 节点组成的分布式服 务器群,它具有复制、高可用和分片特性。 Redis 的集群没有中心 节点,并且带有复制和故障 转移特性,这可以避免单个节点成为性能瓶颈,或者因为某个节点下线而导致整个集群下 线。 分布式Redis 集群是一个由多个 Redis 服务器组成的分布式网 络服务器群,集群中的各个服 务器被称为节点(node),这些节">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis集群">
+<meta property="og:url" content="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="集群Redis 的分布式数据 库实现 Redis 集群是一个由多个 节点组成的分布式服 务器群,它具有复制、高可用和分片特性。 Redis 的集群没有中心 节点,并且带有复制和故障 转移特性,这可以避免单个节点成为性能瓶颈,或者因为某个节点下线而导致整个集群下 线。 分布式Redis 集群是一个由多个 Redis 服务器组成的分布式网 络服务器群,集群中的各个服 务器被称为节点(node),这些节">
+<meta property="og:locale" content="Zh">
+<meta property="og:image" content="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/images/redis_c1.png">
+<meta property="og:image" content="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/images/redis_c2.png">
+<meta property="og:image" content="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/images/redis_c3.png">
+<meta property="og:image" content="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/images/redis_c4.png">
+<meta property="og:updated_time" content="2018-12-18T10:17:20.708Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis集群">
+<meta name="twitter:description" content="集群Redis 的分布式数据 库实现 Redis 集群是一个由多个 节点组成的分布式服 务器群,它具有复制、高可用和分片特性。 Redis 的集群没有中心 节点,并且带有复制和故障 转移特性,这可以避免单个节点成为性能瓶颈,或者因为某个节点下线而导致整个集群下 线。 分布式Redis 集群是一个由多个 Redis 服务器组成的分布式网 络服务器群,集群中的各个服 务器被称为节点(node),这些节">
+<meta name="twitter:image" content="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/images/redis_c1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录平时可能用到的资料</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-redis/2014-12-26-Redis集群" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/26/redis/2014-12-26-Redis集群/" class="article-date">
+  <time datetime="2014-12-25T16:00:00.000Z" itemprop="datePublished">2014-12-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redis集群
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h1><p>Redis 的分布式数据 库实现</p>
+<p>Redis 集群是一个由多个 节点组成的分布式服 务器群,它具有复制、高可用和分片特性。</p>
+<p>Redis 的集群没有中心 节点,并且带有复制和故障 转移特性,这可以避免单个节点成为性能瓶颈,或者因为某个节点下线而导致整个集群下 线。</p>
+<h2 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h2><p>Redis 集群是一个由多个 Redis 服务器组成的分布式网 络服务器群,集群中的各个服 务器被称为节点(node),这些节点会相互连接并进行通信。</p>
+<p>分布式的 Redis 集群没有中心 节点,所以用户不必担心某个 节点会成为整个集群的性能瓶 颈。</p>
+<p><img src="./images/redis_c1.png" alt=""></p>
+<h2 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h2><p>Redis 集群的每个节点都有两种角色可 选,一个是主节点(master node),另一个是从 节点(slave node):其中主节点用于储存数据,而从 节点则是某个主节点的复制品。</p>
+<p>当用户需要处理更多读请求的时候,添加从节点可以扩展系统的读性能。</p>
+<p>因为 Redis 集群重用了单机 Redis 复制特性的代 码,所以集群的复制行 为和我们之前介绍的单机复制特性的行 为是完全一样的。<br><img src="./images/redis_c2.png" alt=""></p>
+<h2 id="节点故障检测和自动故障转移"><a href="#节点故障检测和自动故障转移" class="headerlink" title="节点故障检测和自动故障转移"></a>节点故障检测和自动故障转移</h2><p>Redis 集群的主节点内置了类似 Redis Sentinel 的节点故障检测和自动故障转移功能,当集群中的某个主节点下线时,集群中的其他在 线主节点会注意到这一点,并对已下线的主节点进行故障转移。</p>
+<p>集群进行故障转移的方法和 Redis Sentinel 进行故障转移的方法基本一 样,不同的是,在集群里面,故障转移是由集群中其他在 线的主节点负责进行的,所以集群不必另外使用 Redis Sentinel 。<br><img src="./images/redis_c3.png" alt=""></p>
+<h2 id="分片"><a href="#分片" class="headerlink" title="分片"></a>分片</h2><p>集群使用分片来 扩展数据库的容量,并将命令 请求的负载交给不同的节点来分担。</p>
+<p>集群将整个数据 库分为 16384 个槽(slot),所有键都属于这 16384 个槽的其中一个, 计算键 key属于哪个槽的公式 为 slot_number = crc16(key) % 16384 ,其中 crc16 为 16 位的循环冗余校验和函数。</p>
+<p>集群中的每个主 节点都可以处理 0 个至 16384 个槽,当 16384 个槽都有某个 节点在负责处理时,集群进入上线状态,并开始处理客户端发送的数据命令 请求。</p>
+<p>比如说,如果我们有三个主节点 7000 、 7001 和 7002 ,那么我们可以:</p>
+<ul>
+<li>将槽 0 至 5460 指派给节点 7000 负责处理;</li>
+<li>将槽 5461 至 10922 指派给节点 7001 负责处理;</li>
+<li>将槽 10923 至 16383 指派给节点 7002 负责处理;</li>
+</ul>
+<p>这样就可以将 16384 个槽平均地指派 给三个节点负责处理。</p>
+<h2 id="转向"><a href="#转向" class="headerlink" title="转向"></a>转向</h2><p>对于一个被指派了槽的主 节点来说,这个主节点只会处理属于指派给自己的槽的命令 请求。</p>
+<p>如果一个节点接收到了和自己 处理的槽无关的命令 请求,那么节点会向客户端返回一个转向错误(redirection error),告诉客户端,哪个节点才是负责处理这条命令的,之后客 户端需要根据错误中包含的地址和端口号重新向正确的 节点发送命令请求。<br><img src="./images/redis_c4.png" alt=""></p>
+<h1 id="集群搭建"><a href="#集群搭建" class="headerlink" title="集群搭建"></a>集群搭建</h1><h2 id="集群搭建步骤"><a href="#集群搭建步骤" class="headerlink" title="集群搭建步骤"></a>集群搭建步骤</h2><p>搭建一个 Redis 集群需要执行以下步骤:</p>
+<ol>
+<li>创建多个节点。</li>
+<li>为每个节点指派槽,并将多个 节点连接起来,组成一个集群。</li>
+<li>当集群数据库的 16384 个槽都有节点在处理时,集群进入上线状态。</li>
+</ol>
+<p>接下来,就让我们来搭建一个包含六个 节点的 Redis 集群,其中三个 节点为主节点,而另外三个 节点为从节点,每个主节点都有一个从 节点。</p>
+<p>注意,在极端情况下,如果将 16384 个槽都指派给一个主节点,那么只有一个主 节点也可以让集群进入上线状态,但是要让集群的故障转移特性生效,最起 码要有三个主节点;而要让故障转移真正有意义,最少要为三个主节点分别设置一个从节点,这也是我们使用六个节点作为例子的原因。</p>
+<h2 id="创建节点"><a href="#创建节点" class="headerlink" title="创建节点"></a>创建节点</h2><p>集群中的节点就是运行在集群模式下的 Redis 服务器,为了构建一个集群,我 们需要一一创建集群中的每个节点。</p>
+<p>为了让 Redis 服务器以集群模式运行,我 们需要在启动服务器时,打开服务器的集群模式 选项:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cluster-enabled yes</span><br></pre></td></tr></table></figure></p>
+<p>另外,如果有多个 节点运行在同一台机器里面,那么我 们还需要为每个节点指定不同的端口号:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">port 7000</span><br></pre></td></tr></table></figure></p>
+<p>我们可以将这两个配置值写入到 redis.conf 文件里面,然后 执行以下命令来启 动一个节点:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-server redis.conf</span><br></pre></td></tr></table></figure></p>
+<h2 id="节点创建示例"><a href="#节点创建示例" class="headerlink" title="节点创建示例"></a>节点创建示例</h2><p>为了在同一台机器上构建一个包含六个 节点的集群,其中三个主 节点分别运行在机器的 7000 、7001 和 7002 端口,而三个从 节点则分别运行在机器的 7003 、 7004 和 7005 端口,我们可以先创建一个 rediscluster 文件夹,然后分别创建 7000 至 7005 这六个文件夹,每个文件夹都包含一个redis.conf 文件,它的内容 为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">port &lt;number&gt;</span><br><span class="line">cluster-enabled yes</span><br></pre></td></tr></table></figure></p>
+<p>然后只要分别执行:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/rediscluster/7000$ redis-server redis.conf</span><br><span class="line">...</span><br><span class="line">~/rediscluster/7005$ redis-server redis.conf</span><br></pre></td></tr></table></figure></p>
+<p>就可以创建出六个节点了(节点启动时默认为主节点,之后要将其中三个 节点转为从节点)。</p>
+<h2 id="创建集群"><a href="#创建集群" class="headerlink" title="创建集群"></a>创建集群</h2><p>在创建出六个节点之后,我们需要让这六个节点互相连接以构成一个集群,然后 为三个主节点指派槽,并为这三个主节点分别设置一个从节点。</p>
+<p>创建集群的操作可以通过使用位于 Redis 安装文件夹内的 redis-trib.rb 程序来完成,这是一个使用 Ruby 编写的 Redis 集群管理程序,它具有创建集群、检查集群的上线情况和槽指派情况、对集群进行重新分片、向集群添加新节点或者从集群中移除节点等功能。</p>
+<p>为了创建一个包含三个主 节点和三个从节点的集群,我 们需要执行以下命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>create 表示我们要创建一个集群</li>
+<li>–replicas 1 则表示让 redis-trib.rb 为集群中的每个主节点设置一个从节点</li>
+<li>再之后输入的是各个节点的 IP 地址和端口号。</li>
+</ul>
+<h2 id="访问集群"><a href="#访问集群" class="headerlink" title="访问集群"></a>访问集群</h2><p>集群客户端<br>因为集群功能比起 单机功能要复杂得多,所以不同 语言的 Redis 客户端通常需要为集群添加特别的支持,或者专门开发一个集群客户端。</p>
+<p>目前主要的 Redis 集群客户端(或者说,支持集群功能的 Redis 客户端)有以下这些:</p>
+<ul>
+<li>redis-rb-cluster:antirez 使用 Ruby 编写的 Redis 集群客户端,集群客户端的官方实现。</li>
+<li>predis:Redis 的 PHP 客户端,支持集群功能。</li>
+<li>jedis:Redis 的 JAVA 客户端,支持集群功能。</li>
+<li>StackExchange.Redis:Redis 的 C# 客户端,支持集群功能。</li>
+<li>内置的 redis-cli :在启动时给定 -c 参数即可进入集群模式,支持部分集群功能。</li>
+</ul>
+<h2 id="连接节点并执行命令"><a href="#连接节点并执行命令" class="headerlink" title="连接节点并执行命令"></a>连接节点并执行命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ redis-cli -p 7000 -c</span><br><span class="line">127.0.0.1:7000&gt; SET date 2014-10-10    # 键 date 所在的槽位于 节点 7000 ,节点直接执行命令</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:7000&gt; SET msg &quot;hello world&quot; # 键 msg 所在的槽位于 节点 7001</span><br><span class="line">-&gt; Redirected to slot [6257] located at 127.0.0.1:7001 # 客户端从 7000 转向至 7001</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:7001&gt; SADD fruits “apple” “banana” “cherry” # 键 fruits 所在的槽位于 节点 7002</span><br><span class="line">-&gt; Redirected to slot [14943] located at 127.0.0.1:7002 # 客户端从 7001 转向至 7002</span><br><span class="line">(integer) 2</span><br><span class="line">127.0.0.1:7002&gt; # 转向是自动完成的,无需任何用 户操作</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/" data-id="cjptlhdai006hcxcpvs1c4vbv" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          nodejs的path模块源码解读
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/12/23/redis/2014-12-23-Redis哨兵/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Redis哨兵</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

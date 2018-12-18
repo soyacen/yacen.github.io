@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Redis复制集 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="复制Redis 的复制(replication)功能允许用户根据一个 Redis 服务器来创建任意多个该服务器的复制品,其中被复制的服 务器为主服务(master),而通过复制创建出来的服务器复制品则为从服务器(slave)。 主从服务器两者拥有相同的数据 库数据: 只要主从服务器之间的网络连接正常,主服 务器就会一直将发生在自己身上的数据更新同步 给从服务器,从而一直保 证主从服务器的数据相同。">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis复制集">
+<meta property="og:url" content="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="复制Redis 的复制(replication)功能允许用户根据一个 Redis 服务器来创建任意多个该服务器的复制品,其中被复制的服 务器为主服务(master),而通过复制创建出来的服务器复制品则为从服务器(slave)。 主从服务器两者拥有相同的数据 库数据: 只要主从服务器之间的网络连接正常,主服 务器就会一直将发生在自己身上的数据更新同步 给从服务器,从而一直保 证主从服务器的数据相同。">
+<meta property="og:locale" content="Zh">
+<meta property="og:image" content="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/images/redis_replica.png">
+<meta property="og:image" content="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/images/redis_s.png">
+<meta property="og:image" content="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/images/redis_se.png">
+<meta property="og:image" content="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/images/redis_sd.png">
+<meta property="og:image" content="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/images/redis_md.png">
+<meta property="og:updated_time" content="2018-12-18T09:46:47.533Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis复制集">
+<meta name="twitter:description" content="复制Redis 的复制(replication)功能允许用户根据一个 Redis 服务器来创建任意多个该服务器的复制品,其中被复制的服 务器为主服务(master),而通过复制创建出来的服务器复制品则为从服务器(slave)。 主从服务器两者拥有相同的数据 库数据: 只要主从服务器之间的网络连接正常,主服 务器就会一直将发生在自己身上的数据更新同步 给从服务器,从而一直保 证主从服务器的数据相同。">
+<meta name="twitter:image" content="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/images/redis_replica.png">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录平时可能用到的资料</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-redis/2014-12-22-Redis复制集" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/22/redis/2014-12-22-Redis复制集/" class="article-date">
+  <time datetime="2014-12-21T16:00:00.000Z" itemprop="datePublished">2014-12-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redis复制集
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h1><p>Redis 的复制(replication)功能允许用户根据一个 Redis 服务器来创建任意多个该服务器的复制品,其中被复制的服 务器为主服务(master),而通过复制创建出来的服务器复制品则为从服务器(slave)。</p>
+<p>主从服务器两者拥有相同的数据 库数据:</p>
+<p>只要主从服务器之间的网络连接正常,主服 务器就会一直将发生在自己身上的数据更新同步 给从服务器,从而一直保 证主从服务器的数据相同。</p>
+<p><img src="./images/redis_replica.png" alt=""></p>
+<h2 id="使用从服务器来处理读命令请求"><a href="#使用从服务器来处理读命令请求" class="headerlink" title="使用从服务器来处理读命令请求"></a>使用从服务器来处理读命令请求</h2><p>Redis 允许从服务器执行客户端发送的读命令,比如 GET 、LRANGE、SMEMBERS、HGET、ZRANGE 等等。</p>
+<p>因为主从服务器拥有相同的数据 库数据,所以从服务器在执行客户端发送的读命令时,获得的结果与<br>主服务器执行相同的读命令所获得的结果是一样的。</p>
+<p>因此,用户可以将原本由主服 务器负责处理的一部分(甚至全部) 读命令请求转交给从服务器处理,从而降低主服 务器在处理读命令请求方面的负载,并扩展整个系统处理读命令请求的能力。<br><img src="./images/redis_s.png" alt=""></p>
+<h2 id="通过复制来扩展系统处理读请求的能力"><a href="#通过复制来扩展系统处理读请求的能力" class="headerlink" title="通过复制来扩展系统处理读请求的能力"></a>通过复制来扩展系统处理读请求的能力</h2><p>通过添加从服务器可以<em>线性</em>地扩展整个系统处理读命令请求的能力。<br><img src="./images/redis_se.png" alt=""></p>
+<h2 id="创建从服务器的方法"><a href="#创建从服务器的方法" class="headerlink" title="创建从服务器的方法"></a>创建从服务器的方法</h2><p>Redis 提供了两种方法来 为某个主服务器创建从服务器:</p>
+<ol>
+<li>使用 <code>SLAVEOF &lt;master-ip&gt; &lt;master-port&gt;</code> 命令<ul>
+<li>比如向一个服 务器发送 <code>SLAVEOF 127.0.0.1 6379</code> ,可以让接收到该命令的服务器变为 127.0.0.1:6379 的从服务器。</li>
+<li>在将一个服务器设置成从服务器之后,可以通 过向它发送 SLAVEOF no one 来让它变回一个主服务器(数据库已有的数据会被保留)。</li>
+</ul>
+</li>
+<li>在启动服务器时,通过设置 <code>slaveof &lt;master-ip&gt; &lt;master-port&gt;</code> 配置选项来让服务器成为指定服务器的从服务器。</li>
+</ol>
+<h2 id="服务器在复制时遭遇下线"><a href="#服务器在复制时遭遇下线" class="headerlink" title="服务器在复制时遭遇下线"></a>服务器在复制时遭遇下线</h2><p>在实际的世界中,因 为故障而导致服务器下线的情况总是不可避免的。</p>
+<p>在一个由主服 务器和从服务器组成的系统中,主服务器或者从服务器都有可能会下 线,但是不同服 务<br>器下线带来的影响并不相同:</p>
+<ul>
+<li>如果下线的是从服务器,那么整个系 统处理读请求的性能将有所下降,但 整个系统仍然可以继续处理写请求和读请求,所以这种下线不会导致系统停机;</li>
+<li>另一方面,因 为在整个系统里面,只有主服 务器一个能够处理写请求,所以如果下 线的是主服务器,那么整个系 统将只能处理读请求而无法处理写请求,导致系统停机。</li>
+</ul>
+<h2 id="从服务器下线示例"><a href="#从服务器下线示例" class="headerlink" title="从服务器下线示例"></a>从服务器下线示例</h2><p>从服务器 B 下线,导致客户端 C 的访问失败,但只要客户端 C 改为访问其他在线的服务器,就可以解决 这个问题。<br><img src="./images/redis_sd.png" alt=""></p>
+<h2 id="主服务器下线示例"><a href="#主服务器下线示例" class="headerlink" title="主服务器下线示例"></a>主服务器下线示例</h2><p>主服务器下线导致主从服务器的连接中断,并使得整个系 统无法再执行写命令。</p>
+<p>这时从服务器还是可以继续处理读请求的,但是从服 务器的数据会因为主服务器下线而没办法再得到更新。<br><img src="./images/redis_md.png" alt=""></p>
+<h2 id="让系统重新上线的方法"><a href="#让系统重新上线的方法" class="headerlink" title="让系统重新上线的方法"></a>让系统重新上线的方法</h2><p>为了让系统能够回到正常上线状态(也即是,让系统中的服务器既能够处理读请求,又能够处理写请求),用户需要向系统中的某一个从服 务器发送 <code>SLAVEOF no one</code> 命令,让它变为新的主服务器,并向其他从服务器发送 <code>SLAVEOF newip port</code>命令,让它们去复制新的从服 务器。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/" data-id="cjptlhdah006dcxcpi4rqpfl4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/12/23/redis/2014-12-23-Redis哨兵/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Redis哨兵
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/12/20/redis/2014-12-20-Redis管理工具/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Redis管理工具</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

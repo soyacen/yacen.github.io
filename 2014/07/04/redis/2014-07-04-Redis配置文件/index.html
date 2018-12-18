@@ -7,18 +7,18 @@
   
   <title>Redis配置文件 | 蓦然回首，bug依然在灯火阑珊处</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="基本配置12daemonize no # 是否以后台进程启动databases 16 # 创建database的数量(默认选中的是database 0) rdb12345678save 900 1    #刷新快照到硬盘中，必须满足两者要求才会触发，即900秒之后至少1个关键字发生变化。save 300 10   #必须是300秒之后至少10个关键字发生变化。save 60 10000 #必须是6">
+  <meta name="description" content="三种设置配置选项的方法: 服务器启动时通过参数来设置,格式为  1$ redis-server --&amp;lt;option&amp;gt; &amp;lt;value&amp;gt; 。  服务器启动时通过指定配置文件来 设置,格式为  1$ redis-server &amp;lt;path-to-config-file&amp;gt;  在服务器运行时,通过 CONFIG SET &amp;lt;option&amp;gt; &amp;lt;value&amp;gt">
 <meta name="keywords" content="后端 Node.js go golang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis配置文件">
 <meta property="og:url" content="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/index.html">
 <meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
-<meta property="og:description" content="基本配置12daemonize no # 是否以后台进程启动databases 16 # 创建database的数量(默认选中的是database 0) rdb12345678save 900 1    #刷新快照到硬盘中，必须满足两者要求才会触发，即900秒之后至少1个关键字发生变化。save 300 10   #必须是300秒之后至少10个关键字发生变化。save 60 10000 #必须是6">
+<meta property="og:description" content="三种设置配置选项的方法: 服务器启动时通过参数来设置,格式为  1$ redis-server --&amp;lt;option&amp;gt; &amp;lt;value&amp;gt; 。  服务器启动时通过指定配置文件来 设置,格式为  1$ redis-server &amp;lt;path-to-config-file&amp;gt;  在服务器运行时,通过 CONFIG SET &amp;lt;option&amp;gt; &amp;lt;value&amp;gt">
 <meta property="og:locale" content="Zh">
-<meta property="og:updated_time" content="2018-12-04T08:43:23.900Z">
+<meta property="og:updated_time" content="2018-12-13T08:50:21.739Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Redis配置文件">
-<meta name="twitter:description" content="基本配置12daemonize no # 是否以后台进程启动databases 16 # 创建database的数量(默认选中的是database 0) rdb12345678save 900 1    #刷新快照到硬盘中，必须满足两者要求才会触发，即900秒之后至少1个关键字发生变化。save 300 10   #必须是300秒之后至少10个关键字发生变化。save 60 10000 #必须是6">
+<meta name="twitter:description" content="三种设置配置选项的方法: 服务器启动时通过参数来设置,格式为  1$ redis-server --&amp;lt;option&amp;gt; &amp;lt;value&amp;gt; 。  服务器启动时通过指定配置文件来 设置,格式为  1$ redis-server &amp;lt;path-to-config-file&amp;gt;  在服务器运行时,通过 CONFIG SET &amp;lt;option&amp;gt; &amp;lt;value&amp;gt">
   
     <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
   
@@ -95,7 +95,20 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">daemonize no # 是否以后台进程启动</span><br><span class="line">databases 16 # 创建database的数量(默认选中的是database 0)</span><br></pre></td></tr></table></figure>
+        <h2 id="三种设置配置选项的方法"><a href="#三种设置配置选项的方法" class="headerlink" title="三种设置配置选项的方法:"></a>三种设置配置选项的方法:</h2><ol>
+<li><p>服务器启动时通过参数来设置,格式为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-server --&lt;option&gt; &lt;value&gt; 。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>服务器启动时通过指定配置文件来 设置,格式为 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-server &lt;path-to-config-file&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在服务器运行时,通过 <code>CONFIG SET &lt;option&gt; &lt;value&gt;</code> 命令来设置。</p>
+</li>
+</ol>
+<p>需要注意的是,并不是所有配置 选项都可以使用 <code>CONFIG SET</code> 来修改,有些选项只能在服务器启动时设置,并且在不使用 <code>CONFIG REWRITE</code> 的情况下, <code>CONFIG SET</code> 设置的选项值在服务器关闭之后就会丢失。</p>
+<p>使用 <code>CONFIG GET &lt;option&gt;</code>命令可以获取配置选项的当前值。</p>
+<p>如果服务器在启动时载入了配置文件,并且在服 务器运行的过程中,用户使用 <code>CONFIG SET</code> 修改了某些选项的值,那么只要使用 <code>CONFIG REWRITE</code> 命令,就可以将 <code>CONFIG SET</code> 的修改记录到配置文件里面,以便服务器下次启动时使用。</p>
+<h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">daemonize no # 是否以后台进程启动</span><br><span class="line">databases 16 # 创建database的数量(默认选中的是database 0)</span><br></pre></td></tr></table></figure>
 <h2 id="rdb"><a href="#rdb" class="headerlink" title="rdb"></a>rdb</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    #刷新快照到硬盘中，必须满足两者要求才会触发，即900秒之后至少1个关键字发生变化。</span><br><span class="line">save 300 10   #必须是300秒之后至少10个关键字发生变化。</span><br><span class="line">save 60 10000 #必须是60秒之后至少10000个关键字发生变化。</span><br><span class="line">stop-writes-on-bgsave-error yes    #后台存储错误停止写。</span><br><span class="line">rdbcompression yes    #使用LZF压缩rdb文件。</span><br><span class="line">rdbchecksum yes       #存储和加载rdb文件时校验。</span><br><span class="line">dbfilename dump.rdb   #设置rdb文件名。</span><br><span class="line">dir ./    #设置工作目录，rdb文件会写入该目录。</span><br></pre></td></tr></table></figure>
 <h2 id="主从配置"><a href="#主从配置" class="headerlink" title="主从配置"></a>主从配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">slaveof &lt;masterip&gt; &lt;masterport&gt; # 设为某台机器的从服务器</span><br><span class="line">masterauth &lt;master-password&gt;    # 连接主服务器的密码</span><br><span class="line">slave-serve-stale-data yes      # 当主从断开或正在复制中,从服务器是否应答</span><br><span class="line">slave-read-only yes #从服务器只读</span><br><span class="line">repl-ping-slave-period 10       # 从ping主的时间间隔,秒为单位</span><br><span class="line">repl-timeout 60                 # 主从超时时间(超时认为断线了),要比period大</span><br><span class="line">slave-priority 100              # 如果master不能再正常工作，那么会在多个slave中，选择优先值最小的一个slave提升为master，优先值为0表示不能提升为master。</span><br><span class="line"></span><br><span class="line">repl-disable-tcp-nodelay no     # 主端是否合并数据,大块发送给slave</span><br><span class="line">slave-priority 100              # 从服务器的优先级,当主服挂了,会自动挑slave priority最小的为主服</span><br></pre></td></tr></table></figure>
 <h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">requirepass foobared # 需要密码</span><br><span class="line">rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52 #如果公共环境,可以重命名部分敏感命令 如config</span><br></pre></td></tr></table></figure>
@@ -110,7 +123,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/" data-id="cjpi4wo0y004gf9cpecake0ou" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/" data-id="cjptlhd9v004vcxcp3vqv6nbu" class="article-share-link">Share</a>
       
       
     </footer>
