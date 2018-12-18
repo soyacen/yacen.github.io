@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Redis对象 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="对象系统Redis 是一个键值对(key-value pair)数据库,数据库中的每个键都有与之对应的值,并且这些键和值都是对象(object),其中:  键总是一个字符串 对象(String Object)。 而值则可以是字符串 对象、列表对象(List Object)、散列对象(Hash Object)、集合对象(SetObject)或者有序集合 对象(Sorted Set Object /">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis对象">
+<meta property="og:url" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="对象系统Redis 是一个键值对(key-value pair)数据库,数据库中的每个键都有与之对应的值,并且这些键和值都是对象(object),其中:  键总是一个字符串 对象(String Object)。 而值则可以是字符串 对象、列表对象(List Object)、散列对象(Hash Object)、集合对象(SetObject)或者有序集合 对象(Sorted Set Object /">
+<meta property="og:locale" content="Zh">
+<meta property="og:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o1.png">
+<meta property="og:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o3.png">
+<meta property="og:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o2.png">
+<meta property="og:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o4.png">
+<meta property="og:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o5.png">
+<meta property="og:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o6.png">
+<meta property="og:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o7.png">
+<meta property="og:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o8.png">
+<meta property="og:updated_time" content="2018-12-18T12:44:30.771Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis对象">
+<meta name="twitter:description" content="对象系统Redis 是一个键值对(key-value pair)数据库,数据库中的每个键都有与之对应的值,并且这些键和值都是对象(object),其中:  键总是一个字符串 对象(String Object)。 而值则可以是字符串 对象、列表对象(List Object)、散列对象(Hash Object)、集合对象(SetObject)或者有序集合 对象(Sorted Set Object /">
+<meta name="twitter:image" content="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/images/redis_o1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录平时可能用到的资料</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-redis/2015-01-05-Redis对象" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/01/05/redis/2015-01-05-Redis对象/" class="article-date">
+  <time datetime="2015-01-04T16:00:00.000Z" itemprop="datePublished">2015-01-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Redis对象
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="对象系统"><a href="#对象系统" class="headerlink" title="对象系统"></a>对象系统</h1><p>Redis 是一个键值对(key-value pair)数据库,数据库中的每个键都有与之对应的值,并且这些键和值<br>都是对象(object),其中:</p>
+<ul>
+<li>键总是一个字符串 对象(String Object)。</li>
+<li>而值则可以是字符串 对象、列表对象(List Object)、散列对象(Hash Object)、集合对象(SetObject)或者有序集合 对象(Sorted Set Object / Zset Object)中的任意一个, 这五种对象分别对应我们在 Redis 数据库中操作的字符串 键值对(SET、BITOP、PFADD)、列表键值对(RPUSH、LRANGE)、散列键值对(HADD、HLEN)、集合键值对(SADD、SMEMBERS)和有序集合键值对(ZADD、ZRANGE)。</li>
+</ul>
+<p>举个例子,执行命令 SET msg “hello world” 会让数据库关联起一个新的键值对,其中键是一个包含内容 “msg” 的字符串对象,而值则是一个包含内容 “hello world” 的字符串对象;</p>
+<p>另一方面,执行命令 SADD fruits “apple” “banana” “cherry” 则会创建一个键为字符串对象,值为集<br>合对象的键值对。<br><img src="./images/redis_o1.png" alt=""></p>
+<h2 id="对象的实现"><a href="#对象的实现" class="headerlink" title="对象的实现"></a>对象的实现</h2><p>Redis 中的每种对象都有与之相 对应的底层数据结构,并且为了让对象在各种不同的 应用场景下都有优秀的性能表现,Redis 为每种对象都提供了两种 类型的数据结构实现:</p>
+<ul>
+<li>第一类是为了进行性能优化而特制的编码数据结构(encoded data structure),这些数据结构主要使用“以 CPU 换内存的方式”来节约内存。<ul>
+<li>编码数据结构主要在对象包含的值数量比较少、或者值的体积比较小时使用:比如在字符串 对象包含的字符串比 较短时,集合只包含三五个小元素 时,又或者列表只包含十来个 项时,这些情况都可以使用编码数据结构。</li>
+</ul>
+</li>
+<li>另一类是普通数据结构,也即是我们在书上、论文上看见的数据结构,比如双向 链表、字典、跳跃表等等。<ul>
+<li>比起 编码数据结构,这些普通的数据 结构需要消耗更多内存,但是能 够提供更强大的功能,普通数据 结构主要在对象包含的值比较多、或者值的体积比较大时使用。</li>
+</ul>
+</li>
+</ul>
+<p>在创建新对象时,Redis 会优先使用编码数据结构来表示对象,并在有需要 时,自动将对象的表示方式转换为普通数据结构。</p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>编码数据结构:</p>
+<ul>
+<li>压缩列表(zip list)</li>
+<li>整数集合(int set)</li>
+</ul>
+<p>普通数据结构:</p>
+<ul>
+<li>简单动态字符串(SDS, simple dynamic string)</li>
+<li>双向链表</li>
+<li>字典</li>
+<li>跳跃表</li>
+</ul>
+<p>另外需要注意的是, 节约内存并不是编码数据结构所特有的 —— 普通数据结构也有相应的内存优化模式,比如 SDS 就有两种或以上的表示方式,不同的表示可以 让同一对象在不同的使用 场景下也尽可能地保持高效。</p>
+<h2 id="对象与数据结构之间的关系"><a href="#对象与数据结构之间的关系" class="headerlink" title="对象与数据结构之间的关系"></a>对象与数据结构之间的关系</h2><p><img src="./images/redis_o3.png" alt=""></p>
+<h2 id="压缩列表"><a href="#压缩列表" class="headerlink" title="压缩列表"></a>压缩列表</h2><p>压缩列表具有以下特点:</p>
+<ul>
+<li>压缩列表包含的项都是有序的,列表的两端分 别为表头和表尾。</li>
+<li><p>每个项可以储存一个字符串、整数或者浮点数。</p>
+</li>
+<li><p>可以从表头开始或者从表尾开始遍 历整个压缩列表,复杂度为 O(N) 。</p>
+</li>
+<li><p>定位压缩列表中指定索引上的 项,复杂度为 O(N) 。</p>
+</li>
+<li><p>使用压缩列表来储存值消耗的内存比使用双向 链表来储存值消耗的内存要少。<br><img src="./images/redis_o2.png" alt=""></p>
+</li>
+</ul>
+<h2 id="整数集合"><a href="#整数集合" class="headerlink" title="整数集合"></a>整数集合</h2><p>整数集合具有以下特点:</p>
+<ul>
+<li>集合元素只能是整数(最大 为 64 位),并且集合中不会出 现重复的元素。</li>
+<li>集合的底层使用有序的整数数 组来表示。</li>
+<li>数组的类型会随着新添加元素的 类型而改变:举个例子,如果 集合中位长度最大的元素 可以使用16 位整数来保存,那么数 组的类型就是 int16_t ,而如果集合中位 长度最大的元素可以使用 32 位整数来保存的 话,那么数组的类型就是 int32_t ,诸如此类。</li>
+<li>数组的类型只会自动增大,但不会减小。</li>
+</ul>
+<p><img src="./images/redis_o4.png" alt=""></p>
+<h2 id="SDS"><a href="#SDS" class="headerlink" title="SDS"></a>SDS</h2><p>Redis 使用 SDS (simple dynamic string)而不是 C 语言的字符串格式(以空字符 为结尾的字符数组)来作为 Redis 的默认字符串表示, SDS 具有以下特点:</p>
+<ul>
+<li>可以储存位数组(实现 BITOP 和 HyperLogLog)、字符串、整数和浮点数,其中超 过 64 位的整数和超过 IEEE 754 标准的浮点数使用字符串来表示。</li>
+<li>具有 int 、 embstr 和 raw 三种表示形式可 选,其中 int 表示用于储存小于等于 64 位的整数,embstr 用来储存比较短的位数组和字符串,而其他格式的 值则由 raw 格式储存。</li>
+<li>比起 C 语言的字符串格式, SDS 具有以下四个 优点:<ol>
+<li>常数复杂度获取长度值; </li>
+<li>不会引起缓冲区溢出; </li>
+<li>通过预分配和惰性释放两种策略来减少内存重分配的 执行次数; </li>
+<li>可以储存二进制位。</li>
+</ol>
+</li>
+</ul>
+<p><img src="./images/redis_o5.png" alt=""></p>
+<h2 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h2><p>Redis 的双向链表实现具有以下特性:</p>
+<ul>
+<li>双向、无环、带有表头和表尾指针。</li>
+<li>一个链表包含多个项,每个项都是一个字符串 对象,换句话来说,一个列表对象可以包含多个字符串对象。</li>
+<li>可以从表头或者表尾遍历整个链表,复杂度为 O(N) 。</li>
+<li>定位特定索引上的 项,复杂度为 O(N) 。</li>
+<li>链表带有长度记录属性,获取链表的当前长度的复杂度为 O(1) 。</li>
+</ul>
+<p><img src="./images/redis_o6.png" alt=""></p>
+<h2 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h2><p>Redis 的字典实现具有以下特性:</p>
+<ul>
+<li>查找、添加、删除键值对的复杂度为 O(1) ,键和值都是字符串对象。</li>
+<li>使用散列表(hash table)为底层实现,使用链地址法(separate chaining)来解决键冲突。</li>
+<li>Redis 会在不同的地方使用不同的散列算法,其中最常用的是 MurmurHash2 算法。</li>
+<li>在键值对数量大增或者大减的 时候会对散列表进行重新散列(rehash),并且这个 rehash 是渐进式、分多次进行的,不会在短 时间内耗费大量 CPU 时间,造成服务器阻塞。</li>
+</ul>
+<p><img src="./images/redis_o7.png" alt=""></p>
+<h2 id="跳跃表"><a href="#跳跃表" class="headerlink" title="跳跃表"></a>跳跃表</h2><p>Redis 的跳跃表实现具有以下特点:</p>
+<ul>
+<li>支持平均 O(log N) 最坏 O(N) 复杂度的节点查找操作,并且可以通 过执行范围性(range)操作来批量地获取有序的节点。</li>
+<li>跳跃表节点除了实现跳跃表所需的层(level)之外,还具有 score 属性和 obj 属性:前者是一个浮点数,用于 记录成员的分值;而后者则是一个字符串对象,用来记录成员本身。</li>
+<li>和字典一起构成 ZSET 结构,用于实现 Redis 的有序集合结构:其中字典用于快速 获取元素的分值(比如实现 ZSCORE 命令),以及判断元素是否存在;而跳 跃表则用于执行范围操作(比如实现 ZRANGE 命令)。</li>
+</ul>
+<p><img src="./images/redis_o8.png" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/" data-id="cjptr425m006goscpwy84c7yx" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/01/10/redis/2015-01-10-Redis数据库实现/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Redis数据库实现
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2014/12/26/redis/2014-12-26-Redis集群/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Redis集群</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

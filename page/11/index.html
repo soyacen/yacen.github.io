@@ -70,6 +70,100 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-redis/2014-07-18-Redis应用之任务队列" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" class="article-date">
+  <time datetime="2014-07-17T16:00:00.000Z" itemprop="datePublished">2014-07-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/18/redis/2014-07-18-Redis应用之任务队列/">Redis应用之任务队列</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="一个待做的任务队列"><a href="#一个待做的任务队列" class="headerlink" title="一个待做的任务队列"></a>一个待做的任务队列</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush tasks:willdoing [taskid]</span><br></pre></td></tr></table></figure>
+<h2 id="正在做的任务队列"><a href="#正在做的任务队列" class="headerlink" title="正在做的任务队列"></a>正在做的任务队列</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpoplpush tasks:willdoing tasks:doing</span><br></pre></td></tr></table></figure>
+<h2 id="已完成的任务队列"><a href="#已完成的任务队列" class="headerlink" title="已完成的任务队列"></a>已完成的任务队列</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lrem tasks:doing 1 [taskid]</span><br></pre></td></tr></table></figure>
+<h2 id="失败的，下次从-tasks-doing-里取任务"><a href="#失败的，下次从-tasks-doing-里取任务" class="headerlink" title="失败的，下次从 tasks:doing 里取任务"></a>失败的，下次从 tasks:doing 里取任务</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/18/redis/2014-07-18-Redis应用之任务队列/" data-id="cjptr42520053oscpt7uz2q8o" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-16-Redis应用之统计登录用户" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" class="article-date">
+  <time datetime="2014-07-15T16:00:00.000Z" itemprop="datePublished">2014-07-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/">Redis应用之统计登录用户</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="用户量小于百万"><a href="#用户量小于百万" class="headerlink" title="用户量小于百万"></a>用户量小于百万</h2><p>用户量不大，只有几千几万的情况下，直接使用集合类型即可</p>
+<h3 id="用户登录"><a href="#用户登录" class="headerlink" title="用户登录"></a>用户登录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sadd login:20140715:users [userid]</span><br></pre></td></tr></table></figure>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>可以直接做 交 差 并 等集合运算</p>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><p>用户越来越多,消耗的内存也会越来越多</p>
+<h2 id="用户量小于亿"><a href="#用户量小于亿" class="headerlink" title="用户量小于亿"></a>用户量小于亿</h2><h3 id="这个级别使用二进制可以精确存储"><a href="#这个级别使用二进制可以精确存储" class="headerlink" title="这个级别使用二进制可以精确存储"></a>这个级别使用二进制可以精确存储</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setbit login:20140715:users [userid] 1</span><br></pre></td></tr></table></figure>
+<h3 id="得到某个用户是否登录-判断是否是-1"><a href="#得到某个用户是否登录-判断是否是-1" class="headerlink" title="得到某个用户是否登录,判断是否是 1"></a>得到某个用户是否登录,判断是否是 1</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getbit login:20140715:users [userid]</span><br></pre></td></tr></table></figure>
+<h3 id="获取登录用户数量"><a href="#获取登录用户数量" class="headerlink" title="获取登录用户数量"></a>获取登录用户数量</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bitcount login:20140715:users 0 -1</span><br></pre></td></tr></table></figure>
+<h3 id="也可以作-交-差-并-等运算"><a href="#也可以作-交-差-并-等运算" class="headerlink" title="也可以作 交 差 并 等运算"></a>也可以作 交 差 并 等运算</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bitop [ AND | OR | NOT | XOR] login:20140715-6:users login:20140715:users login:20140716:users</span><br></pre></td></tr></table></figure>
+<h2 id="用户梁大于亿"><a href="#用户梁大于亿" class="headerlink" title="用户梁大于亿"></a>用户梁大于亿</h2><p>推荐使用 hyperLogLog<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfadd login:20140715:users [userid]</span><br></pre></td></tr></table></figure></p>
+<p>求数量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfcount login:20140715:users</span><br></pre></td></tr></table></figure></p>
+<p>合并<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pfmerge  login:20140715:users  login:20140716:users</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/16/redis/2014-07-16-Redis应用之统计登录用户/" data-id="cjptr4250004yoscp0sjayp9n" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-redis/2014-07-15-Redis应用之秒杀" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" class="article-date">
@@ -104,49 +198,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" data-id="cjptlhd9w004zcxcpqmmm9iau" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-14-Redis一般命令" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/14/redis/2014-07-14-Redis一般命令/" class="article-date">
-  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis一般命令/">Redis一般命令</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="https://redis.io/commands" target="_blank" rel="noopener">英文版</a></p>
-<p><a href="http://doc.redisfans.com/#" target="_blank" rel="noopener">中文版</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis一般命令/" data-id="cjptlhd9s004pcxcps99qi2wz" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/15/redis/2014-07-15-Redis应用之秒杀/" data-id="cjptr424z004xoscp2g6t0obi" class="article-share-link">Share</a>
       
       
     </footer>
@@ -193,7 +245,49 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis应用之缓存/" data-id="cjptlhd9u004tcxcpsomcnmxq" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis应用之缓存/" data-id="cjptr424y004uoscpcqs0v586" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-14-Redis一般命令" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/14/redis/2014-07-14-Redis一般命令/" class="article-date">
+  <time datetime="2014-07-13T16:00:00.000Z" itemprop="datePublished">2014-07-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/14/redis/2014-07-14-Redis一般命令/">Redis一般命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://redis.io/commands" target="_blank" rel="noopener">英文版</a></p>
+<p><a href="http://doc.redisfans.com/#" target="_blank" rel="noopener">中文版</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/14/redis/2014-07-14-Redis一般命令/" data-id="cjptr424x004toscpxnnfukc0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -251,7 +345,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/13/redis/2014-07-13-Redis适用场合/" data-id="cjptlhd9t004rcxcponyloh9o" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/13/redis/2014-07-13-Redis适用场合/" data-id="cjptr424w004noscpupqyjz4o" class="article-share-link">Share</a>
       
       
     </footer>
@@ -315,7 +409,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/" data-id="cjptlhd9v004vcxcp3vqv6nbu" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/04/redis/2014-07-04-Redis配置文件/" data-id="cjptr424w004poscpwwh9j6m2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -371,7 +465,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/03/redis/2014-07-03-Redis安装与使用/" data-id="cjptlhd9m004acxcp205uubpc" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/03/redis/2014-07-03-Redis安装与使用/" data-id="cjptr424v004loscp7k8bgqgi" class="article-share-link">Share</a>
       
       
     </footer>
@@ -444,7 +538,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/06/03/redis/2014-06-03-Redis特点/" data-id="cjptlhd9o004fcxcpk7cdjyre" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/06/03/redis/2014-06-03-Redis特点/" data-id="cjptr424u004ioscpcsfiesrq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -498,7 +592,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 

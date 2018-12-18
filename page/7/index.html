@@ -70,6 +70,174 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-redis/2014-12-10-Redis持久化" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/10/redis/2014-12-10-Redis持久化/" class="article-date">
+  <time datetime="2014-12-09T16:00:00.000Z" itemprop="datePublished">2014-12-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/10/redis/2014-12-10-Redis持久化/">Redis持久化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Redis有两种持久化策略：</p>
+<h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2><p>redis的默认持久化机制</p>
+<p>RDB相当于照快照。保存的是一种状态<br>  20G数据…-&gt;几kb快照</p>
+<h3 id="在-Redis-服务器创建-RDB-文件的情况中-以下三种是最常-见的"><a href="#在-Redis-服务器创建-RDB-文件的情况中-以下三种是最常-见的" class="headerlink" title="在 Redis 服务器创建 RDB 文件的情况中,以下三种是最常 见的:"></a>在 Redis 服务器创建 RDB 文件的情况中,以下三种是最常 见的:</h3><ol>
+<li>服务器执行客户端发送的 SAVE 命令;</li>
+<li>服务器执行客户端发送的 BGSAVE 命令;</li>
+<li>使用 save 配置选项设置的自动保存条件被满足,服务器自动执行 BGSAVE 。</li>
+</ol>
+<p>在这三种创建 RDB 文件的情况中,前两种情况需要用 户手动执行,而第三种情况 则是由 Redis 服务器自动执行。</p>
+<h3 id="SAVE-命令"><a href="#SAVE-命令" class="headerlink" title="SAVE 命令"></a>SAVE 命令</h3><p>通过使用客户端向服务器发送 SAVE 命令,可以命令服 务器去创建一个新的 RDB 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SAVE</span><br><span class="line">OK</span><br></pre></td></tr></table></figure></p>
+<p><img src="./images/save.png" alt=""></p>
+<p>在执行 SAVE 命令的过程中(也即是创建 RDB 文件的过程中),Redis 服务器将被阻塞,无法 处理客户端发送的命令请求,只有在 SAVE 命令执行完毕之后(也即是 RDB 文件创建完毕之后),服务器才会重新开始处理客户端发送的命令请求。</p>
+<p>如果 RDB 文件已经存在,那么服 务器将自动使用新的 RDB 文件去代替旧的 RDB 文件。</p>
+<p>SAVE 命令的复杂度为 O(N) ,N 为服务器中,所有数据 库包含的键值对数量总和。</p>
+<h3 id="BGSAVE-命令"><a href="#BGSAVE-命令" class="headerlink" title="BGSAVE 命令"></a>BGSAVE 命令</h3><p>执行 BGSAVE 命令同样可以创建一个新的 RDB 文件,这个命令和 SAVE 命令的区别在于,BGSAVE 不会造成 Redis 服务器阻塞:在执行 BGSAVE 命令的过程中, Redis 服务器仍然可以正常地 处理其他<br>客户端发送的命令请求。</p>
+<p>BGSAVE 命令不会造成服 务器阻塞的原因在于:</p>
+<ol>
+<li>当 Redis 服务器接收到 BGSAVE 命令的时候,它不会自己来 创建 RDB 文件,而是通 过 fork() 来生成一个子进程,然后由子 进程负责创建 RDB 文件,而自己 则继续处理客户端的命令请求;</li>
+<li>当子进程创建好 RDB 文件并退出时,它会向父进程(也即是负责处理命令请求的 Redis 服务器)发送一个信号,告知它 RDB 文件已经创建完毕;</li>
+<li>最后 Redis 服务器(父进程)接收子进程创建的 RDB 文件,BGSAVE 执行完毕。<br><img src="./images/bgsave.png" alt=""></li>
+</ol>
+<p>BGSAVE 是一个异步命令, 发送命令的客户端会立即得到回复,而 实际的操作在回复之后才开始:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; BGSAVE</span><br><span class="line">Background saving started</span><br></pre></td></tr></table></figure></p>
+<p>BGSAVE 命令的复杂度和 SAVE 一样,都是 O(N) ,N 为所有数据库包含的键值对数量总和。</p>
+<h3 id="自动-RDB-持久化"><a href="#自动-RDB-持久化" class="headerlink" title="自动 RDB 持久化"></a>自动 RDB 持久化</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">save &lt;seconds&gt; &lt;changes&gt;</span><br></pre></td></tr></table></figure>
+<p>这个选项的效果为:如果距离上一次 创建 RDB 文件已经过去了 seconds 秒,并且服务器的所有数据<br>库总共已经发生了不少于 changes 次修改(包括添加、 删除和更新),那么 执行 BGSAVE 。</p>
+<p>另外,用户还可以通过设置多个 save 选项来设置多个自动保存条件,当 任意一个条件被满足时,服务器就会自动执行 BGSAVE 命令。</p>
+<p>举个例子,对于以下设置来说:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br></pre></td></tr></table></figure></p>
+<p>只要三个条件中的任意一个被 满足时,服务器就会执行 BGSAVE 。</p>
+<p>每次创建 RDB 文件之后,服 务器为实现自动持久化而设置的时间计数器和次数计数器就会被清零,<br>并重新开始计数,所以多个保存条件的效果是不会叠加的。</p>
+<p>配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    # 900秒内,有1条写入,则产生快照 </span><br><span class="line">save 300 10   # 300秒内有1000次写入,则产生快照</span><br><span class="line">save 60 10000 # 60秒内有10000次写入,则产生快照</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes # 后台备份进程出错时,主进程停不停止写入?</span><br><span class="line">rdbcompression yes  # 导出的rdb文件是否压缩</span><br><span class="line">rdbchecksum yes   # 导入rbd恢复时数据时,要不要检验rdb的完整性</span><br><span class="line">dbfilename dump.rdb   # 导出来的rdb文件名</span><br><span class="line">dir ./   # rdb的放置路径</span><br></pre></td></tr></table></figure></p>
+<h3 id="RDB优点"><a href="#RDB优点" class="headerlink" title="RDB优点"></a>RDB优点</h3><ol>
+<li>快照保存数据极快，还原数据速度极快</li>
+<li>适用于灾难备份</li>
+</ol>
+<h3 id="RDB缺点"><a href="#RDB缺点" class="headerlink" title="RDB缺点"></a>RDB缺点</h3><ol>
+<li>RDB机制符合要求就会照快照。(随时随地启动)，会占用一部分资源，内存小的机器就不适合用 适用于大内存机器<ul>
+<li>服务器正常关闭时，照快照</li>
+<li>key满足一定条件，照快照</li>
+</ul>
+</li>
+<li>如果在等待创建下一个 RDB 文件的过程中,服务器遭遇了意外停机,那么用 户将丢失最后一次创建RDB 文件之后,数据 库发生的所有修改。</li>
+</ol>
+<h2 id="AOF-append-of-mode"><a href="#AOF-append-of-mode" class="headerlink" title="AOF(append of mode)"></a>AOF(append of mode)</h2><p>AOF 持久化保存数据 库数据的方法是:每当有修改数据 库的命令被执行时,服务器就会将被执行的命令写入到 AOF 文件的末尾。</p>
+<p>使用日志功能保存数据操作，默认AOF机制关闭</p>
+<h3 id="AOF-持久化的安全性问题"><a href="#AOF-持久化的安全性问题" class="headerlink" title="AOF 持久化的安全性问题"></a>AOF 持久化的安全性问题</h3><p>虽然服务器每执行一个修改数据 库的命令,就会将被 执行的命令写入到 AOF 文件,但这并不意味着AOF 持久化不会丢失任何数据。</p>
+<p>在目前常见的操作系统中,执行系统调用 write 函数,将一些内容写入到某个文件里面 时,为了提高效率,系统通常不会直接将内容写入到硬 盘里面,而是先将内容放入到一个内存 缓冲区(buffer)里面,等到缓冲区被填满,或者用户执行 fsync 调用和 fdatasync 调用时,才将储存在缓冲区里面的内容真正地写入到硬 盘里面。</p>
+<p>对于 AOF 持久化来说,当一条命令真正地被写入到硬 盘里面时,这条命令才不会因 为停机而意外丢失。</p>
+<p>因此,AOF 持久化在遭遇停机 时丢失命令的数量,取决于命令被写入到硬 盘的时间:</p>
+<ul>
+<li>越早将命令写入到硬 盘,发生意外停机时丢失的数据就越少;</li>
+<li>而越迟将命令写入到硬 盘,发生意外停机时丢失的数据就越多。</li>
+</ul>
+<h3 id="安全性控制"><a href="#安全性控制" class="headerlink" title="安全性控制"></a>安全性控制</h3><p>为了控制 Redis 服务器在遇到意外停机 时丢失的数据量, Redis 为 AOF 持久化提供了 appendfsync 选项,这个选项的值可以是 always 、 everysec 或者 no ,这些值的意思分别为:</p>
+<ul>
+<li>每次改同步(always)：服务器每写入一个命令,就 调用一次 fdatasync ,将缓冲区里面的命令写入到硬 盘里面。在这种模式下,服 务器即使遭遇意外停机,也不会 丢失任何已经成功执行的命令数据。</li>
+<li>每秒同步(everysec)：服务器每秒钟调用一次 fdatasync ,将缓冲区里面的命令写入到硬 盘里面。在这种模式下,服务器遭遇意外停机 时,最多只丢失一秒钟内执行的命令数据。</li>
+<li>不同步(no)：服务器不主动调用 fdatasync ,由操作系统决定何时将缓冲区里面的命令写入到硬 盘里面。在这种模式下,服务器遭遇意外停机 时,丢失命令的数量是不确定的。</li>
+</ul>
+<p>运行速度: always 的速度慢, everysec 和 no 都很快。</p>
+<p>默认值: everysec 。</p>
+<h2 id="AOF-重写"><a href="#AOF-重写" class="headerlink" title="AOF 重写"></a>AOF 重写</h2><ol>
+<li>客户端向服务器发送 BGREWRITEAOF 命令。</li>
+<li>通过设置配置选项来让服务器自动执行 BGREWRITEAOF 命令,它们分别是:<ul>
+<li>auto-aof-rewrite-min-size <size> ,触发 AOF 重写所需的最小体 积:只有在 AOF 文件的体积大于等于 size 时,服务器才会考虑是否需要进行 AOF 重写。这个选项用于避免对体积过小的AOF 文件进行重写。</size></li>
+<li>auto-aof-rewrite-percentage <percent> ,指定触发重写所需的 AOF 文件体积百分比:当 AOF 文件的体积大于 auto-aof-rewrite-min-size 指定的体积,并且超过上一次重写之后的 AOF 文件体积的 percent% 时,就会触发 AOF 重写。(如果服 务器刚刚启动不久,还没有进行过 AOF 重写,那么使用服 务器启动时载入的 AOF 文件的体积来作为基准值。)将这个值设置为 0 表示关闭自动 AOF 重写。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br></pre></td></tr></table></figure>
+</percent></li>
+</ul>
+</li>
+</ol>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>持续性占用极少量的内存资源</li>
+</ol>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>日志文件会特别大，不适用于灾难恢复</li>
+<li>恢复效率远远低于RDB</li>
+</ol>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">appendonly no   # 是否打开 aof日志功能</span><br><span class="line"></span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># appendfsync always  # 每1个命令,都立即同步到aof. 安全,速度慢</span><br><span class="line">appendfsync everysec  # 折衷方案,每秒写1次</span><br><span class="line"># appendfsync no # # 写入工作交给操作系统,由操作系统判断缓冲区大小,统一写入到aof. 同步频率低,速度快,</span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no # 正在导出rdb快照的过程中,要不要停止同步aof</span><br><span class="line">auto-aof-rewrite-percentage 100 # aof文件大小比起上次重写时的大小,增长率100%时,重写</span><br><span class="line">auto-aof-rewrite-min-size 64mb # aof文件,至少超过64M时,重写</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">aof-use-rdb-preamble no</span><br></pre></td></tr></table></figure>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><p><img src="./images/RDBvsAOF.png" alt=""></p>
+<h3 id="注-在dump-rdb过程中-aof如果停止同步-会不会丢失"><a href="#注-在dump-rdb过程中-aof如果停止同步-会不会丢失" class="headerlink" title="注: 在dump rdb过程中,aof如果停止同步,会不会丢失?"></a>注: 在dump rdb过程中,aof如果停止同步,会不会丢失?</h3><p>答: 不会,所有的操作缓存在内存的队列里, dump完成后,统一操作.</p>
+<h3 id="注-aof重写是指什么"><a href="#注-aof重写是指什么" class="headerlink" title="注: aof重写是指什么?"></a>注: aof重写是指什么?</h3><p>答: aof重写是指把内存中的数据,逆化成命令,写入到.aof日志里.<br>以解决 aof日志过大的问题.</p>
+<h3 id="问-如果rdb文件-和aof文件都存在-优先用谁来恢复数据"><a href="#问-如果rdb文件-和aof文件都存在-优先用谁来恢复数据" class="headerlink" title="问: 如果rdb文件,和aof文件都存在,优先用谁来恢复数据?"></a>问: 如果rdb文件,和aof文件都存在,优先用谁来恢复数据?</h3><p>答: aof</p>
+<h3 id="问-2种是否可以同时用"><a href="#问-2种是否可以同时用" class="headerlink" title="问: 2种是否可以同时用?"></a>问: 2种是否可以同时用?</h3><p>答: 可以,而且推荐这么做</p>
+<h3 id="问-恢复时rdb和aof哪个恢复的快"><a href="#问-恢复时rdb和aof哪个恢复的快" class="headerlink" title="问: 恢复时rdb和aof哪个恢复的快"></a>问: 恢复时rdb和aof哪个恢复的快</h3><p>答: rdb快,因为其是数据的内存映射,直接载入到内存,而aof是命令,需要逐条执行</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjptr425v0075oscp922gkxj5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-14-Redis应用之分类" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/14/redis/2014-08-14-Redis应用之分类/" class="article-date">
+  <time datetime="2014-08-13T16:00:00.000Z" itemprop="datePublished">2014-08-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/14/redis/2014-08-14-Redis应用之分类/">Redis应用之分类</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>分类需求类似于标签功能，按需用集合或有序集合，这里据一个文章分类的例子</p>
+<h2 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h2><p>分类页面会根据文章最后一次被回复的时间来排序帖子。</p>
+<h2 id="将文章添加到一个分类中"><a href="#将文章添加到一个分类中" class="headerlink" title="将文章添加到一个分类中"></a>将文章添加到一个分类中</h2><p>文章id为article_id, 分类id为category_id, 文章创建时间为time<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zadd anticle:category:[category_id] time [article_id]</span><br></pre></td></tr></table></figure></p>
+<h2 id="检查给定的文章是否属于当前分类"><a href="#检查给定的文章是否属于当前分类" class="headerlink" title="检查给定的文章是否属于当前分类"></a>检查给定的文章是否属于当前分类</h2><p>当 article_id 作为元素存在于 ZSET 时，它的分值不为 None<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zscore anticle:category:[category_id] [article_id]</span><br></pre></td></tr></table></figure></p>
+<h2 id="返回当前分类包含的文章数量"><a href="#返回当前分类包含的文章数量" class="headerlink" title="返回当前分类包含的文章数量"></a>返回当前分类包含的文章数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zcard anticle:category:[category_id]</span><br></pre></td></tr></table></figure>
+<h2 id="按-count-个帖子为一页-返回该分类第-n-页的帖子。"><a href="#按-count-个帖子为一页-返回该分类第-n-页的帖子。" class="headerlink" title="按 count 个帖子为一页,返回该分类第 n 页的帖子。"></a>按 count 个帖子为一页,返回该分类第 n 页的帖子。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># start_index = (n-1)*count</span><br><span class="line"># end_index = n*count-1</span><br><span class="line">zrevrange anticle:category:[category_id] start_index end_index</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/14/redis/2014-08-14-Redis应用之分类/" data-id="cjptr425h0062oscpjfuj09l7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-redis/2014-08-12-Redis应用之评论" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/08/12/redis/2014-08-12-Redis应用之评论/" class="article-date">
@@ -118,7 +286,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/12/redis/2014-08-12-Redis应用之评论/" data-id="cjptlhdad0061cxcp4i97ifd3" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/12/redis/2014-08-12-Redis应用之评论/" data-id="cjptr425i0064oscpj63cqvvo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -167,7 +335,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjptlhd8c002fcxcpwe0p2arl" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjptr423o002joscpno4fgmqq" class="article-share-link">Share</a>
       
       
     </footer>
@@ -216,7 +384,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjptlhda9005tcxcp0wu8fjhc" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjptr425g005yoscps1fzcwmg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -266,7 +434,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjptlhd8c002dcxcpsz9m1np7" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjptr423o002hoscpeqy8wrlu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -319,7 +487,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjptlhd8b002bcxcp0xepzl9w" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjptr423n002foscpsjbpjc23" class="article-share-link">Share</a>
       
       
     </footer>
@@ -371,7 +539,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjptlhd8a0029cxcpgbxupwk5" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjptr425q006qoscpmuhkfogx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -442,7 +610,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjptlhd9p004icxcpjctup7ab" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjptr423n002doscpby3itkk8" class="article-share-link">Share</a>
       
       
     </footer>
@@ -487,102 +655,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjptlhdab005xcxcpr7pejeq5" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-4-MySql数据库的工作流程" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" class="article-date">
-  <time datetime="2014-08-03T16:00:00.000Z" itemprop="datePublished">2014-08-04</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/">MySql数据库的工作流程</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在收到一个查询的时候，Mysql的架构中的各个组件是如此工作的：<br><img src="mysql3.png" alt="mysql3"></p>
-<p>客户端同数据库服务层建立TCP连接，连接管理模块会建立连接，并请求一个连接线程。如果连接池中有空闲的连接线程，则分配给这个连接，如果没有，在没有超过最大连接数的情况下，创建新的连接线程负责这个客户端。</p>
-<p>在真正的操作之前，还需要调用用户模块进行授权检查，来验证用户是否有权限。通过后，方才提供服务，连接线程开始接收并处理来自客户端的SQL语句。</p>
-<p>连接线程接收到SQL语句之后，将语句交给SQL语句解析模块进行语法分析和语义分析。</p>
-<p>如果是一个查询语句，则可以先看查询缓存中是否有结果，如果有结果可以直接返回给客户端。</p>
-<p>如果查询缓存中没有结果，就需要真的查询数据库引擎层了，于是发给SQL优化器，进行查询的优化。如果是表变更，则分别交给insert, update, delete, create，alter处理模块进行处理。</p>
-<p>接下来就是请求数据库引擎层，打开表，如果需要的话获取相应的锁。</p>
-<p>接下来的处理过程就到了数据库引擎层，例如InnoDB。</p>
-<p>在数据库引擎层，要先查询缓存页中有没有相应的数据，如果有则可以直接返回，如果没有就要从磁盘上去读取。</p>
-<p>当在磁盘中找到相应的数据之后，则会加载到缓存中来，从而使得后面的查询更加高效，由于内存有限，多采用变通的LRU表来管理缓存页，保证缓存的都是经常访问的数据。</p>
-<p>获取数据后返回给客户端，关闭连接，释放连接线程，过程结束。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" data-id="cjptlhd9r004mcxcp51vu8i0y" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-08-04-Redis应用之周榜、月榜、年榜" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" class="article-date">
-  <time datetime="2014-08-03T16:00:00.000Z" itemprop="datePublished">2014-08-04</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/">Redis应用之周榜、月榜、年榜</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="创建每日排行榜"><a href="#创建每日排行榜" class="headerlink" title="创建每日排行榜"></a>创建每日排行榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 2014-08-04</span><br><span class="line">zadd music:rank:2014-08-04 1345 Happy 2314 Fancy 3413 Rude 5313 Problem</span><br><span class="line"></span><br><span class="line"># 2014-08-05</span><br><span class="line">zadd music:rank:2014-08-05 1234 Happy 2345 Fancy 3456 Rude 4567 Problem </span><br><span class="line"></span><br><span class="line"># 2014-08-06</span><br><span class="line">zadd music:rank:2014-08-06 2431 Happy 3456 Fancy 4321 Rude 6432 Problem </span><br><span class="line"></span><br><span class="line"># 2014-08-07</span><br><span class="line">zadd music:rank:2014-08-07 1632 Happy 2632 Fancy 2456 Rude 1245 Problem</span><br></pre></td></tr></table></figure>
-<h2 id="周榜"><a href="#周榜" class="headerlink" title="周榜"></a>周榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zunionstore music:weakrank:2014-08-04-10 music:rank:2014-08-04 music:rank:2014-08-05 music:rank:2014-08-06 ...music:rank:2014-08-10</span><br></pre></td></tr></table></figure>
-<h2 id="月榜"><a href="#月榜" class="headerlink" title="月榜"></a>月榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zunionstore music:monthrank:2014-08 music:rank:2014-08-04 music:rank:2014-08-05 music:rank:2014-08-06 ...music:rank:2014-08-30</span><br></pre></td></tr></table></figure>
-<h2 id="年榜"><a href="#年榜" class="headerlink" title="年榜"></a>年榜</h2><p>zunionstore music:yearrank:2014 music:monthrank:2014-01 music:monthrank:2014-02 music:monthrank:2014-03 …music:monthrank:2014-12</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" data-id="cjptlhdac005zcxcpduoq18db" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjptr425g0060oscpvmxkato6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -636,7 +709,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 
