@@ -126,7 +126,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/" data-id="cjpuvgbbz002g9zcpievo3ddj" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/25/mysql/2014-7-25-MySql面试题-6/" data-id="cjpv19de4002nj5cpzi7truip" class="article-share-link">Share</a>
       
       
     </footer>
@@ -136,10 +136,10 @@
 
 
   
-    <article id="post-redis/2014-07-24-Redis应用之计数器" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-redis/2014-07-25-Redis应用之id生成器" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/24/redis/2014-07-24-Redis应用之计数器/" class="article-date">
-  <time datetime="2014-07-23T16:00:00.000Z" itemprop="datePublished">2014-07-24</time>
+    <a href="/2014/07/25/redis/2014-07-25-Redis应用之id生成器/" class="article-date">
+  <time datetime="2014-07-24T16:00:00.000Z" itemprop="datePublished">2014-07-25</time>
 </a>
     
   <div class="article-category">
@@ -154,7 +154,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/24/redis/2014-07-24-Redis应用之计数器/">Redis应用之计数器</a>
+      <a class="article-title" href="/2014/07/25/redis/2014-07-25-Redis应用之id生成器/">Redis应用之id生成器</a>
     </h1>
   
 
@@ -162,12 +162,15 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="获取一个唯一的id"><a href="#获取一个唯一的id" class="headerlink" title="获取一个唯一的id"></a>获取一个唯一的id</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incr global:[name]id</span><br></pre></td></tr></table></figure>
-<h2 id="重置"><a href="#重置" class="headerlink" title="重置"></a>重置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global:[name]id</span><br></pre></td></tr></table></figure>
+        <h2 id="计数器增-1-并返回值"><a href="#计数器增-1-并返回值" class="headerlink" title="计数器增 1,并返回值"></a>计数器增 1,并返回值</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incr global:counter</span><br></pre></td></tr></table></figure>
+<h2 id="获取计数器当前值"><a href="#获取计数器当前值" class="headerlink" title="获取计数器当前值"></a>获取计数器当前值</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get global:counter</span><br></pre></td></tr></table></figure>
+<h2 id="重置计数器"><a href="#重置计数器" class="headerlink" title="重置计数器"></a>重置计数器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getset global:counter</span><br></pre></td></tr></table></figure>
+<p><code>set</code>命令也可以，<code>getset</code>可以获取先前值，有时会有用</p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/24/redis/2014-07-24-Redis应用之计数器/" data-id="cjpuvgbdb005v9zcp1j669viu" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/25/redis/2014-07-25-Redis应用之id生成器/" data-id="cjpv19dfg005zj5cpptzsogvf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -257,7 +260,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/24/mysql/2014-7-24-MySql面试题-5/" data-id="cjpuvgbbx002c9zcp0wffyzfy" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/24/mysql/2014-7-24-MySql面试题-5/" data-id="cjpv19de0002cj5cp436fql9h" class="article-share-link">Share</a>
       
       
     </footer>
@@ -299,7 +302,48 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/24/redis/2014-07-23-Redis应用之有序集合/" data-id="cjpuvgbd9005p9zcp33pnqhpn" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/24/redis/2014-07-23-Redis应用之有序集合/" data-id="cjpv19dfe005uj5cp335r9482" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-07-24-Redis应用之计数器" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/07/24/redis/2014-07-24-Redis应用之计数器/" class="article-date">
+  <time datetime="2014-07-23T16:00:00.000Z" itemprop="datePublished">2014-07-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/07/24/redis/2014-07-24-Redis应用之计数器/">Redis应用之计数器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="获取一个唯一的id"><a href="#获取一个唯一的id" class="headerlink" title="获取一个唯一的id"></a>获取一个唯一的id</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">incr global:[name]id</span><br></pre></td></tr></table></figure>
+<h2 id="重置"><a href="#重置" class="headerlink" title="重置"></a>重置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set global:[name]id</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/07/24/redis/2014-07-24-Redis应用之计数器/" data-id="cjpv19dff005xj5cp35od4ua9" class="article-share-link">Share</a>
       
       
     </footer>
@@ -370,7 +414,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/23/mysql/2014-7-23-MySql面试题-4/" data-id="cjpuvgbbw00269zcpbz0ybnqn" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/23/mysql/2014-7-23-MySql面试题-4/" data-id="cjpv19ddz0029j5cpqowzz4ai" class="article-share-link">Share</a>
       
       
     </footer>
@@ -423,7 +467,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/22/mysql/2014-7-22-MySql面试题-3/" data-id="cjpuvgbbv00229zcpji0b33p5" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/22/mysql/2014-7-22-MySql面试题-3/" data-id="cjpv19ddx001zj5cpwa3buhye" class="article-share-link">Share</a>
       
       
     </footer>
@@ -528,7 +572,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjpuvgbd9005r9zcpz2z0hzrd" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/22/redis/2014-07-22-Redis应用之微博/" data-id="cjpv19dfd005sj5cpys2uezow" class="article-share-link">Share</a>
       
       
     </footer>
@@ -578,7 +622,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" data-id="cjpuvgbd7005i9zcpfvdwroyn" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/21/redis/2014-07-21-Redis应用之标签系统/" data-id="cjpv19dfc005pj5cptsy0c88y" class="article-share-link">Share</a>
       
       
     </footer>
@@ -659,49 +703,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/21/mysql/2014-7-21-MySql面试题-2/" data-id="cjpuvgbbu001y9zcpmui8rq13" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-07-20-Redis应用之多人在线聊天(消息队列)" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天(消息队列)/" class="article-date">
-  <time datetime="2014-07-19T16:00:00.000Z" itemprop="datePublished">2014-07-20</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天(消息队列)/">Redis应用之多人在线聊天(消息队列)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="发送端发送消息"><a href="#发送端发送消息" class="headerlink" title="发送端发送消息"></a>发送端发送消息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lpush chat:userid:123:userid:456 hello</span><br></pre></td></tr></table></figure>
-<h2 id="接收端接受消息"><a href="#接收端接受消息" class="headerlink" title="接收端接受消息"></a>接收端接受消息</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brpop chat:userid:123:userid:456 30000</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/20/redis/2014-07-20-Redis应用之多人在线聊天(消息队列)/" data-id="cjpuvgbd8005n9zcp8tudhspb" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/07/21/mysql/2014-7-21-MySql面试题-2/" data-id="cjpv19ddy0026j5cpse7zy227" class="article-share-link">Share</a>
       
       
     </footer>
@@ -715,7 +717,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/10/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/12/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/10/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/12/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -755,7 +757,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 

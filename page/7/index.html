@@ -70,6 +70,65 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-nodejs/2015-04-24-generator-怎么样判断一个函数是Generator" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/" class="article-date">
+  <time datetime="2015-04-23T16:00:00.000Z" itemprop="datePublished">2015-04-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/">怎么样判断一个函数是Generator</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>在JS中，有集中不同类型的函数：</p>
+<ol>
+<li>普通函数</li>
+<li>generator函数</li>
+<li>async函数</li>
+<li>箭头函数</li>
+</ol>
+<p>那该怎么判断一个函数是generator函数呢？</p>
+<p>阅读koa源码，发现了一个<code>is-generator-function</code>的库，学习下。</p>
+<h2 id="is-generator-function"><a href="#is-generator-function" class="headerlink" title="is-generator-function"></a><code>is-generator-function</code></h2><p>这个库只暴露一个方法：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = <span class="function"><span class="keyword">function</span> <span class="title">isGeneratorFunction</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>它首先会通过<code>typeof fn !== &#39;function&#39;</code>来检查是否是一个<code>function</code>，不是直接返回<code>false</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> fn !== <span class="string">'function'</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着会用正则表达式进一步判断。检查函数调用<code>toString()</code>方法后的字符串以<code>function*</code>做开头的。如果是的话就直接返回<code>true</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> isFnRegex = <span class="regexp">/^\s*(?:function)?\*/</span>;</span><br><span class="line"><span class="keyword">var</span> fnToStr = <span class="built_in">Function</span>.prototype.toString;</span><br><span class="line"><span class="keyword">if</span> (isFnRegex.test(fnToStr.call(fn))) &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后会检查当前js引擎是否有<code>Symbol</code>和<code>Symbol.toStringTag</code>等于<code>&#39;symbol&#39;</code>。因为ES6中引入了<code>Symbol</code>，参考<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag" target="_blank" rel="noopener">Symbol.toStringTag</a>,简单来说就是这个属性可以用来定制调用<code>Object.toString()</code>方法得到<code>[object Object]</code>中 <code>object</code> 后面的那个字符串。ES内置<code>GeneratorFunction.prototype[Symbol.toStringTag]： &#39;GeneratorFunction&#39;</code>，所以这样也能判断这个<code>fn</code>是否是<code>GeneratorFunction</code>。<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> hasToStringTag = <span class="keyword">typeof</span> <span class="built_in">Symbol</span> === <span class="string">'function'</span> &amp;&amp; <span class="keyword">typeof</span> <span class="built_in">Symbol</span>.toStringTag === <span class="string">'symbol'</span>;</span><br><span class="line"><span class="keyword">var</span> toStr = <span class="built_in">Object</span>.prototype.toString;</span><br><span class="line"><span class="keyword">if</span> (!hasToStringTag) &#123;</span><br><span class="line">	<span class="keyword">var</span> str = toStr.call(fn);</span><br><span class="line">	<span class="keyword">return</span> str === <span class="string">'[object GeneratorFunction]'</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果这个也失效了咋办？最后一招：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> getProto = <span class="built_in">Object</span>.getPrototypeOf;</span><br><span class="line"><span class="keyword">return</span> getProto(fn) === GeneratorFunction;</span><br></pre></td></tr></table></figure></p>
+<p>获取<code>fn</code>的原型。普通函数的原型是<code>[Function]</code>，而<code>generator</code>函数的原型是<code>GeneratorFunction {}</code>，所以也能判断成功。</p>
+<h2 id="is-generator-function-1"><a href="#is-generator-function-1" class="headerlink" title="is-generator-function"></a><code>is-generator-function</code></h2><p>我记得<code>co</code>库里面也有判断一个函数是否是generator函数的代码，我们来看看tj大神是怎么写的。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Check if `obj` is a generator function.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param &#123;Mixed&#125; obj</span></span><br><span class="line"><span class="comment"> * @return &#123;Boolean&#125;</span></span><br><span class="line"><span class="comment"> * @api private</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">isGeneratorFunction</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> <span class="keyword">constructor</span> = obj.<span class="keyword">constructor</span>;</span><br><span class="line">  if (!<span class="keyword">constructor</span>) return false;</span><br><span class="line">  if ('GeneratorFunction' === <span class="keyword">constructor</span>.name || 'GeneratorFunction' === <span class="keyword">constructor</span>.displayName) return true;</span><br><span class="line">  return isGenerator(<span class="keyword">constructor</span>.prototype);</span><br><span class="line">&#125;</span><br><span class="line">/**</span><br><span class="line"> * Check if `obj` is a generator.</span><br><span class="line"> *</span><br><span class="line"> * @param &#123;Mixed&#125; obj</span><br><span class="line"> * @<span class="keyword">return</span> &#123;<span class="built_in">Boolean</span>&#125;</span><br><span class="line"> * @api private</span><br><span class="line"> *<span class="regexp">/</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">function isGenerator(obj) &#123;</span></span><br><span class="line"><span class="regexp">  return 'function' == typeof obj.next &amp;&amp; 'function' == typeof obj.throw;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>tj大神的思路完全不一样。这个<code>fn</code>的构造函数是否是<code>GeneratorFunction</code>，接着在判断<code>fn</code>的构造函数的原型是否有<code>next</code>和<code>throw</code>方法。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>小小的一个判断一个函数是否<code>generator</code>函数就有如此多的办法，666.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/04/24/nodejs/2015-04-24-generator-怎么样判断一个函数是Generator/" data-id="cjpv19dez004qj5cp79ym6xnz" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-nodejs/2015-03-12-nodejs的path模块源码解读" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" class="article-date">
@@ -112,7 +171,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" data-id="cjpuvgbcw004p9zcp7rple7oj" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" data-id="cjpv19df0004sj5cprmu45vw2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -188,7 +247,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/01/10/redis/2015-01-10-Redis数据库实现/" data-id="cjpuvgbds00759zcpznwj7anc" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/01/10/redis/2015-01-10-Redis数据库实现/" data-id="cjpv19dfz0077j5cpz1220elz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -318,7 +377,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/" data-id="cjpuvgbds00739zcpe3w5vzcd" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/" data-id="cjpv19dg00079j5cp8valnmdb" class="article-share-link">Share</a>
       
       
     </footer>
@@ -414,7 +473,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/" data-id="cjpuvgbdr00719zcp6acpbghd" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/" data-id="cjpv19dfy0075j5cpp15m9895" class="article-share-link">Share</a>
       
       
     </footer>
@@ -480,7 +539,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/23/redis/2014-12-23-Redis哨兵/" data-id="cjpuvgbdq006z9zcp5zb22o6a" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/23/redis/2014-12-23-Redis哨兵/" data-id="cjpv19dfx0073j5cpryp1oy3v" class="article-share-link">Share</a>
       
       
     </footer>
@@ -547,7 +606,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/" data-id="cjpuvgbdq006x9zcp40hkim64" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/" data-id="cjpv19dfx0071j5cpjycf7wgm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -589,7 +648,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/20/redis/2014-12-20-Redis管理工具/" data-id="cjpuvgbdp006v9zcp5onz8lbj" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/20/redis/2014-12-20-Redis管理工具/" data-id="cjpv19dfw006zj5cpddt4vbwi" class="article-share-link">Share</a>
       
       
     </footer>
@@ -658,7 +717,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/17/redis/2014-12-17-RedisLua脚本/" data-id="cjpuvgbdp006t9zcphezhh8lv" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/17/redis/2014-12-17-RedisLua脚本/" data-id="cjpv19dfw006xj5cp4oppe73k" class="article-share-link">Share</a>
       
       
     </footer>
@@ -727,145 +786,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" data-id="cjpuvgbdo006r9zcp2ilkg8ki" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-12-13-Redis服务端命令" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/12/13/redis/2014-12-13-Redis服务端命令/" class="article-date">
-  <time datetime="2014-12-12T16:00:00.000Z" itemprop="datePublished">2014-12-13</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/12/13/redis/2014-12-13-Redis服务端命令/">Redis服务端命令</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h2><p>检查网络连接以及服务器是否正常运作。</p>
-<h2 id="time"><a href="#time" class="headerlink" title="time"></a>time</h2><p>显示服务器时间 , 时间戳(秒), 微秒数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; time </span><br><span class="line">1) &quot;1375270361&quot;</span><br><span class="line">2) &quot;504511&quot;</span><br></pre></td></tr></table></figure></p>
-<h2 id="dbsize"><a href="#dbsize" class="headerlink" title="dbsize"></a>dbsize</h2><p> 当前数据库的key的数量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; dbsize</span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure></p>
-<h2 id="BGREWRITEAOF"><a href="#BGREWRITEAOF" class="headerlink" title="BGREWRITEAOF"></a>BGREWRITEAOF</h2><p>后台进程重写AOF</p>
-<h2 id="BGSAVE"><a href="#BGSAVE" class="headerlink" title="BGSAVE"></a>BGSAVE</h2><p> 后台保存rdb快照</p>
-<h2 id="SAVE"><a href="#SAVE" class="headerlink" title="SAVE"></a>SAVE</h2><p> 保存rdb快照</p>
-<h2 id="LASTSAVE"><a href="#LASTSAVE" class="headerlink" title="LASTSAVE"></a>LASTSAVE</h2><p>上次保存时间</p>
-<h2 id="Slaveof-master-Host-port"><a href="#Slaveof-master-Host-port" class="headerlink" title="Slaveof master-Host port"></a>Slaveof master-Host port</h2><p> 把当前实例设为master的slave</p>
-<h2 id="Flushall"><a href="#Flushall" class="headerlink" title="Flushall"></a>Flushall</h2><p>清空所有库所有键 </p>
-<h2 id="Flushdb"><a href="#Flushdb" class="headerlink" title="Flushdb"></a>Flushdb</h2><p>清空当前库所有键</p>
-<h2 id="Showdown-save-nosave"><a href="#Showdown-save-nosave" class="headerlink" title="Showdown [save/nosave]"></a>Showdown [save/nosave]</h2><p>关闭保存，关闭bu保存</p>
-<h2 id="注-如果不小心运行了flushall"><a href="#注-如果不小心运行了flushall" class="headerlink" title="注: 如果不小心运行了flushall,"></a>注: 如果不小心运行了flushall,</h2><ul>
-<li>立即 shutdown nosave ,关闭服务器</li>
-<li>然后 手工编辑aof文件, 去掉文件中的 “flushall ”相关行, </li>
-<li>然后开启服务器,就可以导入回原来数据.</li>
-</ul>
-<h2 id="如果-flushall之后-系统恰好bgrewriteaof了-那么aof就清空了-数据丢失"><a href="#如果-flushall之后-系统恰好bgrewriteaof了-那么aof就清空了-数据丢失" class="headerlink" title="如果,flushall之后,系统恰好bgrewriteaof了,那么aof就清空了,数据丢失."></a>如果,flushall之后,系统恰好bgrewriteaof了,那么aof就清空了,数据丢失.</h2><h2 id="Slowlog"><a href="#Slowlog" class="headerlink" title="Slowlog"></a>Slowlog</h2><p>显示慢查询</p>
-<h3 id="注-多慢才叫慢"><a href="#注-多慢才叫慢" class="headerlink" title="注:多慢才叫慢?"></a>注:多慢才叫慢?</h3><p>答: 由slowlog-log-slower-than 10000 ,来指定,(单位是微秒)</p>
-<h3 id="服务器储存多少条慢查询的记录"><a href="#服务器储存多少条慢查询的记录" class="headerlink" title="服务器储存多少条慢查询的记录?"></a>服务器储存多少条慢查询的记录?</h3><p>答: 由 slowlog-max-len 128 ,来做限制</p>
-<h2 id="Info-Replication-CPU-Memory"><a href="#Info-Replication-CPU-Memory" class="headerlink" title="Info [Replication/CPU/Memory..]"></a>Info [Replication/CPU/Memory..]</h2><p>查看redis服务器的信息</p>
-<h2 id="Config-get-配置项"><a href="#Config-get-配置项" class="headerlink" title="Config get 配置项"></a>Config get 配置项</h2><h2 id="Config-set-配置项-值"><a href="#Config-set-配置项-值" class="headerlink" title="Config set 配置项 值"></a>Config set 配置项 值</h2><ul>
-<li>特殊的选项,不允许用此命令设置,如slave-of, 需要用单独的slaveof命令来设置</li>
-</ul>
-<h1 id="Redis运维时需要注意的参数"><a href="#Redis运维时需要注意的参数" class="headerlink" title="Redis运维时需要注意的参数"></a>Redis运维时需要注意的参数</h1><h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><p>内存信息,比如内存占用数量、使用的内存分配器等等。</p>
-<ul>
-<li><code>info Memory</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">used_memory:859192 数据结构的空间</span><br><span class="line">used_memory_rss:7634944 实占空间</span><br><span class="line">mem_fragmentation_ratio:8.89 前2者的比例,1.N为佳,如果此值过大,说明redis的内存的碎片化严重,可以导出再导入一次.</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><p>和主从复制有关的信息,比如服 务器的角色、主从服 务器的连接状态是否正常等等。</p>
-<ul>
-<li><code>info Replication</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">role:slave</span><br><span class="line">master_host:192.168.1.128</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>和 RDB 持久化以及 AOF 持久化有关的信息,比如 RDB 持久化是否正在 进行、AOF 文件重写是否正在 进行等等。</p>
-<ul>
-<li><code>info Persistence</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdb_changes_since_last_save:0</span><br><span class="line">rdb_last_save_time:1375224063</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="fork耗时"><a href="#fork耗时" class="headerlink" title="fork耗时"></a>fork耗时</h2><ul>
-<li><code>info Status</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">latest_fork_usec:936  上次导出rdb快照,持久化花费微秒</span><br><span class="line">注意: 如果某实例有10G内容,导出需要2分钟,</span><br><span class="line">每分钟写入10000次,导致不断的rdb导出,磁盘始处于高IO状态.</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="server"><a href="#server" class="headerlink" title="server"></a>server</h2><p>服务器本身的信息,比如版本号、 监听端口号、服 务器 ID 等等。</p>
-<ul>
-<li><code>info Server</code></li>
-</ul>
-<h2 id="clients"><a href="#clients" class="headerlink" title="clients"></a>clients</h2><p>已连接客户端的信息,比如已 连接客户端的数量、正在被阻塞的客 户端数量等等。</p>
-<ul>
-<li><code>info Clients</code></li>
-</ul>
-<h2 id="stats"><a href="#stats" class="headerlink" title="stats"></a>stats</h2><p>服务器的统计信息,比如已 处理的命令请求数量、每秒 钟处理的命令请求数量等等。</p>
-<ul>
-<li><code>info Stats</code></li>
-</ul>
-<h2 id="cpu"><a href="#cpu" class="headerlink" title="cpu"></a>cpu</h2><p>服务器的系统 CPU 占用量和用户 CPU 占用量。</p>
-<ul>
-<li><code>info Cpu</code></li>
-</ul>
-<h2 id="commandstats"><a href="#commandstats" class="headerlink" title="commandstats"></a>commandstats</h2><p>命令执行的统计信息,比如命令 执行的次数、命令耗 费的 CPU 时间、执行每个命令耗费的平均 CPU 时间等等。</p>
-<ul>
-<li><code>info commandstats</code></li>
-</ul>
-<h2 id="cluster"><a href="#cluster" class="headerlink" title="cluster"></a>cluster</h2><p>集群功能的相关信息。</p>
-<ul>
-<li><code>info cluster</code></li>
-</ul>
-<h2 id="keyspace"><a href="#keyspace" class="headerlink" title="keyspace"></a>keyspace</h2><p>和数据库键空间有关的信息,比如数据库的键数量、数据库已经被删除的过期键数量等等。</p>
-<ul>
-<li><code>info keyspace</code></li>
-</ul>
-<h2 id="查看服务器正在执行的命令"><a href="#查看服务器正在执行的命令" class="headerlink" title="查看服务器正在执行的命令"></a>查看服务器正在执行的命令</h2><ul>
-<li><code>MONITOR</code><br>实时地打印出 Redis 服务器接收到的命令,格式 为“时间戳 [数据库号码 IP地址和端口号 ] 被执行的命<br>令”。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; MONITOR</span><br><span class="line">OK</span><br><span class="line">1378822099.421623 [0 127.0.0.1:56604] &quot;PING&quot;</span><br><span class="line">1378822105.089572 [0 127.0.0.1:56604] &quot;SET&quot; &quot;msg&quot; &quot;hello world&quot;</span><br><span class="line">1378822109.036925 [0 127.0.0.1:56604] &quot;SET&quot; &quot;number&quot; &quot;123&quot;</span><br><span class="line">1378822140.649496 [0 127.0.0.1:56604] &quot;SADD&quot; &quot;fruits&quot; &quot;Apple&quot; &quot;Banana&quot; &quot;Cherry&quot;</span><br><span class="line">1378822154.117160 [0 127.0.0.1:56604] &quot;EXPIRE&quot; &quot;msg&quot; &quot;10086&quot;</span><br><span class="line">1378822257.329412 [0 127.0.0.1:56604] &quot;KEYS&quot; &quot;*&quot;</span><br><span class="line">1378822258.690131 [0 127.0.0.1:56604] &quot;DBSIZE&quot;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="慢日志"><a href="#慢日志" class="headerlink" title="慢日志"></a>慢日志</h2><p>Redis 的慢查询功能用于将执行时间超过指定时长的命令记录起来,并向用 户展示那些被记录的命令,方便用户发现运行缓慢的命令,并 进行针对性的优化。</p>
-<p>慢查询功能可以通过以下两个配置 选项来进行设置:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slowlog-log-slower-than &lt;microseconds&gt;</span><br></pre></td></tr></table></figure></p>
-<p>执行时长超过 microseconds 微秒的命令将被 记录,将这个值设置为负数表示关闭慢查询功能。</p>
-<p>默认值为 10000 ,也即是 1/100 秒,因为 1 秒 = 1 百万微秒。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slowlog-max-len &lt;length&gt;</span><br></pre></td></tr></table></figure></p>
-<p>慢查询日志的最大数量,当 记录的日志超过这个数量时,新日志会覆盖旧日志( FIFO)。默认值为 128 。</p>
-<h3 id="查看慢查询日志"><a href="#查看慢查询日志" class="headerlink" title="查看慢查询日志"></a>查看慢查询日志</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLOWLOG GET [number]</span><br></pre></td></tr></table></figure>
-<p>返回服务器目前记录的慢查询日志。</p>
-<p>如果给定可选的 number 参数,那么只返回最多 number 条日志;否则的话,返回所有慢 查询日志。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 为测试需要,将 slowlog-log-slower-than 设成了 10 微秒</span><br><span class="line">redis&gt; SLOWLOG GET</span><br><span class="line">1) 1) (integer) 12</span><br><span class="line"># 唯一的日志标识符</span><br><span class="line">2) (integer) 1324097834</span><br><span class="line"># 被记录命令的执行时间,以 UNIX 时间戳格式表示</span><br><span class="line">3) (integer) 16</span><br><span class="line"># 命令执行耗费的时长,以微秒为单位</span><br><span class="line">4) 1) &quot;CONFIG&quot;</span><br><span class="line"># 被执行的命令,以数 组的形式排列</span><br><span class="line">2) &quot;GET&quot;</span><br><span class="line"># 这里完整的命令是 CONFIG GET slowlog-log-slower-than</span><br><span class="line">3) &quot;slowlog-log-slower-than&quot;</span><br></pre></td></tr></table></figure></p>
-<h3 id="查看目前已有的慢-查询日志数量。"><a href="#查看目前已有的慢-查询日志数量。" class="headerlink" title="查看目前已有的慢 查询日志数量。"></a>查看目前已有的慢 查询日志数量。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SLOWLOG LEN</span><br><span class="line">(integer) 14</span><br></pre></td></tr></table></figure>
-<h3 id="删除所有慢查询日志。"><a href="#删除所有慢查询日志。" class="headerlink" title="删除所有慢查询日志。"></a>删除所有慢查询日志。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SLOWLOG RESET</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config get/set slowlog-log-slower-than</span><br><span class="line">CONFIG get/SET slowlog-max-len </span><br><span class="line">slowlog get N 获取慢日志</span><br></pre></td></tr></table></figure>
-<h2 id="关闭服务器"><a href="#关闭服务器" class="headerlink" title="关闭服务器"></a>关闭服务器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHUTDOWN [option]</span><br></pre></td></tr></table></figure>
-<p>在不给定 option 参数的情况下,服 务器会先执行持久化操作:</p>
-<ul>
-<li>如果打开了 AOF 持久化,那么 调用 fdatasync ,确保之前执行的命令能够被写入到硬盘。</li>
-<li>如果打开了 RDB 持久化并且数据 库已经发生了变化,那么执行 SAVE 命令。</li>
-</ul>
-<p>在以上操作都完成之后,服 务器关闭。</p>
-<p>在打开了持久化功能的情况下,使用 SHUTDOWN 命令关闭服务器不会丢失任何数据。</p>
-<p>option 选项的值可以是 save 或者 nosave :</p>
-<ul>
-<li>SHUTDOWN save 在关闭之前总是执行 SAVE 命令,用于在没有开启 RDB 持久化的情况下,创建一个 RDB 文件来保存数据;</li>
-<li>SHUTDOWN nosave 在关闭之前不执行 SAVE 命令,用于在数据 库可能已经出错的情况下,避免将错误的数据保存到 RDB 文件里面。</li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpuvgbdn006p9zcpwtdipu7u" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" data-id="cjpv19dfu006tj5cpudxqs2op" class="article-share-link">Share</a>
       
       
     </footer>
@@ -879,7 +800,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -919,7 +840,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 

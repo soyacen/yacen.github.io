@@ -70,6 +70,144 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-redis/2014-12-13-Redis服务端命令" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/13/redis/2014-12-13-Redis服务端命令/" class="article-date">
+  <time datetime="2014-12-12T16:00:00.000Z" itemprop="datePublished">2014-12-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/13/redis/2014-12-13-Redis服务端命令/">Redis服务端命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h2><p>检查网络连接以及服务器是否正常运作。</p>
+<h2 id="time"><a href="#time" class="headerlink" title="time"></a>time</h2><p>显示服务器时间 , 时间戳(秒), 微秒数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; time </span><br><span class="line">1) &quot;1375270361&quot;</span><br><span class="line">2) &quot;504511&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="dbsize"><a href="#dbsize" class="headerlink" title="dbsize"></a>dbsize</h2><p> 当前数据库的key的数量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; dbsize</span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure></p>
+<h2 id="BGREWRITEAOF"><a href="#BGREWRITEAOF" class="headerlink" title="BGREWRITEAOF"></a>BGREWRITEAOF</h2><p>后台进程重写AOF</p>
+<h2 id="BGSAVE"><a href="#BGSAVE" class="headerlink" title="BGSAVE"></a>BGSAVE</h2><p> 后台保存rdb快照</p>
+<h2 id="SAVE"><a href="#SAVE" class="headerlink" title="SAVE"></a>SAVE</h2><p> 保存rdb快照</p>
+<h2 id="LASTSAVE"><a href="#LASTSAVE" class="headerlink" title="LASTSAVE"></a>LASTSAVE</h2><p>上次保存时间</p>
+<h2 id="Slaveof-master-Host-port"><a href="#Slaveof-master-Host-port" class="headerlink" title="Slaveof master-Host port"></a>Slaveof master-Host port</h2><p> 把当前实例设为master的slave</p>
+<h2 id="Flushall"><a href="#Flushall" class="headerlink" title="Flushall"></a>Flushall</h2><p>清空所有库所有键 </p>
+<h2 id="Flushdb"><a href="#Flushdb" class="headerlink" title="Flushdb"></a>Flushdb</h2><p>清空当前库所有键</p>
+<h2 id="Showdown-save-nosave"><a href="#Showdown-save-nosave" class="headerlink" title="Showdown [save/nosave]"></a>Showdown [save/nosave]</h2><p>关闭保存，关闭bu保存</p>
+<h2 id="注-如果不小心运行了flushall"><a href="#注-如果不小心运行了flushall" class="headerlink" title="注: 如果不小心运行了flushall,"></a>注: 如果不小心运行了flushall,</h2><ul>
+<li>立即 shutdown nosave ,关闭服务器</li>
+<li>然后 手工编辑aof文件, 去掉文件中的 “flushall ”相关行, </li>
+<li>然后开启服务器,就可以导入回原来数据.</li>
+</ul>
+<h2 id="如果-flushall之后-系统恰好bgrewriteaof了-那么aof就清空了-数据丢失"><a href="#如果-flushall之后-系统恰好bgrewriteaof了-那么aof就清空了-数据丢失" class="headerlink" title="如果,flushall之后,系统恰好bgrewriteaof了,那么aof就清空了,数据丢失."></a>如果,flushall之后,系统恰好bgrewriteaof了,那么aof就清空了,数据丢失.</h2><h2 id="Slowlog"><a href="#Slowlog" class="headerlink" title="Slowlog"></a>Slowlog</h2><p>显示慢查询</p>
+<h3 id="注-多慢才叫慢"><a href="#注-多慢才叫慢" class="headerlink" title="注:多慢才叫慢?"></a>注:多慢才叫慢?</h3><p>答: 由slowlog-log-slower-than 10000 ,来指定,(单位是微秒)</p>
+<h3 id="服务器储存多少条慢查询的记录"><a href="#服务器储存多少条慢查询的记录" class="headerlink" title="服务器储存多少条慢查询的记录?"></a>服务器储存多少条慢查询的记录?</h3><p>答: 由 slowlog-max-len 128 ,来做限制</p>
+<h2 id="Info-Replication-CPU-Memory"><a href="#Info-Replication-CPU-Memory" class="headerlink" title="Info [Replication/CPU/Memory..]"></a>Info [Replication/CPU/Memory..]</h2><p>查看redis服务器的信息</p>
+<h2 id="Config-get-配置项"><a href="#Config-get-配置项" class="headerlink" title="Config get 配置项"></a>Config get 配置项</h2><h2 id="Config-set-配置项-值"><a href="#Config-set-配置项-值" class="headerlink" title="Config set 配置项 值"></a>Config set 配置项 值</h2><ul>
+<li>特殊的选项,不允许用此命令设置,如slave-of, 需要用单独的slaveof命令来设置</li>
+</ul>
+<h1 id="Redis运维时需要注意的参数"><a href="#Redis运维时需要注意的参数" class="headerlink" title="Redis运维时需要注意的参数"></a>Redis运维时需要注意的参数</h1><h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><p>内存信息,比如内存占用数量、使用的内存分配器等等。</p>
+<ul>
+<li><code>info Memory</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">used_memory:859192 数据结构的空间</span><br><span class="line">used_memory_rss:7634944 实占空间</span><br><span class="line">mem_fragmentation_ratio:8.89 前2者的比例,1.N为佳,如果此值过大,说明redis的内存的碎片化严重,可以导出再导入一次.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><p>和主从复制有关的信息,比如服 务器的角色、主从服 务器的连接状态是否正常等等。</p>
+<ul>
+<li><code>info Replication</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">role:slave</span><br><span class="line">master_host:192.168.1.128</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>和 RDB 持久化以及 AOF 持久化有关的信息,比如 RDB 持久化是否正在 进行、AOF 文件重写是否正在 进行等等。</p>
+<ul>
+<li><code>info Persistence</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdb_changes_since_last_save:0</span><br><span class="line">rdb_last_save_time:1375224063</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="fork耗时"><a href="#fork耗时" class="headerlink" title="fork耗时"></a>fork耗时</h2><ul>
+<li><code>info Status</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">latest_fork_usec:936  上次导出rdb快照,持久化花费微秒</span><br><span class="line">注意: 如果某实例有10G内容,导出需要2分钟,</span><br><span class="line">每分钟写入10000次,导致不断的rdb导出,磁盘始处于高IO状态.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="server"><a href="#server" class="headerlink" title="server"></a>server</h2><p>服务器本身的信息,比如版本号、 监听端口号、服 务器 ID 等等。</p>
+<ul>
+<li><code>info Server</code></li>
+</ul>
+<h2 id="clients"><a href="#clients" class="headerlink" title="clients"></a>clients</h2><p>已连接客户端的信息,比如已 连接客户端的数量、正在被阻塞的客 户端数量等等。</p>
+<ul>
+<li><code>info Clients</code></li>
+</ul>
+<h2 id="stats"><a href="#stats" class="headerlink" title="stats"></a>stats</h2><p>服务器的统计信息,比如已 处理的命令请求数量、每秒 钟处理的命令请求数量等等。</p>
+<ul>
+<li><code>info Stats</code></li>
+</ul>
+<h2 id="cpu"><a href="#cpu" class="headerlink" title="cpu"></a>cpu</h2><p>服务器的系统 CPU 占用量和用户 CPU 占用量。</p>
+<ul>
+<li><code>info Cpu</code></li>
+</ul>
+<h2 id="commandstats"><a href="#commandstats" class="headerlink" title="commandstats"></a>commandstats</h2><p>命令执行的统计信息,比如命令 执行的次数、命令耗 费的 CPU 时间、执行每个命令耗费的平均 CPU 时间等等。</p>
+<ul>
+<li><code>info commandstats</code></li>
+</ul>
+<h2 id="cluster"><a href="#cluster" class="headerlink" title="cluster"></a>cluster</h2><p>集群功能的相关信息。</p>
+<ul>
+<li><code>info cluster</code></li>
+</ul>
+<h2 id="keyspace"><a href="#keyspace" class="headerlink" title="keyspace"></a>keyspace</h2><p>和数据库键空间有关的信息,比如数据库的键数量、数据库已经被删除的过期键数量等等。</p>
+<ul>
+<li><code>info keyspace</code></li>
+</ul>
+<h2 id="查看服务器正在执行的命令"><a href="#查看服务器正在执行的命令" class="headerlink" title="查看服务器正在执行的命令"></a>查看服务器正在执行的命令</h2><ul>
+<li><code>MONITOR</code><br>实时地打印出 Redis 服务器接收到的命令,格式 为“时间戳 [数据库号码 IP地址和端口号 ] 被执行的命<br>令”。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; MONITOR</span><br><span class="line">OK</span><br><span class="line">1378822099.421623 [0 127.0.0.1:56604] &quot;PING&quot;</span><br><span class="line">1378822105.089572 [0 127.0.0.1:56604] &quot;SET&quot; &quot;msg&quot; &quot;hello world&quot;</span><br><span class="line">1378822109.036925 [0 127.0.0.1:56604] &quot;SET&quot; &quot;number&quot; &quot;123&quot;</span><br><span class="line">1378822140.649496 [0 127.0.0.1:56604] &quot;SADD&quot; &quot;fruits&quot; &quot;Apple&quot; &quot;Banana&quot; &quot;Cherry&quot;</span><br><span class="line">1378822154.117160 [0 127.0.0.1:56604] &quot;EXPIRE&quot; &quot;msg&quot; &quot;10086&quot;</span><br><span class="line">1378822257.329412 [0 127.0.0.1:56604] &quot;KEYS&quot; &quot;*&quot;</span><br><span class="line">1378822258.690131 [0 127.0.0.1:56604] &quot;DBSIZE&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="慢日志"><a href="#慢日志" class="headerlink" title="慢日志"></a>慢日志</h2><p>Redis 的慢查询功能用于将执行时间超过指定时长的命令记录起来,并向用 户展示那些被记录的命令,方便用户发现运行缓慢的命令,并 进行针对性的优化。</p>
+<p>慢查询功能可以通过以下两个配置 选项来进行设置:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slowlog-log-slower-than &lt;microseconds&gt;</span><br></pre></td></tr></table></figure></p>
+<p>执行时长超过 microseconds 微秒的命令将被 记录,将这个值设置为负数表示关闭慢查询功能。</p>
+<p>默认值为 10000 ,也即是 1/100 秒,因为 1 秒 = 1 百万微秒。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slowlog-max-len &lt;length&gt;</span><br></pre></td></tr></table></figure></p>
+<p>慢查询日志的最大数量,当 记录的日志超过这个数量时,新日志会覆盖旧日志( FIFO)。默认值为 128 。</p>
+<h3 id="查看慢查询日志"><a href="#查看慢查询日志" class="headerlink" title="查看慢查询日志"></a>查看慢查询日志</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLOWLOG GET [number]</span><br></pre></td></tr></table></figure>
+<p>返回服务器目前记录的慢查询日志。</p>
+<p>如果给定可选的 number 参数,那么只返回最多 number 条日志;否则的话,返回所有慢 查询日志。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 为测试需要,将 slowlog-log-slower-than 设成了 10 微秒</span><br><span class="line">redis&gt; SLOWLOG GET</span><br><span class="line">1) 1) (integer) 12</span><br><span class="line"># 唯一的日志标识符</span><br><span class="line">2) (integer) 1324097834</span><br><span class="line"># 被记录命令的执行时间,以 UNIX 时间戳格式表示</span><br><span class="line">3) (integer) 16</span><br><span class="line"># 命令执行耗费的时长,以微秒为单位</span><br><span class="line">4) 1) &quot;CONFIG&quot;</span><br><span class="line"># 被执行的命令,以数 组的形式排列</span><br><span class="line">2) &quot;GET&quot;</span><br><span class="line"># 这里完整的命令是 CONFIG GET slowlog-log-slower-than</span><br><span class="line">3) &quot;slowlog-log-slower-than&quot;</span><br></pre></td></tr></table></figure></p>
+<h3 id="查看目前已有的慢-查询日志数量。"><a href="#查看目前已有的慢-查询日志数量。" class="headerlink" title="查看目前已有的慢 查询日志数量。"></a>查看目前已有的慢 查询日志数量。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SLOWLOG LEN</span><br><span class="line">(integer) 14</span><br></pre></td></tr></table></figure>
+<h3 id="删除所有慢查询日志。"><a href="#删除所有慢查询日志。" class="headerlink" title="删除所有慢查询日志。"></a>删除所有慢查询日志。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SLOWLOG RESET</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config get/set slowlog-log-slower-than</span><br><span class="line">CONFIG get/SET slowlog-max-len </span><br><span class="line">slowlog get N 获取慢日志</span><br></pre></td></tr></table></figure>
+<h2 id="关闭服务器"><a href="#关闭服务器" class="headerlink" title="关闭服务器"></a>关闭服务器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHUTDOWN [option]</span><br></pre></td></tr></table></figure>
+<p>在不给定 option 参数的情况下,服 务器会先执行持久化操作:</p>
+<ul>
+<li>如果打开了 AOF 持久化,那么 调用 fdatasync ,确保之前执行的命令能够被写入到硬盘。</li>
+<li>如果打开了 RDB 持久化并且数据 库已经发生了变化,那么执行 SAVE 命令。</li>
+</ul>
+<p>在以上操作都完成之后,服 务器关闭。</p>
+<p>在打开了持久化功能的情况下,使用 SHUTDOWN 命令关闭服务器不会丢失任何数据。</p>
+<p>option 选项的值可以是 save 或者 nosave :</p>
+<ul>
+<li>SHUTDOWN save 在关闭之前总是执行 SAVE 命令,用于在没有开启 RDB 持久化的情况下,创建一个 RDB 文件来保存数据;</li>
+<li>SHUTDOWN nosave 在关闭之前不执行 SAVE 命令,用于在数据 库可能已经出错的情况下,避免将错误的数据保存到 RDB 文件里面。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpv19dfv006vj5cpz2q90prk" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-redis/2014-12-11-Redis-HyperLogLog" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" class="article-date">
@@ -123,7 +261,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" data-id="cjpuvgbdn006n9zcpxc9hbrw2" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/11/redis/2014-12-11-Redis-HyperLogLog/" data-id="cjpv19dfu006rj5cpe3v3gqcl" class="article-share-link">Share</a>
       
       
     </footer>
@@ -246,7 +384,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjpuvgbe1007p9zcpy1xrzil3" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjpv19dga007sj5cprfx46cvx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -291,7 +429,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/14/redis/2014-08-14-Redis应用之分类/" data-id="cjpuvgbdm006l9zcpbmxzibux" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/14/redis/2014-08-14-Redis应用之分类/" data-id="cjpv19dft006pj5cp4ewhj4kj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -349,7 +487,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/12/redis/2014-08-12-Redis应用之评论/" data-id="cjpuvgbdl006j9zcpy22si50n" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/12/redis/2014-08-12-Redis应用之评论/" data-id="cjpv19dfs006nj5cpdbgdqku5" class="article-share-link">Share</a>
       
       
     </footer>
@@ -398,7 +536,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjpuvgbc8003a9zcpul2luv0n" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjpv19ded003bj5cp83v5zaos" class="article-share-link">Share</a>
       
       
     </footer>
@@ -447,7 +585,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjpuvgbdi006b9zcpbfnqjgjq" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjpv19dfr006lj5cp18xqzq7i" class="article-share-link">Share</a>
       
       
     </footer>
@@ -497,7 +635,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjpuvgbc800389zcp7baguz49" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjpv19deb0037j5cp0zydnmni" class="article-share-link">Share</a>
       
       
     </footer>
@@ -550,7 +688,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjpuvgbc700369zcpajrxo866" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjpv19dec0039j5cpcr0vpzcd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -602,78 +740,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjpuvgbc600329zcpahtvk3dz" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-5-MySql数据库索引的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" class="article-date">
-  <time datetime="2014-08-04T16:00:00.000Z" itemprop="datePublished">2014-08-05</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/">MySql数据库索引的原理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在整个过程中，最容易称为瓶颈点的是数据的读写，往往意味着要顺序或者随机读写磁盘，而读写磁盘的速度往往是比较慢的。</p>
-<p>如果加快这个过程呢？相信大家都猜到了就是建立索引。</p>
-<p>为什么索引能够加快这个过程呢？</p>
-<p>相信大家都逛过美食城，里面众多家餐馆琳琅满目，如果你不着急呢，肚子不饿，对搜索的性能没有要求，就可以在商场里面慢慢逛，逛一家看一家，知道找到自己想吃的餐馆。但是当你饿了，或者你们约好了餐馆，你一定想直奔那个餐馆，这个时候，你往往会去看楼层的索引图，快速的查找你目标餐馆的位置，找到后，直奔主题，就会大大节约时间，这就是索引的作用。</p>
-<p>所以索引就是通过值，快速的找到它的位置，从而可以快速的访问。</p>
-<p>索引的另外一个作用就是不用真正的查看数据，就能够做一些判断，例如商场里面有没有某个餐馆，你看一下索引就知道了，不必真的到商场里面逛一圈，再如找出所有的川菜馆，也是只要看索引就可以了，不用一家一家川菜馆跑。</p>
-<p>那么在Mysql中，索引是如何工作的呢？</p>
-<p>Mysql的索引结构，往往是一棵B+树。</p>
-<p>一棵m阶B+树具有如下的性质：</p>
-<ol>
-<li><p>节点分索引节点和数据节点。索引节点相当于B树的内部节点，所有的索引节点组成一棵B树，具有B树的所有的特性。在索引节点中，存放着Key和指针，并不存放具体的元素。数据节点相当与B树的外部节点，B树的外部节点为空，在B+树中被利用了起来，用于存放真正的数据元素，里面包含了Key和元素的其他信息，但是没有指针。</p>
-</li>
-<li><p>整棵索引节点组成的B树仅仅用来查找具有某个Key的数据元素位于哪个外部节点。在索引节点中找到了Key，事情没有结束，要继续找到数据节点，然后将数据节点中的元素读出来，或者二分查找，或者顺序扫描来寻找真正的数据元素。</p>
-</li>
-<li><p>M这个阶数仅仅用来控制索引节点部分的度，至于每个数据节点包含多少元素，与m无关。</p>
-</li>
-<li><p>另外有一个链表，将所有的数据节点串起来，可以顺序访问。</p>
-</li>
-</ol>
-<p>这个定义的比较抽象，我们来看一个具体的例子。</p>
-<p><img src="mysql4.png" alt="mysql4"></p>
-<p>从图中我们可以看出，这是一个3阶B+树，而一个外部数据节点最多包含5项。如果插入的数据在数据节点，如果不引起分裂和合并，则索引节点组成的B树就不会变。</p>
-<p>如果在71到75的外部节点插入一项76，则引起分裂，71,72,73成为一个数据节点，74,75,76成为一个数据节点，而对于索引节点来讲相当于插入一个Key为74的过程。</p>
-<p>如果在41到43的外部节点中删除43，则引起合并，41,42,61,62,63合并成一个节点，对于索引节点来讲，相当于删除Key为60的过程。</p>
-<p>查找的时候，由于B+树层高很小，所以能够比较快速的定位，例如我们要查找值62，在根节点发现大于40则访问右面，小于70则访问左面，大于60则访问右面，在叶子节点的第二个，就找到了62，成功定位。</p>
-<p>在Mysql的InnoDB中，有两种类型的B+树索引，一种称为聚簇索引，一种称为二级索引。</p>
-<p>聚簇索引的叶子节点就是数据节点，往往是主键作为聚簇索引，二级索引的叶子节点存放的是KEY字段加主键值。因而通过二级索引访问数据，要访问两次索引。</p>
-<p><img src="mysql5.png" alt="mysql5"></p>
-<p>还有一种索引的形式称为组合索引，或者复合索引，可以在多个列上建立索引。</p>
-<p><img src="mysql6.png" alt="mysql6"></p>
-<p>这种索引的排序规则为，先比较第一列，在第一列相等的情况下，比较第二列，以此类推。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjpuvgbc600349zcp2rv6ieht" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjpv19dea0033j5cpyjefa6wf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -687,7 +754,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/7/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/9/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/7/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/9/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -727,7 +794,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 

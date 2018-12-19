@@ -105,7 +105,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjpuvgbdk006f9zcpbysnw6vh" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjpv19dfr006jj5cppe4zjgsb" class="article-share-link">Share</a>
       
       
     </footer>
@@ -115,14 +115,14 @@
 
 
   
-    <article id="post-redis/2014-08-04-Redis应用之周榜、月榜、年榜" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-mysql/2014-8-5-MySql数据库索引的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" class="article-date">
-  <time datetime="2014-08-03T16:00:00.000Z" itemprop="datePublished">2014-08-04</time>
+    <a href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" class="article-date">
+  <time datetime="2014-08-04T16:00:00.000Z" itemprop="datePublished">2014-08-05</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
+    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
   </div>
 
   </div>
@@ -133,7 +133,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/">Redis应用之周榜、月榜、年榜</a>
+      <a class="article-title" href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/">MySql数据库索引的原理</a>
     </h1>
   
 
@@ -141,15 +141,42 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="创建每日排行榜"><a href="#创建每日排行榜" class="headerlink" title="创建每日排行榜"></a>创建每日排行榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 2014-08-04</span><br><span class="line">zadd music:rank:2014-08-04 1345 Happy 2314 Fancy 3413 Rude 5313 Problem</span><br><span class="line"></span><br><span class="line"># 2014-08-05</span><br><span class="line">zadd music:rank:2014-08-05 1234 Happy 2345 Fancy 3456 Rude 4567 Problem </span><br><span class="line"></span><br><span class="line"># 2014-08-06</span><br><span class="line">zadd music:rank:2014-08-06 2431 Happy 3456 Fancy 4321 Rude 6432 Problem </span><br><span class="line"></span><br><span class="line"># 2014-08-07</span><br><span class="line">zadd music:rank:2014-08-07 1632 Happy 2632 Fancy 2456 Rude 1245 Problem</span><br></pre></td></tr></table></figure>
-<h2 id="周榜"><a href="#周榜" class="headerlink" title="周榜"></a>周榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zunionstore music:weakrank:2014-08-04-10 music:rank:2014-08-04 music:rank:2014-08-05 music:rank:2014-08-06 ...music:rank:2014-08-10</span><br></pre></td></tr></table></figure>
-<h2 id="月榜"><a href="#月榜" class="headerlink" title="月榜"></a>月榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zunionstore music:monthrank:2014-08 music:rank:2014-08-04 music:rank:2014-08-05 music:rank:2014-08-06 ...music:rank:2014-08-30</span><br></pre></td></tr></table></figure>
-<h2 id="年榜"><a href="#年榜" class="headerlink" title="年榜"></a>年榜</h2><p>zunionstore music:yearrank:2014 music:monthrank:2014-01 music:monthrank:2014-02 music:monthrank:2014-03 …music:monthrank:2014-12</p>
+        <p>在整个过程中，最容易称为瓶颈点的是数据的读写，往往意味着要顺序或者随机读写磁盘，而读写磁盘的速度往往是比较慢的。</p>
+<p>如果加快这个过程呢？相信大家都猜到了就是建立索引。</p>
+<p>为什么索引能够加快这个过程呢？</p>
+<p>相信大家都逛过美食城，里面众多家餐馆琳琅满目，如果你不着急呢，肚子不饿，对搜索的性能没有要求，就可以在商场里面慢慢逛，逛一家看一家，知道找到自己想吃的餐馆。但是当你饿了，或者你们约好了餐馆，你一定想直奔那个餐馆，这个时候，你往往会去看楼层的索引图，快速的查找你目标餐馆的位置，找到后，直奔主题，就会大大节约时间，这就是索引的作用。</p>
+<p>所以索引就是通过值，快速的找到它的位置，从而可以快速的访问。</p>
+<p>索引的另外一个作用就是不用真正的查看数据，就能够做一些判断，例如商场里面有没有某个餐馆，你看一下索引就知道了，不必真的到商场里面逛一圈，再如找出所有的川菜馆，也是只要看索引就可以了，不用一家一家川菜馆跑。</p>
+<p>那么在Mysql中，索引是如何工作的呢？</p>
+<p>Mysql的索引结构，往往是一棵B+树。</p>
+<p>一棵m阶B+树具有如下的性质：</p>
+<ol>
+<li><p>节点分索引节点和数据节点。索引节点相当于B树的内部节点，所有的索引节点组成一棵B树，具有B树的所有的特性。在索引节点中，存放着Key和指针，并不存放具体的元素。数据节点相当与B树的外部节点，B树的外部节点为空，在B+树中被利用了起来，用于存放真正的数据元素，里面包含了Key和元素的其他信息，但是没有指针。</p>
+</li>
+<li><p>整棵索引节点组成的B树仅仅用来查找具有某个Key的数据元素位于哪个外部节点。在索引节点中找到了Key，事情没有结束，要继续找到数据节点，然后将数据节点中的元素读出来，或者二分查找，或者顺序扫描来寻找真正的数据元素。</p>
+</li>
+<li><p>M这个阶数仅仅用来控制索引节点部分的度，至于每个数据节点包含多少元素，与m无关。</p>
+</li>
+<li><p>另外有一个链表，将所有的数据节点串起来，可以顺序访问。</p>
+</li>
+</ol>
+<p>这个定义的比较抽象，我们来看一个具体的例子。</p>
+<p><img src="mysql4.png" alt="mysql4"></p>
+<p>从图中我们可以看出，这是一个3阶B+树，而一个外部数据节点最多包含5项。如果插入的数据在数据节点，如果不引起分裂和合并，则索引节点组成的B树就不会变。</p>
+<p>如果在71到75的外部节点插入一项76，则引起分裂，71,72,73成为一个数据节点，74,75,76成为一个数据节点，而对于索引节点来讲相当于插入一个Key为74的过程。</p>
+<p>如果在41到43的外部节点中删除43，则引起合并，41,42,61,62,63合并成一个节点，对于索引节点来讲，相当于删除Key为60的过程。</p>
+<p>查找的时候，由于B+树层高很小，所以能够比较快速的定位，例如我们要查找值62，在根节点发现大于40则访问右面，小于70则访问左面，大于60则访问右面，在叶子节点的第二个，就找到了62，成功定位。</p>
+<p>在Mysql的InnoDB中，有两种类型的B+树索引，一种称为聚簇索引，一种称为二级索引。</p>
+<p>聚簇索引的叶子节点就是数据节点，往往是主键作为聚簇索引，二级索引的叶子节点存放的是KEY字段加主键值。因而通过二级索引访问数据，要访问两次索引。</p>
+<p><img src="mysql5.png" alt="mysql5"></p>
+<p>还有一种索引的形式称为组合索引，或者复合索引，可以在多个列上建立索引。</p>
+<p><img src="mysql6.png" alt="mysql6"></p>
+<p>这种索引的排序规则为，先比较第一列，在第一列相等的情况下，比较第二列，以此类推。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" data-id="cjpuvgbdl006h9zcpu31ccom4" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjpv19deb0035j5cpp1pa7zev" class="article-share-link">Share</a>
       
       
     </footer>
@@ -200,7 +227,51 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" data-id="cjpuvgbc500309zcp2uzcmbwe" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/04/mysql/2014-8-4-MySql数据库的工作流程/" data-id="cjpv19de90031j5cpvou72vup" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-04-Redis应用之周榜、月榜、年榜" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" class="article-date">
+  <time datetime="2014-08-03T16:00:00.000Z" itemprop="datePublished">2014-08-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/">Redis应用之周榜、月榜、年榜</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="创建每日排行榜"><a href="#创建每日排行榜" class="headerlink" title="创建每日排行榜"></a>创建每日排行榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 2014-08-04</span><br><span class="line">zadd music:rank:2014-08-04 1345 Happy 2314 Fancy 3413 Rude 5313 Problem</span><br><span class="line"></span><br><span class="line"># 2014-08-05</span><br><span class="line">zadd music:rank:2014-08-05 1234 Happy 2345 Fancy 3456 Rude 4567 Problem </span><br><span class="line"></span><br><span class="line"># 2014-08-06</span><br><span class="line">zadd music:rank:2014-08-06 2431 Happy 3456 Fancy 4321 Rude 6432 Problem </span><br><span class="line"></span><br><span class="line"># 2014-08-07</span><br><span class="line">zadd music:rank:2014-08-07 1632 Happy 2632 Fancy 2456 Rude 1245 Problem</span><br></pre></td></tr></table></figure>
+<h2 id="周榜"><a href="#周榜" class="headerlink" title="周榜"></a>周榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zunionstore music:weakrank:2014-08-04-10 music:rank:2014-08-04 music:rank:2014-08-05 music:rank:2014-08-06 ...music:rank:2014-08-10</span><br></pre></td></tr></table></figure>
+<h2 id="月榜"><a href="#月榜" class="headerlink" title="月榜"></a>月榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zunionstore music:monthrank:2014-08 music:rank:2014-08-04 music:rank:2014-08-05 music:rank:2014-08-06 ...music:rank:2014-08-30</span><br></pre></td></tr></table></figure>
+<h2 id="年榜"><a href="#年榜" class="headerlink" title="年榜"></a>年榜</h2><p>zunionstore music:yearrank:2014 music:monthrank:2014-01 music:monthrank:2014-02 music:monthrank:2014-03 …music:monthrank:2014-12</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/04/redis/2014-08-04-Redis应用之周榜、月榜、年榜/" data-id="cjpv19dfq006hj5cpyxwi5nec" class="article-share-link">Share</a>
       
       
     </footer>
@@ -254,7 +325,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" data-id="cjpuvgbc5002y9zcp42f4l2ph" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/03/mysql/2014-8-3-MySql数据库的总体架构/" data-id="cjpv19de9002zj5cp88n3p2xk" class="article-share-link">Share</a>
       
       
     </footer>
@@ -298,7 +369,48 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/03/redis/2014-08-03-Redis应用之自动补完/" data-id="cjpuvgbdh00699zcpi7cqcysq" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/03/redis/2014-08-03-Redis应用之自动补完/" data-id="cjpv19dfp006fj5cp5xx1bqgt" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-08-02-Redis应用之翻页" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/08/02/redis/2014-08-02-Redis应用之翻页/" class="article-date">
+  <time datetime="2014-08-01T16:00:00.000Z" itemprop="datePublished">2014-08-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/08/02/redis/2014-08-02-Redis应用之翻页/">Redis应用之翻页</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="blog文章分页"><a href="#blog文章分页" class="headerlink" title="blog文章分页"></a>blog文章分页</h1><h2 id="添加一篇blog，以时间作为score"><a href="#添加一篇blog，以时间作为score" class="headerlink" title="添加一篇blog，以时间作为score"></a>添加一篇blog，以时间作为score</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">zadd blog:page 1407000000 &apos;今天天气正好&apos;</span><br><span class="line"></span><br><span class="line">zadd blog:page 1417000000 &apos;lol剑姬出装&apos;</span><br><span class="line"></span><br><span class="line">zadd blog:page 1427000000 &apos;dk单刷副本&apos;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<h2 id="每页有-n-篇blog-返回第-m-页-start-m-1-n-end-mm-1"><a href="#每页有-n-篇blog-返回第-m-页-start-m-1-n-end-mm-1" class="headerlink" title="每页有 n 篇blog, 返回第 m 页,start = (m-1)n, end =mm-1"></a>每页有 n 篇blog, 返回第 m 页,start = (m-1)<em>n, end =m</em>m-1</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 每页5篇 ，第1页</span><br><span class="line">zrevrange blog:page 0 4</span><br><span class="line"></span><br><span class="line"># 每页5篇 ，第2页</span><br><span class="line">zrevrange blog:page 5 9</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/08/02/redis/2014-08-02-Redis应用之翻页/" data-id="cjpv19dfo006dj5cpqys15juy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -390,90 +502,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" data-id="cjpuvgbc4002w9zcpbr7l333p" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-08-02-Redis应用之翻页" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/02/redis/2014-08-02-Redis应用之翻页/" class="article-date">
-  <time datetime="2014-08-01T16:00:00.000Z" itemprop="datePublished">2014-08-02</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/02/redis/2014-08-02-Redis应用之翻页/">Redis应用之翻页</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="blog文章分页"><a href="#blog文章分页" class="headerlink" title="blog文章分页"></a>blog文章分页</h1><h2 id="添加一篇blog，以时间作为score"><a href="#添加一篇blog，以时间作为score" class="headerlink" title="添加一篇blog，以时间作为score"></a>添加一篇blog，以时间作为score</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">zadd blog:page 1407000000 &apos;今天天气正好&apos;</span><br><span class="line"></span><br><span class="line">zadd blog:page 1417000000 &apos;lol剑姬出装&apos;</span><br><span class="line"></span><br><span class="line">zadd blog:page 1427000000 &apos;dk单刷副本&apos;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<h2 id="每页有-n-篇blog-返回第-m-页-start-m-1-n-end-mm-1"><a href="#每页有-n-篇blog-返回第-m-页-start-m-1-n-end-mm-1" class="headerlink" title="每页有 n 篇blog, 返回第 m 页,start = (m-1)n, end =mm-1"></a>每页有 n 篇blog, 返回第 m 页,start = (m-1)<em>n, end =m</em>m-1</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 每页5篇 ，第1页</span><br><span class="line">zrevrange blog:page 0 4</span><br><span class="line"></span><br><span class="line"># 每页5篇 ，第2页</span><br><span class="line">zrevrange blog:page 5 9</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/02/redis/2014-08-02-Redis应用之翻页/" data-id="cjpuvgbdf00659zcp8indb4ow" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-08-01-Redis应用之排行榜" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/01/redis/2014-08-01-Redis应用之排行榜/" class="article-date">
-  <time datetime="2014-07-31T16:00:00.000Z" itemprop="datePublished">2014-08-01</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/01/redis/2014-08-01-Redis应用之排行榜/">Redis应用之排行榜</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="创建一个排行榜-比如歌曲的收听人数排行榜"><a href="#创建一个排行榜-比如歌曲的收听人数排行榜" class="headerlink" title="创建一个排行榜,比如歌曲的收听人数排行榜"></a>创建一个排行榜,比如歌曲的收听人数排行榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zadd music:rank 1345 Happy 2314 Fancy 3413 Rude 5313 Problem [count music...]</span><br></pre></td></tr></table></figure>
-<h2 id="当一个用户听歌，对应人数-1"><a href="#当一个用户听歌，对应人数-1" class="headerlink" title="当一个用户听歌，对应人数+1"></a>当一个用户听<rude>歌，对应人数+1</rude></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zincrby music:rank Rude 1</span><br></pre></td></tr></table></figure>
-<h2 id="获取排行版前n位"><a href="#获取排行版前n位" class="headerlink" title="获取排行版前n位"></a>获取排行版前n位</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrevrange music:rank 0 n-1 [withscores]</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/01/redis/2014-08-01-Redis应用之排行榜/" data-id="cjpuvgbdg00679zcpx5wfjami" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/02/mysql/2014-8-2-数据库表创建注意事项/" data-id="cjpv19de7002vj5cpm8gy31t1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -537,7 +566,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" data-id="cjpuvgbc3002u9zcpzekxes2o" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/01/mysql/2014-8-1-Mysql 中 MyISAM 和 InnoDB 的区别有哪些/" data-id="cjpv19de8002xj5cptzq2j6ab" class="article-share-link">Share</a>
       
       
     </footer>
@@ -547,14 +576,14 @@
 
 
   
-    <article id="post-mysql/2014-7-30-MySQL优化" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-redis/2014-08-01-Redis应用之排行榜" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/07/30/mysql/2014-7-30-MySQL优化/" class="article-date">
-  <time datetime="2014-07-29T16:00:00.000Z" itemprop="datePublished">2014-07-30</time>
+    <a href="/2014/08/01/redis/2014-08-01-Redis应用之排行榜/" class="article-date">
+  <time datetime="2014-07-31T16:00:00.000Z" itemprop="datePublished">2014-08-01</time>
 </a>
     
   <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
+    <a class="article-category-link" href="/categories/redis/">redis</a>
   </div>
 
   </div>
@@ -565,7 +594,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/07/30/mysql/2014-7-30-MySQL优化/">MySQL优化</a>
+      <a class="article-title" href="/2014/08/01/redis/2014-08-01-Redis应用之排行榜/">Redis应用之排行榜</a>
     </h1>
   
 
@@ -573,29 +602,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="MySQL优化"><a href="#MySQL优化" class="headerlink" title="MySQL优化"></a>MySQL优化</h2><ol>
-<li><p>开启查询缓存，优化查询</p>
-</li>
-<li><p>explain你的select查询，这可以帮你分析你的查询语句或是表结构的性能瓶颈。EXPLAIN 的查询结果还会告诉你你的索引主键被如何利用的，你的数据表是如何被搜索和排序的</p>
-</li>
-<li><p>当只要一行数据时使用limit 1，MySQL数据库引擎会在找到一条数据后停止搜索，而不是继续往后查少下一条符合记录的数据</p>
-</li>
-<li><p>为搜索字段建索引</p>
-</li>
-<li><p>使用 ENUM 而不是 VARCHAR，如果你有一个字段，比如“性别”，“国家”，“民族”，“状态”或“部门”，你知道这些字段的取值是有限而且固定的，那么，你应该使用 ENUM 而不是VARCHAR。</p>
-</li>
-<li><p>Prepared StatementsPrepared Statements很像存储过程，是一种运行在后台的SQL语句集合，我们可以从使用 prepared statements 获得很多好处，无论是性能问题还是安全问题。Prepared Statements 可以检查一些你绑定好的变量，这样可以保护你的程序不会受到“SQL注入式”攻击</p>
-</li>
-<li><p>垂直分表</p>
-</li>
-<li><p>选择正确的存储引擎</p>
-</li>
-</ol>
-
+        <h2 id="创建一个排行榜-比如歌曲的收听人数排行榜"><a href="#创建一个排行榜-比如歌曲的收听人数排行榜" class="headerlink" title="创建一个排行榜,比如歌曲的收听人数排行榜"></a>创建一个排行榜,比如歌曲的收听人数排行榜</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zadd music:rank 1345 Happy 2314 Fancy 3413 Rude 5313 Problem [count music...]</span><br></pre></td></tr></table></figure>
+<h2 id="当一个用户听歌，对应人数-1"><a href="#当一个用户听歌，对应人数-1" class="headerlink" title="当一个用户听歌，对应人数+1"></a>当一个用户听<rude>歌，对应人数+1</rude></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zincrby music:rank Rude 1</span><br></pre></td></tr></table></figure>
+<h2 id="获取排行版前n位"><a href="#获取排行版前n位" class="headerlink" title="获取排行版前n位"></a>获取排行版前n位</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zrevrange music:rank 0 n-1 [withscores]</span><br></pre></td></tr></table></figure>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/07/30/mysql/2014-7-30-MySQL优化/" data-id="cjpuvgbc3002s9zcps1izyfux" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/08/01/redis/2014-08-01-Redis应用之排行榜/" data-id="cjpv19dfm006bj5cpnw8xbrpj" class="article-share-link">Share</a>
       
       
     </footer>
@@ -609,7 +622,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -649,7 +662,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 
