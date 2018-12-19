@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Docker概念 | 蓦然回首，bug依然在灯火阑珊处</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Docker 概念什么是容器？ 一种虚拟化的方案 操作系统级别的虚拟化 只能运行相同或相似的内核的操作系统 依赖于Linux内核特性：Namespace和Cgroup(Control Group)  什么是Docker？ 将应用程序自动部署到容器 Go语言开源引擎 2013年初 dotCloud 基于apache 2.0 开源授权协议发行  Docker的目标 提供简单轻量的建模方式 职责的逻辑分">
+<meta name="keywords" content="后端 Node.js go golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker概念">
+<meta property="og:url" content="http://yacen.github.io/2017/06/20/docker/2017-06-20-Docker概念/index.html">
+<meta property="og:site_name" content="蓦然回首，bug依然在灯火阑珊处">
+<meta property="og:description" content="Docker 概念什么是容器？ 一种虚拟化的方案 操作系统级别的虚拟化 只能运行相同或相似的内核的操作系统 依赖于Linux内核特性：Namespace和Cgroup(Control Group)  什么是Docker？ 将应用程序自动部署到容器 Go语言开源引擎 2013年初 dotCloud 基于apache 2.0 开源授权协议发行  Docker的目标 提供简单轻量的建模方式 职责的逻辑分">
+<meta property="og:locale" content="Zh">
+<meta property="og:image" content="http://yacen.github.io/2017/06/20/docker/2017-06-20-Docker概念/images/01.PNG">
+<meta property="og:image" content="http://yacen.github.io/2017/06/20/docker/2017-06-20-Docker概念/images/02.PNG">
+<meta property="og:image" content="http://yacen.github.io/2017/06/20/docker/2017-06-20-Docker概念/images/03.PNG">
+<meta property="og:image" content="http://yacen.github.io/2017/06/20/docker/2017-06-20-Docker概念/images/04.PNG">
+<meta property="og:image" content="http://yacen.github.io/2017/06/20/docker/2017-06-20-Docker概念/images/05.PNG">
+<meta property="og:updated_time" content="2018-12-19T07:44:18.106Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Docker概念">
+<meta name="twitter:description" content="Docker 概念什么是容器？ 一种虚拟化的方案 操作系统级别的虚拟化 只能运行相同或相似的内核的操作系统 依赖于Linux内核特性：Namespace和Cgroup(Control Group)  什么是Docker？ 将应用程序自动部署到容器 Go语言开源引擎 2013年初 dotCloud 基于apache 2.0 开源授权协议发行  Docker的目标 提供简单轻量的建模方式 职责的逻辑分">
+<meta name="twitter:image" content="http://yacen.github.io/2017/06/20/docker/2017-06-20-Docker概念/images/01.PNG">
+  
+    <link rel="alternate" href="/atom.xml" title="蓦然回首，bug依然在灯火阑珊处" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">蓦然回首，bug依然在灯火阑珊处</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录平时可能用到的资料</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yacen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-docker/2017-06-20-Docker概念" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/20/docker/2017-06-20-Docker概念/" class="article-date">
+  <time datetime="2017-06-19T16:00:00.000Z" itemprop="datePublished">2017-06-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/docker/">docker</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Docker概念
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Docker-概念"><a href="#Docker-概念" class="headerlink" title="Docker 概念"></a>Docker 概念</h1><h2 id="什么是容器？"><a href="#什么是容器？" class="headerlink" title="什么是容器？"></a>什么是容器？</h2><ol>
+<li>一种虚拟化的方案</li>
+<li>操作系统级别的虚拟化</li>
+<li>只能运行相同或相似的内核的操作系统</li>
+<li>依赖于Linux内核特性：Namespace和Cgroup(Control Group)<br><img src="./images/01.PNG" alt=""></li>
+</ol>
+<h2 id="什么是Docker？"><a href="#什么是Docker？" class="headerlink" title="什么是Docker？"></a>什么是Docker？</h2><ol>
+<li>将应用程序自动部署到容器</li>
+<li>Go语言开源引擎</li>
+<li>2013年初 dotCloud</li>
+<li>基于apache 2.0 开源授权协议发行</li>
+</ol>
+<h2 id="Docker的目标"><a href="#Docker的目标" class="headerlink" title="Docker的目标"></a>Docker的目标</h2><ol>
+<li>提供简单轻量的建模方式</li>
+<li>职责的逻辑分离</li>
+<li>快速高效的开发生命周期</li>
+<li>鼓励使用面向服务的架构</li>
+</ol>
+<h2 id="Docker的使用场景"><a href="#Docker的使用场景" class="headerlink" title="Docker的使用场景"></a>Docker的使用场景</h2><ol>
+<li>使用Docker容器开发、测试、部署服务</li>
+<li>创建隔离的运行环境</li>
+<li>搭建测试环境</li>
+<li>构建多用户的平台即服务（PaaS）基础设施</li>
+<li>提供软件即服务（SaaS）应用程序</li>
+<li>高性能、超大规模的宿主机部署</li>
+</ol>
+<h2 id="docker的基本组成"><a href="#docker的基本组成" class="headerlink" title="docker的基本组成"></a>docker的基本组成</h2><ol>
+<li>Docker Client客户端</li>
+<li>Docker Daemon 守护进程</li>
+<li>Docker Image 镜像</li>
+<li>Docker Container 容器</li>
+<li>Docker Registry 仓库</li>
+</ol>
+<h2 id="Docker-客户端-守护进程"><a href="#Docker-客户端-守护进程" class="headerlink" title="Docker 客户端/守护进程"></a>Docker 客户端/守护进程</h2><ul>
+<li>C/S架构</li>
+<li>本地/远程<br><img src="./images/02.PNG" alt=""></li>
+</ul>
+<h2 id="Docker-Image-镜像"><a href="#Docker-Image-镜像" class="headerlink" title="Docker Image 镜像"></a>Docker Image 镜像</h2><ul>
+<li>容器的基石</li>
+<li>层叠的只读文件系统</li>
+<li>联合加载（union mount）<br><img src="./images/03.PNG" alt=""></li>
+</ul>
+<h2 id="Docker-Container-容器"><a href="#Docker-Container-容器" class="headerlink" title="Docker Container 容器"></a>Docker Container 容器</h2><ul>
+<li>通过镜像启动</li>
+<li>启动和执行阶段</li>
+<li>写时复制（copy on write）<br><img src="./images/04.PNG" alt=""></li>
+</ul>
+<h2 id="Docker-Registry-仓库"><a href="#Docker-Registry-仓库" class="headerlink" title="Docker Registry 仓库"></a>Docker Registry 仓库</h2><ul>
+<li>共有</li>
+<li>私有</li>
+<li>Docker Hub</li>
+</ul>
+<h2 id="Docker的基本组成"><a href="#Docker的基本组成" class="headerlink" title="Docker的基本组成"></a>Docker的基本组成</h2><p><img src="./images/05.PNG" alt=""></p>
+<h2 id="Docker依赖的Linux内核特性"><a href="#Docker依赖的Linux内核特性" class="headerlink" title="Docker依赖的Linux内核特性"></a>Docker依赖的Linux内核特性</h2><ul>
+<li>Namespace 命名空间</li>
+<li>Control groups （Cgroups）控制组</li>
+</ul>
+<h2 id="Namespaces命名空间"><a href="#Namespaces命名空间" class="headerlink" title="Namespaces命名空间"></a>Namespaces命名空间</h2><ul>
+<li>编程语言<br>  封装 <---> 代码隔离</---></li>
+<li>操作系统<ul>
+<li>系统资源的隔离</li>
+<li>进程、网络、文件系统…</li>
+</ul>
+</li>
+</ul>
+<h2 id="Namespaces命名空间-1"><a href="#Namespaces命名空间-1" class="headerlink" title="Namespaces命名空间"></a>Namespaces命名空间</h2><ul>
+<li>PID (Process ID) 进程隔离</li>
+<li>NET （Network） 管理网络接口</li>
+<li>IPC （InterProcess Communication） 管理跨进程通信的访问</li>
+<li>MNT（Mount） 管理挂载点</li>
+<li>UTS （Unix Timesharing System） 隔离内核和版本标识</li>
+</ul>
+<h2 id="Control-Groups-控制组"><a href="#Control-Groups-控制组" class="headerlink" title="Control Groups 控制组"></a>Control Groups 控制组</h2><ul>
+<li>用来分配资源</li>
+<li>来源于google</li>
+<li>Linux kernel 2.6.24 @ 2007 支持</li>
+</ul>
+<h2 id="Control-Groups-控制组-1"><a href="#Control-Groups-控制组-1" class="headerlink" title="Control Groups 控制组"></a>Control Groups 控制组</h2><ul>
+<li>资源限制</li>
+<li>优先级设定</li>
+<li>资源计量</li>
+<li>资源控制</li>
+</ul>
+<h2 id="Docker-容器的能力"><a href="#Docker-容器的能力" class="headerlink" title="Docker 容器的能力"></a>Docker 容器的能力</h2><ul>
+<li>文件系统隔离：每个容器都有自己的root文件系统</li>
+<li>进程隔离：每个容器都运行在自己的进程环境中</li>
+<li>网络隔离：容器间的虚拟网络接口和IP地址都是分开的</li>
+<li>资源隔离和分组：使用Cgroups将CPU和内存之类的资源独立分配给每个Docker容器</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2017/06/20/docker/2017-06-20-Docker概念/" data-id="cjpuvgbay00059zcppregvoy8" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/06/25/docker/2017-06-25-Docker使用/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Docker使用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/07/25/request/2015-07-25-request-分析3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">request-分析3</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/koa/">koa</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lodash/">lodash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/koa/" style="font-size: 15px;">koa</a> <a href="/tags/lodash/" style="font-size: 20px;">lodash</a> <a href="/tags/nodejs/" style="font-size: 10px;">nodejs</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2018/11/28/egg/egg-特性/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/20/nginx/2018-09-20-Nginx错误之13Permission denied/">Nginx错误之13:Permission denied</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/12/nginx/2018-09-12-Nginx性能优化之Keep-Alive/">Nginx性能优化之Keep-Alive</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/09/nginx/2018-09-09-Nginx性能优化之Buffers/">Nginx性能优化之Buffers</a>
+          </li>
+        
+          <li>
+            <a href="/2018/09/04/nginx/2018-09-04-Nginx性能优化之超时/">Nginx性能优化之超时</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2018 Jax<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

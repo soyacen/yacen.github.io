@@ -70,10 +70,62 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-redis/2014-12-10-Redis持久化" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-nodejs/2015-03-12-nodejs的path模块源码解读" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/12/10/redis/2014-12-10-Redis持久化/" class="article-date">
-  <time datetime="2014-12-09T16:00:00.000Z" itemprop="datePublished">2014-12-10</time>
+    <a href="/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" class="article-date">
+  <time datetime="2015-03-11T16:00:00.000Z" itemprop="datePublished">2015-03-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/nodejs/">nodejs</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/">nodejs的path模块源码解读</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>path 模块是Node.js的核心模块之一，它主要用于路径的相关操作。</p>
+<p>而路径却在Windows与UNIX上有不同的表现，所以Node.js分别做了不同的处理，如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">posix.win32 = win32.win32 = win32;</span><br><span class="line">posix.posix = win32.posix = posix;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (process.platform === <span class="string">'win32'</span>)</span><br><span class="line">  <span class="built_in">module</span>.exports = win32;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="built_in">module</span>.exports = posix;</span><br></pre></td></tr></table></figure>
+<p>而两个平台的不同主要在分割符还有分上的不同，在Windows平台是<code>\\</code>,而UNIX平台上是<code>/</code>。</p>
+<p>两个平台主要逻辑差不多，本文主要讲UNIX平台下的代码。</p>
+<h2 id="assertPath-path"><a href="#assertPath-path" class="headerlink" title="assertPath(path)"></a><code>assertPath(path)</code></h2><p>如果当传入的path不是字符串的话就抛异常。代码如下：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> inspect = <span class="built_in">require</span>(<span class="string">'util'</span>).inspect;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">assertPath</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> path !== <span class="string">'string'</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(<span class="string">'Path must be a string. Received '</span> + inspect(path));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="normalizeStringPosix-path-allowAboveRoot"><a href="#normalizeStringPosix-path-allowAboveRoot" class="headerlink" title="normalizeStringPosix(path, allowAboveRoot)"></a><code>normalizeStringPosix(path, allowAboveRoot)</code></h2><p>此函数是处理UNIX平台上路径有 <code>.</code> 与 <code>..</code>的情况。</p>
+<h2 id="format-sep-pathObject"><a href="#format-sep-pathObject" class="headerlink" title="_format(sep, pathObject)"></a><code>_format(sep, pathObject)</code></h2><p>pathObject是分装路径信息的一个对象,类似于<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  root: &apos;D:\\&apos;,</span><br><span class="line">  dir: &apos;D:\\IdeaProjects\\lesson2\\log&apos;,</span><br><span class="line">  base: &apos;out.log&apos;,</span><br><span class="line">  ext: &apos;.log&apos;,</span><br><span class="line">  name: &apos;out&apos; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>此方法是为了格式化一个pathObject对象，返回格式化路径；<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_format</span>(<span class="params">sep, pathObject</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//给dir赋值，如果pathObject.dir，否则pathObject.root</span></span><br><span class="line">  <span class="keyword">const</span> dir = pathObject.dir || pathObject.root;</span><br><span class="line">  <span class="comment">//给base赋值，取pathObject的base或者name、ext的拼接</span></span><br><span class="line">  <span class="keyword">const</span> base = pathObject.base ||</span><br><span class="line">    ((pathObject.name || <span class="string">''</span>) + (pathObject.ext || <span class="string">''</span>));</span><br><span class="line"></span><br><span class="line">  <span class="comment">//当pathObject.dir或者pathObject.root为空时,返回base；</span></span><br><span class="line">  <span class="keyword">if</span> (!dir) &#123;</span><br><span class="line">    <span class="keyword">return</span> base;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//当pathObject.root有值时候 ，返回root+base；</span></span><br><span class="line">  <span class="keyword">if</span> (dir === pathObject.root) &#123;</span><br><span class="line">    <span class="keyword">return</span> dir + base;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//当pathObject.dir有值时候，返回dir+sep+base;</span></span><br><span class="line">  <span class="keyword">return</span> dir + sep + base;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="format-pathObject"><a href="#format-pathObject" class="headerlink" title="format(pathObject)"></a><code>format(pathObject)</code></h2><p>次方法分Windows和UNIX系统的不同实现。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">format</span>(<span class="params">pathObject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (pathObject === <span class="literal">null</span> || <span class="keyword">typeof</span> pathObject !== <span class="string">'object'</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">TypeError</span>(</span><br><span class="line">        <span class="string">`Parameter "pathObject" must be an object, not <span class="subst">$&#123;<span class="keyword">typeof</span> pathObject&#125;</span>`</span></span><br><span class="line">      );</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//UNIX是 /, windows是 \\</span></span><br><span class="line">    <span class="keyword">return</span> _format(<span class="string">'/'</span>, pathObject);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="normalize-path"><a href="#normalize-path" class="headerlink" title="normalize(path)"></a><code>normalize(path)</code></h2><p>方法会规范化给定的 path，并解析 ‘..’ 和 ‘.’ 片段。</p>
+<p>当发现多个连续的路径分隔符时（如 POSIX 上的 / 与 Windows 上的 \ 或 /），它们会被单个的路径分隔符（POSIX 上是 /，Windows 上是 \）替换。 末尾的多个分隔符会被保留。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">normalize</span>(<span class="params">path</span>) </span>&#123;</span><br><span class="line">    <span class="comment">//验证path的合法性</span></span><br><span class="line">    assertPath(path);</span><br><span class="line">    <span class="comment">//如果是空字符串，返回 .</span></span><br><span class="line">    <span class="keyword">if</span> (path.length === <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="string">'.'</span>;</span><br><span class="line">    <span class="comment">//是否是绝对路径</span></span><br><span class="line">    <span class="keyword">const</span> isAbsolute = path.charCodeAt(<span class="number">0</span>) === <span class="number">47</span>;</span><br><span class="line">    <span class="comment">//末尾是否有分隔符</span></span><br><span class="line">    <span class="keyword">const</span> trailingSeparator = path.charCodeAt(path.length - <span class="number">1</span>) === <span class="number">47</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 标准化path</span></span><br><span class="line">    path = normalizeStringPosix(path, !isAbsolute);</span><br><span class="line">    <span class="comment">//如果标准化完后的path是空字符串且不是绝对路径，path就是当前文件夹 .</span></span><br><span class="line">    <span class="keyword">if</span> (path.length === <span class="number">0</span> &amp;&amp; !isAbsolute)</span><br><span class="line">      path = <span class="string">'.'</span>;</span><br><span class="line">    <span class="comment">//path不是空字符串且末尾有 / ，path最后加上/</span></span><br><span class="line">    <span class="keyword">if</span> (path.length &gt; <span class="number">0</span> &amp;&amp; trailingSeparator)</span><br><span class="line">      path += <span class="string">'/'</span>;</span><br><span class="line">    <span class="comment">//如果是绝对路径，开头加 /</span></span><br><span class="line">    <span class="keyword">if</span> (isAbsolute)</span><br><span class="line">      <span class="keyword">return</span> <span class="string">'/'</span> + path;</span><br><span class="line">    <span class="keyword">return</span> path;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/03/12/nodejs/2015-03-12-nodejs的path模块源码解读/" data-id="cjpuvgbcw004p9zcp7rple7oj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2015-01-10-Redis数据库实现" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/01/10/redis/2015-01-10-Redis数据库实现/" class="article-date">
+  <time datetime="2015-01-09T16:00:00.000Z" itemprop="datePublished">2015-01-10</time>
 </a>
     
   <div class="article-category">
@@ -88,7 +140,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/12/10/redis/2014-12-10-Redis持久化/">Redis持久化</a>
+      <a class="article-title" href="/2015/01/10/redis/2015-01-10-Redis数据库实现/">Redis数据库实现</a>
     </h1>
   
 
@@ -96,94 +148,177 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Redis有两种持久化策略：</p>
-<h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2><p>redis的默认持久化机制</p>
-<p>RDB相当于照快照。保存的是一种状态<br>  20G数据…-&gt;几kb快照</p>
-<h3 id="在-Redis-服务器创建-RDB-文件的情况中-以下三种是最常-见的"><a href="#在-Redis-服务器创建-RDB-文件的情况中-以下三种是最常-见的" class="headerlink" title="在 Redis 服务器创建 RDB 文件的情况中,以下三种是最常 见的:"></a>在 Redis 服务器创建 RDB 文件的情况中,以下三种是最常 见的:</h3><ol>
-<li>服务器执行客户端发送的 SAVE 命令;</li>
-<li>服务器执行客户端发送的 BGSAVE 命令;</li>
-<li>使用 save 配置选项设置的自动保存条件被满足,服务器自动执行 BGSAVE 。</li>
-</ol>
-<p>在这三种创建 RDB 文件的情况中,前两种情况需要用 户手动执行,而第三种情况 则是由 Redis 服务器自动执行。</p>
-<h3 id="SAVE-命令"><a href="#SAVE-命令" class="headerlink" title="SAVE 命令"></a>SAVE 命令</h3><p>通过使用客户端向服务器发送 SAVE 命令,可以命令服 务器去创建一个新的 RDB 文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SAVE</span><br><span class="line">OK</span><br></pre></td></tr></table></figure></p>
-<p><img src="./images/save.png" alt=""></p>
-<p>在执行 SAVE 命令的过程中(也即是创建 RDB 文件的过程中),Redis 服务器将被阻塞,无法 处理客户端发送的命令请求,只有在 SAVE 命令执行完毕之后(也即是 RDB 文件创建完毕之后),服务器才会重新开始处理客户端发送的命令请求。</p>
-<p>如果 RDB 文件已经存在,那么服 务器将自动使用新的 RDB 文件去代替旧的 RDB 文件。</p>
-<p>SAVE 命令的复杂度为 O(N) ,N 为服务器中,所有数据 库包含的键值对数量总和。</p>
-<h3 id="BGSAVE-命令"><a href="#BGSAVE-命令" class="headerlink" title="BGSAVE 命令"></a>BGSAVE 命令</h3><p>执行 BGSAVE 命令同样可以创建一个新的 RDB 文件,这个命令和 SAVE 命令的区别在于,BGSAVE 不会造成 Redis 服务器阻塞:在执行 BGSAVE 命令的过程中, Redis 服务器仍然可以正常地 处理其他<br>客户端发送的命令请求。</p>
-<p>BGSAVE 命令不会造成服 务器阻塞的原因在于:</p>
-<ol>
-<li>当 Redis 服务器接收到 BGSAVE 命令的时候,它不会自己来 创建 RDB 文件,而是通 过 fork() 来生成一个子进程,然后由子 进程负责创建 RDB 文件,而自己 则继续处理客户端的命令请求;</li>
-<li>当子进程创建好 RDB 文件并退出时,它会向父进程(也即是负责处理命令请求的 Redis 服务器)发送一个信号,告知它 RDB 文件已经创建完毕;</li>
-<li>最后 Redis 服务器(父进程)接收子进程创建的 RDB 文件,BGSAVE 执行完毕。<br><img src="./images/bgsave.png" alt=""></li>
-</ol>
-<p>BGSAVE 是一个异步命令, 发送命令的客户端会立即得到回复,而 实际的操作在回复之后才开始:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; BGSAVE</span><br><span class="line">Background saving started</span><br></pre></td></tr></table></figure></p>
-<p>BGSAVE 命令的复杂度和 SAVE 一样,都是 O(N) ,N 为所有数据库包含的键值对数量总和。</p>
-<h3 id="自动-RDB-持久化"><a href="#自动-RDB-持久化" class="headerlink" title="自动 RDB 持久化"></a>自动 RDB 持久化</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">save &lt;seconds&gt; &lt;changes&gt;</span><br></pre></td></tr></table></figure>
-<p>这个选项的效果为:如果距离上一次 创建 RDB 文件已经过去了 seconds 秒,并且服务器的所有数据<br>库总共已经发生了不少于 changes 次修改(包括添加、 删除和更新),那么 执行 BGSAVE 。</p>
-<p>另外,用户还可以通过设置多个 save 选项来设置多个自动保存条件,当 任意一个条件被满足时,服务器就会自动执行 BGSAVE 命令。</p>
-<p>举个例子,对于以下设置来说:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br></pre></td></tr></table></figure></p>
-<p>只要三个条件中的任意一个被 满足时,服务器就会执行 BGSAVE 。</p>
-<p>每次创建 RDB 文件之后,服 务器为实现自动持久化而设置的时间计数器和次数计数器就会被清零,<br>并重新开始计数,所以多个保存条件的效果是不会叠加的。</p>
-<p>配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">save 900 1    # 900秒内,有1条写入,则产生快照 </span><br><span class="line">save 300 10   # 300秒内有1000次写入,则产生快照</span><br><span class="line">save 60 10000 # 60秒内有10000次写入,则产生快照</span><br><span class="line"></span><br><span class="line">stop-writes-on-bgsave-error yes # 后台备份进程出错时,主进程停不停止写入?</span><br><span class="line">rdbcompression yes  # 导出的rdb文件是否压缩</span><br><span class="line">rdbchecksum yes   # 导入rbd恢复时数据时,要不要检验rdb的完整性</span><br><span class="line">dbfilename dump.rdb   # 导出来的rdb文件名</span><br><span class="line">dir ./   # rdb的放置路径</span><br></pre></td></tr></table></figure></p>
-<h3 id="RDB优点"><a href="#RDB优点" class="headerlink" title="RDB优点"></a>RDB优点</h3><ol>
-<li>快照保存数据极快，还原数据速度极快</li>
-<li>适用于灾难备份</li>
-</ol>
-<h3 id="RDB缺点"><a href="#RDB缺点" class="headerlink" title="RDB缺点"></a>RDB缺点</h3><ol>
-<li>RDB机制符合要求就会照快照。(随时随地启动)，会占用一部分资源，内存小的机器就不适合用 适用于大内存机器<ul>
-<li>服务器正常关闭时，照快照</li>
-<li>key满足一定条件，照快照</li>
-</ul>
-</li>
-<li>如果在等待创建下一个 RDB 文件的过程中,服务器遭遇了意外停机,那么用 户将丢失最后一次创建RDB 文件之后,数据 库发生的所有修改。</li>
-</ol>
-<h2 id="AOF-append-of-mode"><a href="#AOF-append-of-mode" class="headerlink" title="AOF(append of mode)"></a>AOF(append of mode)</h2><p>AOF 持久化保存数据 库数据的方法是:每当有修改数据 库的命令被执行时,服务器就会将被执行的命令写入到 AOF 文件的末尾。</p>
-<p>使用日志功能保存数据操作，默认AOF机制关闭</p>
-<h3 id="AOF-持久化的安全性问题"><a href="#AOF-持久化的安全性问题" class="headerlink" title="AOF 持久化的安全性问题"></a>AOF 持久化的安全性问题</h3><p>虽然服务器每执行一个修改数据 库的命令,就会将被 执行的命令写入到 AOF 文件,但这并不意味着AOF 持久化不会丢失任何数据。</p>
-<p>在目前常见的操作系统中,执行系统调用 write 函数,将一些内容写入到某个文件里面 时,为了提高效率,系统通常不会直接将内容写入到硬 盘里面,而是先将内容放入到一个内存 缓冲区(buffer)里面,等到缓冲区被填满,或者用户执行 fsync 调用和 fdatasync 调用时,才将储存在缓冲区里面的内容真正地写入到硬 盘里面。</p>
-<p>对于 AOF 持久化来说,当一条命令真正地被写入到硬 盘里面时,这条命令才不会因 为停机而意外丢失。</p>
-<p>因此,AOF 持久化在遭遇停机 时丢失命令的数量,取决于命令被写入到硬 盘的时间:</p>
+        <h2 id="Redis-数据库的实现方法"><a href="#Redis-数据库的实现方法" class="headerlink" title="Redis 数据库的实现方法"></a>Redis 数据库的实现方法</h2><p>在 Redis 里面,每个数据 库都是一个字典, 该字典的键和值都是我们之前提到的对象,其中:</p>
 <ul>
-<li>越早将命令写入到硬 盘,发生意外停机时丢失的数据就越少;</li>
-<li>而越迟将命令写入到硬 盘,发生意外停机时丢失的数据就越多。</li>
+<li>字典的键总是一个字符串 对象,它储存了用户为键设置的键名。</li>
+<li>字典的值则可以是字符串 对象、列表对象、散列对象、集合对象或者有序集合 对象的其中一个。</li>
 </ul>
-<h3 id="安全性控制"><a href="#安全性控制" class="headerlink" title="安全性控制"></a>安全性控制</h3><p>为了控制 Redis 服务器在遇到意外停机 时丢失的数据量, Redis 为 AOF 持久化提供了 appendfsync 选项,这个选项的值可以是 always 、 everysec 或者 no ,这些值的意思分别为:</p>
+<p>因为数据库就是字典,所以 针对数据库的操作都是基于字典操作来 实现的:</p>
 <ul>
-<li>每次改同步(always)：服务器每写入一个命令,就 调用一次 fdatasync ,将缓冲区里面的命令写入到硬 盘里面。在这种模式下,服 务器即使遭遇意外停机,也不会 丢失任何已经成功执行的命令数据。</li>
-<li>每秒同步(everysec)：服务器每秒钟调用一次 fdatasync ,将缓冲区里面的命令写入到硬 盘里面。在这种模式下,服务器遭遇意外停机 时,最多只丢失一秒钟内执行的命令数据。</li>
-<li>不同步(no)：服务器不主动调用 fdatasync ,由操作系统决定何时将缓冲区里面的命令写入到硬 盘里面。在这种模式下,服务器遭遇意外停机 时,丢失命令的数量是不确定的。</li>
+<li>比如说,使用 DEL 命令删除一个数据库键,就是删除数据库对应的字典的键值对。</li>
+<li>又比如说,使用 FLUSHDB 清空数据库,就是清空数据 库对应的字典。</li>
+<li>诸如此类。</li>
 </ul>
-<p>运行速度: always 的速度慢, everysec 和 no 都很快。</p>
-<p>默认值: everysec 。</p>
-<h2 id="AOF-重写"><a href="#AOF-重写" class="headerlink" title="AOF 重写"></a>AOF 重写</h2><ol>
-<li>客户端向服务器发送 BGREWRITEAOF 命令。</li>
-<li>通过设置配置选项来让服务器自动执行 BGREWRITEAOF 命令,它们分别是:<ul>
-<li>auto-aof-rewrite-min-size <size> ,触发 AOF 重写所需的最小体 积:只有在 AOF 文件的体积大于等于 size 时,服务器才会考虑是否需要进行 AOF 重写。这个选项用于避免对体积过小的AOF 文件进行重写。</size></li>
-<li>auto-aof-rewrite-percentage <percent> ,指定触发重写所需的 AOF 文件体积百分比:当 AOF 文件的体积大于 auto-aof-rewrite-min-size 指定的体积,并且超过上一次重写之后的 AOF 文件体积的 percent% 时,就会触发 AOF 重写。(如果服 务器刚刚启动不久,还没有进行过 AOF 重写,那么使用服 务器启动时载入的 AOF 文件的体积来作为基准值。)将这个值设置为 0 表示关闭自动 AOF 重写。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br></pre></td></tr></table></figure>
-</percent></li>
+<p><img src="./images/redis_o9.png" alt=""></p>
+<h2 id="记录过期时间"><a href="#记录过期时间" class="headerlink" title="记录过期时间"></a>记录过期时间</h2><p>为了记录数据库键的过期时间,Redis 为每个数据库创建了另一个字典, 专门使用这个字典来记录键的<br>过期时间,其中:</p>
+<ul>
+<li>字典的键指向数据库键对象,也即是带有过期时间的那个键(数据库字典和储存过期时间的字典通过指针使用同一个键对象,不会造成任何 资源浪费)。</li>
+<li>键的值则是一个毫秒格式的 UNIX 时间戳,记录了键到期的时间。</li>
+</ul>
+<p><img src="./images/redis_10.png" alt=""></p>
+<h2 id="RDB-持久化实现原理"><a href="#RDB-持久化实现原理" class="headerlink" title="RDB 持久化实现原理"></a>RDB 持久化实现原理</h2><p>Redis 会遍历服务器中的所有数据 库,访问数据库中的所有键值对,并根据键值对的类型,将这些键值对以及它们的过期时间写入到 RDB 文件里面。</p>
+<p><img src="./images/redis_11.png" alt=""></p>
+<h2 id="AOF-持久化实现原理"><a href="#AOF-持久化实现原理" class="headerlink" title="AOF 持久化实现原理"></a>AOF 持久化实现原理</h2><p>AOF 持久化功能在每次 执行命令之后就将 协议格式的命令写入到 AOF 缓冲区,然后服 务器再定期将缓冲区的内容写入到 AOF 文件,还原数据时只要重新执行 AOF 文件里面的命令即可。</p>
+<p><img src="./images/redis_12.png" alt=""></p>
+<h2 id="命令处理模型"><a href="#命令处理模型" class="headerlink" title="命令处理模型"></a>命令处理模型</h2><p>Redis 服务器使用 Reactor 模式来连接多个客户端并处理命令请求,其中:</p>
+<ul>
+<li>客户端发送的命令请求会被放到一个有序的队列里面。</li>
+<li>服务器使用单线程方式来执行命令 —— 服务器每次从队列里面取出一个 请求并处理它,只有在当前的命令请求处理完毕之后,服务器才会去处理下一个命令 请求。</li>
+<li>单线程的命令处理方式使得针对服务器以及数据库的操作都不需要加 锁,好处是极大地方便了功能的实现,减少了代码出错的可能性;而坏 处则是不能最大化地使用硬件的多 线程能力。</li>
+</ul>
+<p><img src="./images/redis_13.png" alt=""></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>Redis 数据库中的键和值都是对象,其中键总是一个字符串 对象,而值则可以是多种类型对象的其中一个。</li>
+<li>Redis 为每种对象都设置了两种或以上的表示方式,使得 对象可以在不同的 应用场景中都有最好的性能表现。</li>
+<li>Redis 的数据库就是一个字典,数据 库操作都是通过字典操作来实现的;除此之外, Redis 还使用了另一个字典来专门记录键值对的过期时间。</li>
+<li>RDB 持久化通过遍历数据库并将键值对写入到文件来 实现,而 AOF 持久化则通过记录服务器执行过的命令请求来实现。</li>
+<li>Redis 服务器使用 Reactor 模式来处理客户端的命令请求。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2015/01/10/redis/2015-01-10-Redis数据库实现/" data-id="cjpuvgbds00759zcpznwj7anc" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2015-01-05-Redis对象" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/01/05/redis/2015-01-05-Redis对象/" class="article-date">
+  <time datetime="2015-01-04T16:00:00.000Z" itemprop="datePublished">2015-01-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/01/05/redis/2015-01-05-Redis对象/">Redis对象</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="对象系统"><a href="#对象系统" class="headerlink" title="对象系统"></a>对象系统</h1><p>Redis 是一个键值对(key-value pair)数据库,数据库中的每个键都有与之对应的值,并且这些键和值<br>都是对象(object),其中:</p>
+<ul>
+<li>键总是一个字符串 对象(String Object)。</li>
+<li>而值则可以是字符串 对象、列表对象(List Object)、散列对象(Hash Object)、集合对象(SetObject)或者有序集合 对象(Sorted Set Object / Zset Object)中的任意一个, 这五种对象分别对应我们在 Redis 数据库中操作的字符串 键值对(SET、BITOP、PFADD)、列表键值对(RPUSH、LRANGE)、散列键值对(HADD、HLEN)、集合键值对(SADD、SMEMBERS)和有序集合键值对(ZADD、ZRANGE)。</li>
+</ul>
+<p>举个例子,执行命令 SET msg “hello world” 会让数据库关联起一个新的键值对,其中键是一个包含内容 “msg” 的字符串对象,而值则是一个包含内容 “hello world” 的字符串对象;</p>
+<p>另一方面,执行命令 SADD fruits “apple” “banana” “cherry” 则会创建一个键为字符串对象,值为集<br>合对象的键值对。<br><img src="./images/redis_o1.png" alt=""></p>
+<h2 id="对象的实现"><a href="#对象的实现" class="headerlink" title="对象的实现"></a>对象的实现</h2><p>Redis 中的每种对象都有与之相 对应的底层数据结构,并且为了让对象在各种不同的 应用场景下都有优秀的性能表现,Redis 为每种对象都提供了两种 类型的数据结构实现:</p>
+<ul>
+<li>第一类是为了进行性能优化而特制的编码数据结构(encoded data structure),这些数据结构主要使用“以 CPU 换内存的方式”来节约内存。<ul>
+<li>编码数据结构主要在对象包含的值数量比较少、或者值的体积比较小时使用:比如在字符串 对象包含的字符串比 较短时,集合只包含三五个小元素 时,又或者列表只包含十来个 项时,这些情况都可以使用编码数据结构。</li>
 </ul>
 </li>
+<li>另一类是普通数据结构,也即是我们在书上、论文上看见的数据结构,比如双向 链表、字典、跳跃表等等。<ul>
+<li>比起 编码数据结构,这些普通的数据 结构需要消耗更多内存,但是能 够提供更强大的功能,普通数据 结构主要在对象包含的值比较多、或者值的体积比较大时使用。</li>
+</ul>
+</li>
+</ul>
+<p>在创建新对象时,Redis 会优先使用编码数据结构来表示对象,并在有需要 时,自动将对象的表示方式转换为普通数据结构。</p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>编码数据结构:</p>
+<ul>
+<li>压缩列表(zip list)</li>
+<li>整数集合(int set)</li>
+</ul>
+<p>普通数据结构:</p>
+<ul>
+<li>简单动态字符串(SDS, simple dynamic string)</li>
+<li>双向链表</li>
+<li>字典</li>
+<li>跳跃表</li>
+</ul>
+<p>另外需要注意的是, 节约内存并不是编码数据结构所特有的 —— 普通数据结构也有相应的内存优化模式,比如 SDS 就有两种或以上的表示方式,不同的表示可以 让同一对象在不同的使用 场景下也尽可能地保持高效。</p>
+<h2 id="对象与数据结构之间的关系"><a href="#对象与数据结构之间的关系" class="headerlink" title="对象与数据结构之间的关系"></a>对象与数据结构之间的关系</h2><p><img src="./images/redis_o3.png" alt=""></p>
+<h2 id="压缩列表"><a href="#压缩列表" class="headerlink" title="压缩列表"></a>压缩列表</h2><p>压缩列表具有以下特点:</p>
+<ul>
+<li>压缩列表包含的项都是有序的,列表的两端分 别为表头和表尾。</li>
+<li><p>每个项可以储存一个字符串、整数或者浮点数。</p>
+</li>
+<li><p>可以从表头开始或者从表尾开始遍 历整个压缩列表,复杂度为 O(N) 。</p>
+</li>
+<li><p>定位压缩列表中指定索引上的 项,复杂度为 O(N) 。</p>
+</li>
+<li><p>使用压缩列表来储存值消耗的内存比使用双向 链表来储存值消耗的内存要少。<br><img src="./images/redis_o2.png" alt=""></p>
+</li>
+</ul>
+<h2 id="整数集合"><a href="#整数集合" class="headerlink" title="整数集合"></a>整数集合</h2><p>整数集合具有以下特点:</p>
+<ul>
+<li>集合元素只能是整数(最大 为 64 位),并且集合中不会出 现重复的元素。</li>
+<li>集合的底层使用有序的整数数 组来表示。</li>
+<li>数组的类型会随着新添加元素的 类型而改变:举个例子,如果 集合中位长度最大的元素 可以使用16 位整数来保存,那么数 组的类型就是 int16_t ,而如果集合中位 长度最大的元素可以使用 32 位整数来保存的 话,那么数组的类型就是 int32_t ,诸如此类。</li>
+<li>数组的类型只会自动增大,但不会减小。</li>
+</ul>
+<p><img src="./images/redis_o4.png" alt=""></p>
+<h2 id="SDS"><a href="#SDS" class="headerlink" title="SDS"></a>SDS</h2><p>Redis 使用 SDS (simple dynamic string)而不是 C 语言的字符串格式(以空字符 为结尾的字符数组)来作为 Redis 的默认字符串表示, SDS 具有以下特点:</p>
+<ul>
+<li>可以储存位数组(实现 BITOP 和 HyperLogLog)、字符串、整数和浮点数,其中超 过 64 位的整数和超过 IEEE 754 标准的浮点数使用字符串来表示。</li>
+<li>具有 int 、 embstr 和 raw 三种表示形式可 选,其中 int 表示用于储存小于等于 64 位的整数,embstr 用来储存比较短的位数组和字符串,而其他格式的 值则由 raw 格式储存。</li>
+<li>比起 C 语言的字符串格式, SDS 具有以下四个 优点:<ol>
+<li>常数复杂度获取长度值; </li>
+<li>不会引起缓冲区溢出; </li>
+<li>通过预分配和惰性释放两种策略来减少内存重分配的 执行次数; </li>
+<li>可以储存二进制位。</li>
 </ol>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
-<li>持续性占用极少量的内存资源</li>
-</ol>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
-<li>日志文件会特别大，不适用于灾难恢复</li>
-<li>恢复效率远远低于RDB</li>
-</ol>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">appendonly no   # 是否打开 aof日志功能</span><br><span class="line"></span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br><span class="line"></span><br><span class="line"># appendfsync always  # 每1个命令,都立即同步到aof. 安全,速度慢</span><br><span class="line">appendfsync everysec  # 折衷方案,每秒写1次</span><br><span class="line"># appendfsync no # # 写入工作交给操作系统,由操作系统判断缓冲区大小,统一写入到aof. 同步频率低,速度快,</span><br><span class="line"></span><br><span class="line">no-appendfsync-on-rewrite no # 正在导出rdb快照的过程中,要不要停止同步aof</span><br><span class="line">auto-aof-rewrite-percentage 100 # aof文件大小比起上次重写时的大小,增长率100%时,重写</span><br><span class="line">auto-aof-rewrite-min-size 64mb # aof文件,至少超过64M时,重写</span><br><span class="line">aof-load-truncated yes</span><br><span class="line">aof-use-rdb-preamble no</span><br></pre></td></tr></table></figure>
-<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><p><img src="./images/RDBvsAOF.png" alt=""></p>
-<h3 id="注-在dump-rdb过程中-aof如果停止同步-会不会丢失"><a href="#注-在dump-rdb过程中-aof如果停止同步-会不会丢失" class="headerlink" title="注: 在dump rdb过程中,aof如果停止同步,会不会丢失?"></a>注: 在dump rdb过程中,aof如果停止同步,会不会丢失?</h3><p>答: 不会,所有的操作缓存在内存的队列里, dump完成后,统一操作.</p>
-<h3 id="注-aof重写是指什么"><a href="#注-aof重写是指什么" class="headerlink" title="注: aof重写是指什么?"></a>注: aof重写是指什么?</h3><p>答: aof重写是指把内存中的数据,逆化成命令,写入到.aof日志里.<br>以解决 aof日志过大的问题.</p>
-<h3 id="问-如果rdb文件-和aof文件都存在-优先用谁来恢复数据"><a href="#问-如果rdb文件-和aof文件都存在-优先用谁来恢复数据" class="headerlink" title="问: 如果rdb文件,和aof文件都存在,优先用谁来恢复数据?"></a>问: 如果rdb文件,和aof文件都存在,优先用谁来恢复数据?</h3><p>答: aof</p>
-<h3 id="问-2种是否可以同时用"><a href="#问-2种是否可以同时用" class="headerlink" title="问: 2种是否可以同时用?"></a>问: 2种是否可以同时用?</h3><p>答: 可以,而且推荐这么做</p>
-<h3 id="问-恢复时rdb和aof哪个恢复的快"><a href="#问-恢复时rdb和aof哪个恢复的快" class="headerlink" title="问: 恢复时rdb和aof哪个恢复的快"></a>问: 恢复时rdb和aof哪个恢复的快</h3><p>答: rdb快,因为其是数据的内存映射,直接载入到内存,而aof是命令,需要逐条执行</p>
+</li>
+</ul>
+<p><img src="./images/redis_o5.png" alt=""></p>
+<h2 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h2><p>Redis 的双向链表实现具有以下特性:</p>
+<ul>
+<li>双向、无环、带有表头和表尾指针。</li>
+<li>一个链表包含多个项,每个项都是一个字符串 对象,换句话来说,一个列表对象可以包含多个字符串对象。</li>
+<li>可以从表头或者表尾遍历整个链表,复杂度为 O(N) 。</li>
+<li>定位特定索引上的 项,复杂度为 O(N) 。</li>
+<li>链表带有长度记录属性,获取链表的当前长度的复杂度为 O(1) 。</li>
+</ul>
+<p><img src="./images/redis_o6.png" alt=""></p>
+<h2 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h2><p>Redis 的字典实现具有以下特性:</p>
+<ul>
+<li>查找、添加、删除键值对的复杂度为 O(1) ,键和值都是字符串对象。</li>
+<li>使用散列表(hash table)为底层实现,使用链地址法(separate chaining)来解决键冲突。</li>
+<li>Redis 会在不同的地方使用不同的散列算法,其中最常用的是 MurmurHash2 算法。</li>
+<li>在键值对数量大增或者大减的 时候会对散列表进行重新散列(rehash),并且这个 rehash 是渐进式、分多次进行的,不会在短 时间内耗费大量 CPU 时间,造成服务器阻塞。</li>
+</ul>
+<p><img src="./images/redis_o7.png" alt=""></p>
+<h2 id="跳跃表"><a href="#跳跃表" class="headerlink" title="跳跃表"></a>跳跃表</h2><p>Redis 的跳跃表实现具有以下特点:</p>
+<ul>
+<li>支持平均 O(log N) 最坏 O(N) 复杂度的节点查找操作,并且可以通 过执行范围性(range)操作来批量地获取有序的节点。</li>
+<li>跳跃表节点除了实现跳跃表所需的层(level)之外,还具有 score 属性和 obj 属性:前者是一个浮点数,用于 记录成员的分值;而后者则是一个字符串对象,用来记录成员本身。</li>
+<li>和字典一起构成 ZSET 结构,用于实现 Redis 的有序集合结构:其中字典用于快速 获取元素的分值(比如实现 ZSCORE 命令),以及判断元素是否存在;而跳 跃表则用于执行范围操作(比如实现 ZRANGE 命令)。</li>
+</ul>
+<p><img src="./images/redis_o8.png" alt=""></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/12/10/redis/2014-12-10-Redis持久化/" data-id="cjptr425v0075oscp922gkxj5" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2015/01/05/redis/2015-01-05-Redis对象/" data-id="cjpuvgbds00739zcpe3w5vzcd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -193,10 +328,10 @@
 
 
   
-    <article id="post-redis/2014-08-14-Redis应用之分类" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-redis/2014-12-26-Redis集群" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/08/14/redis/2014-08-14-Redis应用之分类/" class="article-date">
-  <time datetime="2014-08-13T16:00:00.000Z" itemprop="datePublished">2014-08-14</time>
+    <a href="/2014/12/26/redis/2014-12-26-Redis集群/" class="article-date">
+  <time datetime="2014-12-25T16:00:00.000Z" itemprop="datePublished">2014-12-26</time>
 </a>
     
   <div class="article-category">
@@ -211,7 +346,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/14/redis/2014-08-14-Redis应用之分类/">Redis应用之分类</a>
+      <a class="article-title" href="/2014/12/26/redis/2014-12-26-Redis集群/">Redis集群</a>
     </h1>
   
 
@@ -219,398 +354,67 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p>分类需求类似于标签功能，按需用集合或有序集合，这里据一个文章分类的例子</p>
-<h2 id="栗子"><a href="#栗子" class="headerlink" title="栗子"></a>栗子</h2><p>分类页面会根据文章最后一次被回复的时间来排序帖子。</p>
-<h2 id="将文章添加到一个分类中"><a href="#将文章添加到一个分类中" class="headerlink" title="将文章添加到一个分类中"></a>将文章添加到一个分类中</h2><p>文章id为article_id, 分类id为category_id, 文章创建时间为time<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zadd anticle:category:[category_id] time [article_id]</span><br></pre></td></tr></table></figure></p>
-<h2 id="检查给定的文章是否属于当前分类"><a href="#检查给定的文章是否属于当前分类" class="headerlink" title="检查给定的文章是否属于当前分类"></a>检查给定的文章是否属于当前分类</h2><p>当 article_id 作为元素存在于 ZSET 时，它的分值不为 None<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zscore anticle:category:[category_id] [article_id]</span><br></pre></td></tr></table></figure></p>
-<h2 id="返回当前分类包含的文章数量"><a href="#返回当前分类包含的文章数量" class="headerlink" title="返回当前分类包含的文章数量"></a>返回当前分类包含的文章数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zcard anticle:category:[category_id]</span><br></pre></td></tr></table></figure>
-<h2 id="按-count-个帖子为一页-返回该分类第-n-页的帖子。"><a href="#按-count-个帖子为一页-返回该分类第-n-页的帖子。" class="headerlink" title="按 count 个帖子为一页,返回该分类第 n 页的帖子。"></a>按 count 个帖子为一页,返回该分类第 n 页的帖子。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># start_index = (n-1)*count</span><br><span class="line"># end_index = n*count-1</span><br><span class="line">zrevrange anticle:category:[category_id] start_index end_index</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/14/redis/2014-08-14-Redis应用之分类/" data-id="cjptr425h0062oscpjfuj09l7" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-08-12-Redis应用之评论" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/12/redis/2014-08-12-Redis应用之评论/" class="article-date">
-  <time datetime="2014-08-11T16:00:00.000Z" itemprop="datePublished">2014-08-12</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/12/redis/2014-08-12-Redis应用之评论/">Redis应用之评论</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="评论"><a href="#评论" class="headerlink" title="评论"></a>评论</h2><p>用户可以对每条微博进行评论。</p>
-<p>对于每条评论,程序都会分配一个唯一的 评论 ID ,并使用格式为 weibo:comment:<id> 的散列键来储存评论的发布者、发布时间和内容。</id></p>
-<p>对于每条微博,程序都会使用一个列表来 储存该微博获得的所有评论的 ID ,列表的键名格式为 weibo:message:<id>:comments 。</id></p>
-<p>每当微博有新的 评论出现时,程序就会将新 评论的 ID推入到列表里面。</p>
-<h2 id="写评论"><a href="#写评论" class="headerlink" title="写评论"></a>写评论</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">commentid = incr global:weibo:comment</span><br><span class="line">HMSET weibo::comment:[commentid]</span><br><span class="line">                          author 10086</span><br><span class="line">                          content “nice post”</span><br><span class="line">                          time 1410123456</span><br></pre></td></tr></table></figure>
-<h2 id="获取评论"><a href="#获取评论" class="headerlink" title="获取评论"></a>获取评论</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HMGET weibo:comment:[commentid] id author content time</span><br></pre></td></tr></table></figure>
-<h2 id="把评论放入微博id为weiboid评论列表"><a href="#把评论放入微博id为weiboid评论列表" class="headerlink" title="把评论放入微博id为weiboid评论列表"></a>把评论放入微博id为weiboid评论列表</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LPUSH weibo:[weiboid]:comments [commentid]</span><br></pre></td></tr></table></figure>
-<h2 id="获取评论列表"><a href="#获取评论列表" class="headerlink" title="获取评论列表"></a>获取评论列表</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LRANGE weibo:[weiboid]:comments 0 -1</span><br></pre></td></tr></table></figure>
-<h2 id="评论数量"><a href="#评论数量" class="headerlink" title="评论数量"></a>评论数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LLEN weibo:[weiboid]:comments</span><br></pre></td></tr></table></figure>
-<p>每个直播间都有一个播主和多个听众。</p>
-<p>播主只要在直播间播放一首歌,那么所有听众都会听到相同的歌曲。</p>
-<h2 id="使用发布与订阅功能实现直播间"><a href="#使用发布与订阅功能实现直播间" class="headerlink" title="使用发布与订阅功能实现直播间"></a>使用发布与订阅功能实现直播间</h2><p>要使用 Redis 实现类似的直播间,我们可以为每个直播间设置一个频道,每个直播间的听众都是频道的订阅者,而播主则通过向频道发送消息来告诉大家要播放哪首歌。</p>
-<p>比如说,假设用户 peter 正在进行直播,他的直播间的频道为 peter::live::room ,当 peter要播放 ID 为 10086 的歌曲时,他会执行命令 PUBLISH peter::live::room “play_song::<br>10086” 。</p>
-<p>而所有听众在接收到 这条消息时,只需要分析出里面的指令( play_song)和要播放的歌曲 ID (10086),就可以播放 peter 指定的歌<br>曲了。</p>
-<h2 id="播主功能，播放-ID-为-song-id-的歌曲。"><a href="#播主功能，播放-ID-为-song-id-的歌曲。" class="headerlink" title="播主功能，播放 ID 为 song_id 的歌曲。"></a>播主功能，播放 ID 为 song_id 的歌曲。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">publish live:room:[roomid] &quot;song is song_id&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="听众功能，收听直播间。"><a href="#听众功能，收听直播间。" class="headerlink" title="听众功能，收听直播间。"></a>听众功能，收听直播间。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">subscribe live:room:[roomid]</span><br></pre></td></tr></table></figure>
-<h2 id="列出所有直播间"><a href="#列出所有直播间" class="headerlink" title="列出所有直播间"></a>列出所有直播间</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pubsub channels</span><br></pre></td></tr></table></figure>
-<h2 id="听众数量"><a href="#听众数量" class="headerlink" title="听众数量"></a>听众数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pubsub numsub live:room:[roomid]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/12/redis/2014-08-12-Redis应用之评论/" data-id="cjptr425i0064oscpj63cqvvo" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-9-读写分离的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/09/mysql/2014-8-9-读写分离的原理/" class="article-date">
-  <time datetime="2014-08-08T16:00:00.000Z" itemprop="datePublished">2014-08-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/09/mysql/2014-8-9-读写分离的原理/">读写分离的原理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>数据库往往写少读多，所以性能优化的第一步就是读写分离。</p>
-<p><img src="mysql7.png" alt="mysql7"></p>
-<p>主从复制基于主节点上的服务层的日志实现的，而从节点上有一个IO线程读取这个日志，然后写入本地。另有一个线程从本地日志读取后在从节点重新执行。</p>
-<p><img src="mysql8.png" alt="mysql8"></p>
-<p>如图是主从异步复制的流程图。在主实例写入引擎后就返回成功，然后将事件发给从实例，在从实例上执行。这种同步方式速度较快，但是在主挂了的时候，如果还没有复制，则可能存在数据丢失问题。</p>
-<p><img src="mysql9.png" alt="mysql9"></p>
-<p>数据库同步复制也不同，是当从节点落盘后再返回客户端，当然这样会使得性能有所降低，网易数据库团队是通过组提交，并行复制等技术将性能提上来。</p>
-<p>有了主从复制，在数据库DAO层可以设置读写分离策略，也有通过数据库中间件做这个事情的。</p>
-<p>其实数据库日志还有很多其他用处，如使用canal(阿里巴巴开源项目: 基于mysql数据库binlog的增量订阅 &amp;消费)订阅数据库的binlog ，可以用于更新缓存等。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/mysql/2014-8-9-读写分离的原理/" data-id="cjptr423o002joscpno4fgmqq" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-redis/2014-08-09-Redis应用之在线直播间" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" class="article-date">
-  <time datetime="2014-08-08T16:00:00.000Z" itemprop="datePublished">2014-08-09</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/">Redis应用之在线直播间</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="在线直播间"><a href="#在线直播间" class="headerlink" title="在线直播间"></a>在线直播间</h2><p>每个直播间都有一个播主和多个听众。</p>
-<p>播主只要在直播间播放一首歌,那么所有听众都会听到相同的歌曲。</p>
-<h2 id="使用发布与订阅功能实现直播间"><a href="#使用发布与订阅功能实现直播间" class="headerlink" title="使用发布与订阅功能实现直播间"></a>使用发布与订阅功能实现直播间</h2><p>要使用 Redis 实现类似的直播间,我们可以为每个直播间设置一个频道,每个直播间的听众都是频道的订阅者,而播主则通过向频道发送消息来告诉大家要播放哪首歌。</p>
-<p>比如说,假设用户 peter 正在进行直播,他的直播间的频道为 peter::live::room ,当 peter要播放 ID 为 10086 的歌曲时,他会执行命令 PUBLISH peter::live::room “play_song::<br>10086” 。</p>
-<p>而所有听众在接收到 这条消息时,只需要分析出里面的指令( play_song)和要播放的歌曲 ID (10086),就可以播放 peter 指定的歌<br>曲了。</p>
-<h2 id="播主功能，播放-ID-为-song-id-的歌曲。"><a href="#播主功能，播放-ID-为-song-id-的歌曲。" class="headerlink" title="播主功能，播放 ID 为 song_id 的歌曲。"></a>播主功能，播放 ID 为 song_id 的歌曲。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">publish live:room:[roomid] &quot;song is song_id&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="听众功能，收听直播间。"><a href="#听众功能，收听直播间。" class="headerlink" title="听众功能，收听直播间。"></a>听众功能，收听直播间。</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">subscribe live:room:[roomid]</span><br></pre></td></tr></table></figure>
-<h2 id="列出所有直播间"><a href="#列出所有直播间" class="headerlink" title="列出所有直播间"></a>列出所有直播间</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pubsub channels</span><br></pre></td></tr></table></figure>
-<h2 id="听众数量"><a href="#听众数量" class="headerlink" title="听众数量"></a>听众数量</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pubsub numsub live:room:[roomid]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/09/redis/2014-08-09-Redis应用之在线直播间/" data-id="cjptr425g005yoscps1fzcwmg" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-8-查询优化的方法论" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/08/mysql/2014-8-8-查询优化的方法论/" class="article-date">
-  <time datetime="2014-08-07T16:00:00.000Z" itemprop="datePublished">2014-08-08</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/08/mysql/2014-8-8-查询优化的方法论/">查询优化的方法论</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>要找到需要优化的SQL语句，首先要收集有问题的SQL语句。</p>
-<p>MySQL 数据库提供了慢SQL日志功能，通过参数slow_query_log，获取执行时间超过一定阈值的SQL语录列表。</p>
-<p>没有使用索引的SQL语句，可以通过long_queries_not_using_indexes参数开启。</p>
-<p>min_examined_row_limit，扫描记录数大于该值的SQL语句才会被记入慢SQL日志。</p>
-<p>找到有问题的语句，接下来就是通过explainSQL，获取SQL的执行计划，是否通过索引扫描记录，可以通过创建索引来优化执行效率。是否扫描记录数过多。是否持锁时间过长，是否存在锁冲突。返回的记录数是否较多。</p>
-<p>接下来可以定制化的优化。没有被索引覆盖的过滤条件涉及的字段，在区分度较大的字段上创建索引，如果涉及多个字段，尽量创建联合索引。</p>
-<p>扫描记录数非常多，返回记录数不多，区分度较差，重新评估SQL语句涉及的字段，选择区分度高的多个字段创建索引</p>
-<p>扫描记录数非常多，返回记录数也非常多，过滤条件不强，增加SQL过滤条件</p>
-<p>schema_redundant_indexes查看有哪些冗余索引。 </p>
-<p>如果多个索引涉及字段顺序一致，则可以组成一个联合索引schema_unused_indexes查看哪些索引从没有被使用。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/08/mysql/2014-8-8-查询优化的方法论/" data-id="cjptr423o002hoscpeqy8wrlu" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-7-解读数据库军规背后的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" class="article-date">
-  <time datetime="2014-08-06T16:00:00.000Z" itemprop="datePublished">2014-08-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/">解读数据库军规背后的原理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>了解了这两种索引的原理，我们就能够解释为什么很多所谓的数据库的军规长这个样子了。下面我们来一一解释。</p>
-<h2 id="什么情况下应该使用组合索引而非单独索引呢？"><a href="#什么情况下应该使用组合索引而非单独索引呢？" class="headerlink" title="什么情况下应该使用组合索引而非单独索引呢？"></a>什么情况下应该使用组合索引而非单独索引呢？</h2><p>假设有条件语句A=a AND B=b，如果A和B是两个单独的索引，在AND条件下只有一个索引起作用，对于B则要逐个判断，而如果使用组合索引(A, B)，只要遍历一棵树就可以了，大大增加了效率。但是对于A=a OR B=b，由于是或的关系，因而组合索引是不起作用的，因而可以使用单独索引，这个时候，两个索引可以同时起作用。</p>
-<h2 id="为什么索引要有区分度，组合索引中应该讲有区分度的放在前面？"><a href="#为什么索引要有区分度，组合索引中应该讲有区分度的放在前面？" class="headerlink" title="为什么索引要有区分度，组合索引中应该讲有区分度的放在前面？"></a>为什么索引要有区分度，组合索引中应该讲有区分度的放在前面？</h2><p>如果没有区分度，例如用性别，相当于把整个大表分成两部分，查找数据还是需要遍历半个表才能找到，使得索引失去了意义。 </p>
-<h2 id="如果有组合索引，还需要单列索引吗？"><a href="#如果有组合索引，还需要单列索引吗？" class="headerlink" title="如果有组合索引，还需要单列索引吗？"></a>如果有组合索引，还需要单列索引吗？</h2><p>如果组合索引是(A, B)，则对于条件A=a，是可以用上这个组合索引的，因为组合索引是先按照第一列进行排序的，所以没必要对于A单独建立一个索引，但是对于B=b就用不上了，因为只有在第一列相同的情况下，才比较第二列，因而第二列相同的，可以分布在不同的节点上，没办法快速定位。</p>
-<h2 id="索引是越多越好吗？"><a href="#索引是越多越好吗？" class="headerlink" title="索引是越多越好吗？"></a>索引是越多越好吗？</h2><p>当然不是，只有在必要的地方添加索引，索引不但会使得插入和修改的效率降低，而且在查询的时候，有一个查询优化器，太多的索引会让优化器困惑，可能没有办法找到正确的查询路径，从而选择了慢的索引。</p>
-<h2 id="为什么要使用自增主键"><a href="#为什么要使用自增主键" class="headerlink" title="为什么要使用自增主键"></a>为什么要使用自增主键</h2><p>因为字符串主键和随机主键会使得数据随机插入，效率比较差，主键应该少更新，避免B+树和频繁合并和分裂。</p>
-<h2 id="为什么尽量不使用NULL"><a href="#为什么尽量不使用NULL" class="headerlink" title="为什么尽量不使用NULL"></a>为什么尽量不使用NULL</h2><p>NULL在B+树里面比较难以处理，往往需要特殊的逻辑进行处理，反而降低了效率。</p>
-<h2 id="为什么不要在更新频繁的字段上建立索引"><a href="#为什么不要在更新频繁的字段上建立索引" class="headerlink" title="为什么不要在更新频繁的字段上建立索引"></a>为什么不要在更新频繁的字段上建立索引</h2><p>更新一个字段意味着相应的索引也要更新，更新往往意味着删除然后再插入，索引本来是一种事先在写的阶段形成一定的数据结构，从而使得在读的阶段效率较高的方式，但是如果一个字段是写多读少，则不建议使用索引。</p>
-<h2 id="为什么在查询条件里面不要使用函数"><a href="#为什么在查询条件里面不要使用函数" class="headerlink" title="为什么在查询条件里面不要使用函数"></a>为什么在查询条件里面不要使用函数</h2><p>例如ID+1=10这种条件，索引是事先写入的时候生成好的，ID+1这种操作在查询阶段，索引无能为例，没办法把所有的索引都先做一个计算，然后再比较吧，代价太大了，因而应该使用ID=10-1。</p>
-<h2 id="为什么不要使用NOT等负向查询条件"><a href="#为什么不要使用NOT等负向查询条件" class="headerlink" title="为什么不要使用NOT等负向查询条件"></a>为什么不要使用NOT等负向查询条件</h2><p>你可以想象一下，对于一棵B+树，跟节点是40，如果你的条件是等于20，就去左面查，你的条件等于50，就去右面查，但是你的条件是不等于66，索引应该咋办？还不是遍历一遍才知道。</p>
-<h2 id="为什么模糊查询不要以通配符开头"><a href="#为什么模糊查询不要以通配符开头" class="headerlink" title="为什么模糊查询不要以通配符开头"></a>为什么模糊查询不要以通配符开头</h2><p>对于一棵B+树来讲，如果根是字符def，如果通配符在后面，例如abc%，则应该搜索左面，例如efg%，则应该搜索右面，如果通配符在前面%abc，则不知道应该走哪一面，还是都扫描一遍吧。</p>
-<h2 id="为什么OR要改成IN，或者使用Union"><a href="#为什么OR要改成IN，或者使用Union" class="headerlink" title="为什么OR要改成IN，或者使用Union"></a>为什么OR要改成IN，或者使用Union</h2><p>OR查询条件的优化往往比较难找到最佳的路径，尤其是OR的条件比较多的时候，尤其如此，对于同一个字段，使用IN就好一些，数据库会对IN里面的条件进行排序，并统一通过二分搜索的方法处理。对于不同的字段，使用Union，则可以让每一个子查询都使用索引。</p>
-<h2 id="为什么数据类型应该尽量小，常用整型来代替字符型，长字符类型可以考虑使用前缀索引？"><a href="#为什么数据类型应该尽量小，常用整型来代替字符型，长字符类型可以考虑使用前缀索引？" class="headerlink" title="为什么数据类型应该尽量小，常用整型来代替字符型，长字符类型可以考虑使用前缀索引？"></a>为什么数据类型应该尽量小，常用整型来代替字符型，长字符类型可以考虑使用前缀索引？</h2><p>因为数据库是按照页存放的，每一页的大小是一样的，如果数据类型比较大，则页数会比较多，每一页放的数据会比较少，树的高度会比较高，因而搜索数据要读取的I/O数目会比较多，插入的时候节点也容易分裂，效率会降低。使用整型来代替字符型多是这个考虑，整型对于索引有更高的效率，例如IP地址等。如果有长字符类型需要使用索引进行查询，为了不要使得索引太大，可以考虑将字段的前缀进行索引，而非整个字段。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/07/mysql/2014-8-7-解读数据库军规背后的原理/" data-id="cjptr423n002foscpsjbpjc23" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-6-MySql数据库索引的优缺点" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" class="article-date">
-  <time datetime="2014-08-05T16:00:00.000Z" itemprop="datePublished">2014-08-06</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/">MySql数据库索引的优缺点</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>数据库索引的优势最明显的就是减少I/O，下面分析几种场景。</p>
-<p>对于=条件的字段，可以直接通过查找B+树的方式，通过很少的硬盘读取次数(相当于B+树层高)，就能够到达叶子节点，然后直接定位到数据的位置。</p>
-<p>对于范围的字段，由于B+树里面都是排好序的，范围可以很快的通过树进行定位。</p>
-<p>同理对于orderby/group by/distinct/max/min，由于B+树是排好序的，也是能够很快的得到结果的。</p>
-<p>还有一个常见的场景称为索引覆盖数据。例如A, B两个字段作为条件字段，常出现A=a AND B=b，同时select C, D时候，往往会建联合索引(A, B)，是一个二级索引，所以搜索的时候，通过二级索引的B+树能够很快的找到相应的叶子节点和记录，但是记录中有的是聚簇索引的ID，所以还需要查找一次聚簇索引的B+树，找到真正的表中的记录，然后在记录中，将C,D读取出来。如果建立联合索引的时候为(A, B, C, D)，则在二级索引的B+树中就有了所有的数据，可以直接返回了，减少了一次搜索树的过程。</p>
-<p>当然索引肯定是有代价的，天下没有免费的午餐。</p>
-<p>索引带来的好处多是读的效率的提高，而索引带来的代价就是写的效率的降低。</p>
-<p>插入和修改数据，都有可能意味着索引的改变。</p>
-<p>插入的时候，往往会在主键上建设聚簇索引，因而主键最好使用自增长，这样插入的数据就总是在最后，而且是顺序的，效率比较高。主键不要使用UUID，这样顺序比较随机，会带来随机的写入，效率比较差。主键不要使用和业务有关，因为与业务相关意味着会被更新，将面临着一次删除和重新插入，效率会比较差。</p>
-<p>通过上面对于B+树的原理的介绍，我们可以看出B+树的分裂代价还是比较大的，而分裂往往就产生于插入的过程中。</p>
-<p>而对于数据的修改，则基本相当于删除再插入，代价也比较大。</p>
-<p>对于一些字符串的列的二级索引，往往会造成随机的写入和读取，对I/O的压力也比较大。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/06/mysql/2014-8-6-MySql数据库索引的优缺点/" data-id="cjptr425q006qoscpmuhkfogx" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-mysql/2014-8-5-MySql数据库索引的原理" class="article article-type-post" itemscope="" itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" class="article-date">
-  <time datetime="2014-08-04T16:00:00.000Z" itemprop="datePublished">2014-08-05</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Mysql/">Mysql</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/">MySql数据库索引的原理</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在整个过程中，最容易称为瓶颈点的是数据的读写，往往意味着要顺序或者随机读写磁盘，而读写磁盘的速度往往是比较慢的。</p>
-<p>如果加快这个过程呢？相信大家都猜到了就是建立索引。</p>
-<p>为什么索引能够加快这个过程呢？</p>
-<p>相信大家都逛过美食城，里面众多家餐馆琳琅满目，如果你不着急呢，肚子不饿，对搜索的性能没有要求，就可以在商场里面慢慢逛，逛一家看一家，知道找到自己想吃的餐馆。但是当你饿了，或者你们约好了餐馆，你一定想直奔那个餐馆，这个时候，你往往会去看楼层的索引图，快速的查找你目标餐馆的位置，找到后，直奔主题，就会大大节约时间，这就是索引的作用。</p>
-<p>所以索引就是通过值，快速的找到它的位置，从而可以快速的访问。</p>
-<p>索引的另外一个作用就是不用真正的查看数据，就能够做一些判断，例如商场里面有没有某个餐馆，你看一下索引就知道了，不必真的到商场里面逛一圈，再如找出所有的川菜馆，也是只要看索引就可以了，不用一家一家川菜馆跑。</p>
-<p>那么在Mysql中，索引是如何工作的呢？</p>
-<p>Mysql的索引结构，往往是一棵B+树。</p>
-<p>一棵m阶B+树具有如下的性质：</p>
+        <h1 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h1><p>Redis 的分布式数据 库实现</p>
+<p>Redis 集群是一个由多个 节点组成的分布式服 务器群,它具有复制、高可用和分片特性。</p>
+<p>Redis 的集群没有中心 节点,并且带有复制和故障 转移特性,这可以避免单个节点成为性能瓶颈,或者因为某个节点下线而导致整个集群下 线。</p>
+<h2 id="分布式"><a href="#分布式" class="headerlink" title="分布式"></a>分布式</h2><p>Redis 集群是一个由多个 Redis 服务器组成的分布式网 络服务器群,集群中的各个服 务器被称为节点(node),这些节点会相互连接并进行通信。</p>
+<p>分布式的 Redis 集群没有中心 节点,所以用户不必担心某个 节点会成为整个集群的性能瓶 颈。</p>
+<p><img src="./images/redis_c1.png" alt=""></p>
+<h2 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h2><p>Redis 集群的每个节点都有两种角色可 选,一个是主节点(master node),另一个是从 节点(slave node):其中主节点用于储存数据,而从 节点则是某个主节点的复制品。</p>
+<p>当用户需要处理更多读请求的时候,添加从节点可以扩展系统的读性能。</p>
+<p>因为 Redis 集群重用了单机 Redis 复制特性的代 码,所以集群的复制行 为和我们之前介绍的单机复制特性的行 为是完全一样的。<br><img src="./images/redis_c2.png" alt=""></p>
+<h2 id="节点故障检测和自动故障转移"><a href="#节点故障检测和自动故障转移" class="headerlink" title="节点故障检测和自动故障转移"></a>节点故障检测和自动故障转移</h2><p>Redis 集群的主节点内置了类似 Redis Sentinel 的节点故障检测和自动故障转移功能,当集群中的某个主节点下线时,集群中的其他在 线主节点会注意到这一点,并对已下线的主节点进行故障转移。</p>
+<p>集群进行故障转移的方法和 Redis Sentinel 进行故障转移的方法基本一 样,不同的是,在集群里面,故障转移是由集群中其他在 线的主节点负责进行的,所以集群不必另外使用 Redis Sentinel 。<br><img src="./images/redis_c3.png" alt=""></p>
+<h2 id="分片"><a href="#分片" class="headerlink" title="分片"></a>分片</h2><p>集群使用分片来 扩展数据库的容量,并将命令 请求的负载交给不同的节点来分担。</p>
+<p>集群将整个数据 库分为 16384 个槽(slot),所有键都属于这 16384 个槽的其中一个, 计算键 key属于哪个槽的公式 为 slot_number = crc16(key) % 16384 ,其中 crc16 为 16 位的循环冗余校验和函数。</p>
+<p>集群中的每个主 节点都可以处理 0 个至 16384 个槽,当 16384 个槽都有某个 节点在负责处理时,集群进入上线状态,并开始处理客户端发送的数据命令 请求。</p>
+<p>比如说,如果我们有三个主节点 7000 、 7001 和 7002 ,那么我们可以:</p>
+<ul>
+<li>将槽 0 至 5460 指派给节点 7000 负责处理;</li>
+<li>将槽 5461 至 10922 指派给节点 7001 负责处理;</li>
+<li>将槽 10923 至 16383 指派给节点 7002 负责处理;</li>
+</ul>
+<p>这样就可以将 16384 个槽平均地指派 给三个节点负责处理。</p>
+<h2 id="转向"><a href="#转向" class="headerlink" title="转向"></a>转向</h2><p>对于一个被指派了槽的主 节点来说,这个主节点只会处理属于指派给自己的槽的命令 请求。</p>
+<p>如果一个节点接收到了和自己 处理的槽无关的命令 请求,那么节点会向客户端返回一个转向错误(redirection error),告诉客户端,哪个节点才是负责处理这条命令的,之后客 户端需要根据错误中包含的地址和端口号重新向正确的 节点发送命令请求。<br><img src="./images/redis_c4.png" alt=""></p>
+<h1 id="集群搭建"><a href="#集群搭建" class="headerlink" title="集群搭建"></a>集群搭建</h1><h2 id="集群搭建步骤"><a href="#集群搭建步骤" class="headerlink" title="集群搭建步骤"></a>集群搭建步骤</h2><p>搭建一个 Redis 集群需要执行以下步骤:</p>
 <ol>
-<li><p>节点分索引节点和数据节点。索引节点相当于B树的内部节点，所有的索引节点组成一棵B树，具有B树的所有的特性。在索引节点中，存放着Key和指针，并不存放具体的元素。数据节点相当与B树的外部节点，B树的外部节点为空，在B+树中被利用了起来，用于存放真正的数据元素，里面包含了Key和元素的其他信息，但是没有指针。</p>
-</li>
-<li><p>整棵索引节点组成的B树仅仅用来查找具有某个Key的数据元素位于哪个外部节点。在索引节点中找到了Key，事情没有结束，要继续找到数据节点，然后将数据节点中的元素读出来，或者二分查找，或者顺序扫描来寻找真正的数据元素。</p>
-</li>
-<li><p>M这个阶数仅仅用来控制索引节点部分的度，至于每个数据节点包含多少元素，与m无关。</p>
-</li>
-<li><p>另外有一个链表，将所有的数据节点串起来，可以顺序访问。</p>
-</li>
+<li>创建多个节点。</li>
+<li>为每个节点指派槽,并将多个 节点连接起来,组成一个集群。</li>
+<li>当集群数据库的 16384 个槽都有节点在处理时,集群进入上线状态。</li>
 </ol>
-<p>这个定义的比较抽象，我们来看一个具体的例子。</p>
-<p><img src="mysql4.png" alt="mysql4"></p>
-<p>从图中我们可以看出，这是一个3阶B+树，而一个外部数据节点最多包含5项。如果插入的数据在数据节点，如果不引起分裂和合并，则索引节点组成的B树就不会变。</p>
-<p>如果在71到75的外部节点插入一项76，则引起分裂，71,72,73成为一个数据节点，74,75,76成为一个数据节点，而对于索引节点来讲相当于插入一个Key为74的过程。</p>
-<p>如果在41到43的外部节点中删除43，则引起合并，41,42,61,62,63合并成一个节点，对于索引节点来讲，相当于删除Key为60的过程。</p>
-<p>查找的时候，由于B+树层高很小，所以能够比较快速的定位，例如我们要查找值62，在根节点发现大于40则访问右面，小于70则访问左面，大于60则访问右面，在叶子节点的第二个，就找到了62，成功定位。</p>
-<p>在Mysql的InnoDB中，有两种类型的B+树索引，一种称为聚簇索引，一种称为二级索引。</p>
-<p>聚簇索引的叶子节点就是数据节点，往往是主键作为聚簇索引，二级索引的叶子节点存放的是KEY字段加主键值。因而通过二级索引访问数据，要访问两次索引。</p>
-<p><img src="mysql5.png" alt="mysql5"></p>
-<p>还有一种索引的形式称为组合索引，或者复合索引，可以在多个列上建立索引。</p>
-<p><img src="mysql6.png" alt="mysql6"></p>
-<p>这种索引的排序规则为，先比较第一列，在第一列相等的情况下，比较第二列，以此类推。</p>
+<p>接下来,就让我们来搭建一个包含六个 节点的 Redis 集群,其中三个 节点为主节点,而另外三个 节点为从节点,每个主节点都有一个从 节点。</p>
+<p>注意,在极端情况下,如果将 16384 个槽都指派给一个主节点,那么只有一个主 节点也可以让集群进入上线状态,但是要让集群的故障转移特性生效,最起 码要有三个主节点;而要让故障转移真正有意义,最少要为三个主节点分别设置一个从节点,这也是我们使用六个节点作为例子的原因。</p>
+<h2 id="创建节点"><a href="#创建节点" class="headerlink" title="创建节点"></a>创建节点</h2><p>集群中的节点就是运行在集群模式下的 Redis 服务器,为了构建一个集群,我 们需要一一创建集群中的每个节点。</p>
+<p>为了让 Redis 服务器以集群模式运行,我 们需要在启动服务器时,打开服务器的集群模式 选项:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cluster-enabled yes</span><br></pre></td></tr></table></figure></p>
+<p>另外,如果有多个 节点运行在同一台机器里面,那么我 们还需要为每个节点指定不同的端口号:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">port 7000</span><br></pre></td></tr></table></figure></p>
+<p>我们可以将这两个配置值写入到 redis.conf 文件里面,然后 执行以下命令来启 动一个节点:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-server redis.conf</span><br></pre></td></tr></table></figure></p>
+<h2 id="节点创建示例"><a href="#节点创建示例" class="headerlink" title="节点创建示例"></a>节点创建示例</h2><p>为了在同一台机器上构建一个包含六个 节点的集群,其中三个主 节点分别运行在机器的 7000 、7001 和 7002 端口,而三个从 节点则分别运行在机器的 7003 、 7004 和 7005 端口,我们可以先创建一个 rediscluster 文件夹,然后分别创建 7000 至 7005 这六个文件夹,每个文件夹都包含一个redis.conf 文件,它的内容 为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">port &lt;number&gt;</span><br><span class="line">cluster-enabled yes</span><br></pre></td></tr></table></figure></p>
+<p>然后只要分别执行:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">~/rediscluster/7000$ redis-server redis.conf</span><br><span class="line">...</span><br><span class="line">~/rediscluster/7005$ redis-server redis.conf</span><br></pre></td></tr></table></figure></p>
+<p>就可以创建出六个节点了(节点启动时默认为主节点,之后要将其中三个 节点转为从节点)。</p>
+<h2 id="创建集群"><a href="#创建集群" class="headerlink" title="创建集群"></a>创建集群</h2><p>在创建出六个节点之后,我们需要让这六个节点互相连接以构成一个集群,然后 为三个主节点指派槽,并为这三个主节点分别设置一个从节点。</p>
+<p>创建集群的操作可以通过使用位于 Redis 安装文件夹内的 redis-trib.rb 程序来完成,这是一个使用 Ruby 编写的 Redis 集群管理程序,它具有创建集群、检查集群的上线情况和槽指派情况、对集群进行重新分片、向集群添加新节点或者从集群中移除节点等功能。</p>
+<p>为了创建一个包含三个主 节点和三个从节点的集群,我 们需要执行以下命令:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>create 表示我们要创建一个集群</li>
+<li>–replicas 1 则表示让 redis-trib.rb 为集群中的每个主节点设置一个从节点</li>
+<li>再之后输入的是各个节点的 IP 地址和端口号。</li>
+</ul>
+<h2 id="访问集群"><a href="#访问集群" class="headerlink" title="访问集群"></a>访问集群</h2><p>集群客户端<br>因为集群功能比起 单机功能要复杂得多,所以不同 语言的 Redis 客户端通常需要为集群添加特别的支持,或者专门开发一个集群客户端。</p>
+<p>目前主要的 Redis 集群客户端(或者说,支持集群功能的 Redis 客户端)有以下这些:</p>
+<ul>
+<li>redis-rb-cluster:antirez 使用 Ruby 编写的 Redis 集群客户端,集群客户端的官方实现。</li>
+<li>predis:Redis 的 PHP 客户端,支持集群功能。</li>
+<li>jedis:Redis 的 JAVA 客户端,支持集群功能。</li>
+<li>StackExchange.Redis:Redis 的 C# 客户端,支持集群功能。</li>
+<li>内置的 redis-cli :在启动时给定 -c 参数即可进入集群模式,支持部分集群功能。</li>
+</ul>
+<h2 id="连接节点并执行命令"><a href="#连接节点并执行命令" class="headerlink" title="连接节点并执行命令"></a>连接节点并执行命令</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ redis-cli -p 7000 -c</span><br><span class="line">127.0.0.1:7000&gt; SET date 2014-10-10    # 键 date 所在的槽位于 节点 7000 ,节点直接执行命令</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:7000&gt; SET msg &quot;hello world&quot; # 键 msg 所在的槽位于 节点 7001</span><br><span class="line">-&gt; Redirected to slot [6257] located at 127.0.0.1:7001 # 客户端从 7000 转向至 7001</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:7001&gt; SADD fruits “apple” “banana” “cherry” # 键 fruits 所在的槽位于 节点 7002</span><br><span class="line">-&gt; Redirected to slot [14943] located at 127.0.0.1:7002 # 客户端从 7001 转向至 7002</span><br><span class="line">(integer) 2</span><br><span class="line">127.0.0.1:7002&gt; # 转向是自动完成的,无需任何用 户操作</span><br></pre></td></tr></table></figure>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/mysql/2014-8-5-MySql数据库索引的原理/" data-id="cjptr423n002doscpby3itkk8" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/26/redis/2014-12-26-Redis集群/" data-id="cjpuvgbdr00719zcp6acpbghd" class="article-share-link">Share</a>
       
       
     </footer>
@@ -620,10 +424,10 @@
 
 
   
-    <article id="post-redis/2014-08-05-Redis应用之Session" class="article article-type-post" itemscope="" itemprop="blogPost">
+    <article id="post-redis/2014-12-23-Redis哨兵" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2014/08/05/redis/2014-08-05-Redis应用之Session/" class="article-date">
-  <time datetime="2014-08-04T16:00:00.000Z" itemprop="datePublished">2014-08-05</time>
+    <a href="/2014/12/23/redis/2014-12-23-Redis哨兵/" class="article-date">
+  <time datetime="2014-12-22T16:00:00.000Z" itemprop="datePublished">2014-12-23</time>
 </a>
     
   <div class="article-category">
@@ -638,7 +442,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2014/08/05/redis/2014-08-05-Redis应用之Session/">Redis应用之Session</a>
+      <a class="article-title" href="/2014/12/23/redis/2014-12-23-Redis哨兵/">Redis哨兵</a>
     </h1>
   
 
@@ -646,16 +450,422 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><p>用户 Session (会话)是一种验证用户身份的手段,通常会分 别储存在服务器端和客户端,一般由用户ID(uid)和 Session ID (sid)组成。</p>
-<p>当用户成功登录网站之后,网 页浏览器会把网站返回的 Session 储存起来,之后每次 浏览器查看网站的某个页面时,浏览器都会把 Session 里面储存的信息连同网页请求一并发送给网站,使得网站可以检查这个客户端是否已经登录,以及是否为指定的用户,等等。</p>
-<p>Session 一般每过一周或者一个月就会自 动过期,强制用户再次登录,以防用户遗忘密码,或者Session ID 遭人破解。</p>
-<h2 id="设置Session"><a href="#设置Session" class="headerlink" title="设置Session"></a>设置Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set key info PX [expireTime|1000 * 60 * 60 * 24]</span><br></pre></td></tr></table></figure>
-<h2 id="获取Session"><a href="#获取Session" class="headerlink" title="获取Session"></a>获取Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get key</span><br></pre></td></tr></table></figure>
-<h2 id="销毁Session"><a href="#销毁Session" class="headerlink" title="销毁Session"></a>销毁Session</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">del key</span><br></pre></td></tr></table></figure>
+        <h1 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h1><p>监视主从服务器,并在主服 务器下线时自动进行故障转移</p>
+<h2 id="启动-Redis-Sentinel"><a href="#启动-Redis-Sentinel" class="headerlink" title="启动 Redis Sentinel"></a>启动 Redis Sentinel</h2><p>通过执行 Redis 安装文件夹中的 redis-sentinel 程序,可以启 动一个 Sentinel 实例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-sentinel sentinel.conf</span><br></pre></td></tr></table></figure></p>
+<p>因为 Redis 的 Sentinel 实际上就是一个运行在 Sentienl 模式下的 Redis 服务器,所以我们同样可以使用以下命令来启 动一个 Sentinel 实例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-server sentinel.conf --sentinel</span><br></pre></td></tr></table></figure></p>
+<p>启动 Sentinel 时需要指定配置文件,该文件记录了要监视的主服务器,以及相关的配置参数</p>
+<h2 id="使用-Sentienl-监视主服务器以及它的从服务器"><a href="#使用-Sentienl-监视主服务器以及它的从服务器" class="headerlink" title="使用 Sentienl 监视主服务器以及它的从服务器"></a>使用 Sentienl 监视主服务器以及它的从服务器</h2><p>每个 Sentinel 实例可以监视任意多个主服 务器,以及被监视的主服务器属下的所有从服 务器。<br><img src="./images/redis_sq.png" alt=""></p>
+<h2 id="Sentinel-网络"><a href="#Sentinel-网络" class="headerlink" title="Sentinel 网络"></a>Sentinel 网络</h2><p>多个 Sentinel 实例可以监视同一个主服务器,监视相同主服务器的这些 Sentinel 们会自动地互相连接,组成一个分布式的 Sentinel 网络,互相通信并交换彼此关于被监视服务器的信息。</p>
+<p><img src="./images/sw.png" alt=""></p>
+<h2 id="服务器下线判断"><a href="#服务器下线判断" class="headerlink" title="服务器下线判断"></a>服务器下线判断</h2><p>当一个 Sentinel 认为被监视的服务器已经下线时,它会向网络中的其他 Sentinel 进行确认,判断该服务器是否真的已 经下线。</p>
+<p>如果下线的服务器为主服务器,那么 Sentinel 网络将对下线主服务器进行自动故障转移:通过将下线主服务器的某个从服 务器提升为新的服务器,并让其他从服务器转为复制新的主服 务器,以此来让系统重新回到上线状态。</p>
+<h2 id="Sentinel-的配置"><a href="#Sentinel-的配置" class="headerlink" title="Sentinel 的配置"></a>Sentinel 的配置</h2><p>监视配置选项</p>
+<p>Sentinel 在启动时必须指定相应的配置文件:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ redis-sentinel sentinel.conf</span><br></pre></td></tr></table></figure></p>
+<p>一个 Sentinel 配置文件至少要包含一个 监视配置选项,用于指定被 监视主服务器的相关信息:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentinel monitor &lt;name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>name 是用户为被监视主服务器设置的名字,</li>
+<li>ip 和 port 则是被监视主服务器的 IP 地址和端口号,</li>
+<li>quorum 为确认这个主服务器已下线所需要的最少 Sentinel 数量。</li>
+</ul>
+<p>举个例子,配置 <code>sentinel monitor mymaster 127.0.0.1 6379 2</code>表示要监视的主服务器的名字为mymaster ,它的 IP 地址为 127.0.0.1 ,端口号为 6379 ,而确认这个主服务器已下线最少需要两个Sentinel 同意。</p>
+<p>Sentinel 可以自动发现并监视主服务器属下的所有从服 务器,所以用户只需要给出主服务器的地址和端口号就可以了。</p>
+<p>端口配置选项</p>
+<p>如果要在同一台机器上运行多个 Sentinel 实例,用户还需要通过 port <number> 选项来为每个Sentinel 设置不同的端口号,如果不 进行设置,那么 Sentinel 的默认端口号为 26379 。</number></p>
+<p>举个例子,如果要在同一台机器上运行两个 Sentinel 实例,用户可以通过载入以下两个配置文件来分别将两个 Sentinel 实例的端口号设置为 26379 和 26380 :<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># sentinel1.conf</span><br><span class="line">port 26379</span><br><span class="line">sentinel monitor ...</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># sentinel2.conf</span><br><span class="line">port 26380</span><br><span class="line">sentinel monitor ...</span><br></pre></td></tr></table></figure>
+<p>执行以下两条命令,将 创建两个监视主服务器 s1的 Sentinel 实例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ redis-sentinel sentinel1.conf</span><br><span class="line">$ redis-sentinel sentinel2.conf</span><br></pre></td></tr></table></figure></p>
+<p>其中 sentinel1.conf 的内容为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">sentinel monitor s1 127.0.0.1 6379 2</span><br></pre></td></tr></table></figure></p>
+<p>而 sentinel2.conf 的内容为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">port 26380</span><br><span class="line">sentinel monitor s1 127.0.0.1 6379 2</span><br></pre></td></tr></table></figure></p>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yacen.github.io/2014/08/05/redis/2014-08-05-Redis应用之Session/" data-id="cjptr425g0060oscpvmxkato6" class="article-share-link">Share</a>
+      <a data-url="http://yacen.github.io/2014/12/23/redis/2014-12-23-Redis哨兵/" data-id="cjpuvgbdq006z9zcp5zb22o6a" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-12-22-Redis复制集" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/22/redis/2014-12-22-Redis复制集/" class="article-date">
+  <time datetime="2014-12-21T16:00:00.000Z" itemprop="datePublished">2014-12-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/22/redis/2014-12-22-Redis复制集/">Redis复制集</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h1><p>Redis 的复制(replication)功能允许用户根据一个 Redis 服务器来创建任意多个该服务器的复制品,其中被复制的服 务器为主服务(master),而通过复制创建出来的服务器复制品则为从服务器(slave)。</p>
+<p>主从服务器两者拥有相同的数据 库数据:</p>
+<p>只要主从服务器之间的网络连接正常,主服 务器就会一直将发生在自己身上的数据更新同步 给从服务器,从而一直保 证主从服务器的数据相同。</p>
+<p><img src="./images/redis_replica.png" alt=""></p>
+<h2 id="使用从服务器来处理读命令请求"><a href="#使用从服务器来处理读命令请求" class="headerlink" title="使用从服务器来处理读命令请求"></a>使用从服务器来处理读命令请求</h2><p>Redis 允许从服务器执行客户端发送的读命令,比如 GET 、LRANGE、SMEMBERS、HGET、ZRANGE 等等。</p>
+<p>因为主从服务器拥有相同的数据 库数据,所以从服务器在执行客户端发送的读命令时,获得的结果与<br>主服务器执行相同的读命令所获得的结果是一样的。</p>
+<p>因此,用户可以将原本由主服 务器负责处理的一部分(甚至全部) 读命令请求转交给从服务器处理,从而降低主服 务器在处理读命令请求方面的负载,并扩展整个系统处理读命令请求的能力。<br><img src="./images/redis_s.png" alt=""></p>
+<h2 id="通过复制来扩展系统处理读请求的能力"><a href="#通过复制来扩展系统处理读请求的能力" class="headerlink" title="通过复制来扩展系统处理读请求的能力"></a>通过复制来扩展系统处理读请求的能力</h2><p>通过添加从服务器可以<em>线性</em>地扩展整个系统处理读命令请求的能力。<br><img src="./images/redis_se.png" alt=""></p>
+<h2 id="创建从服务器的方法"><a href="#创建从服务器的方法" class="headerlink" title="创建从服务器的方法"></a>创建从服务器的方法</h2><p>Redis 提供了两种方法来 为某个主服务器创建从服务器:</p>
+<ol>
+<li>使用 <code>SLAVEOF &lt;master-ip&gt; &lt;master-port&gt;</code> 命令<ul>
+<li>比如向一个服 务器发送 <code>SLAVEOF 127.0.0.1 6379</code> ,可以让接收到该命令的服务器变为 127.0.0.1:6379 的从服务器。</li>
+<li>在将一个服务器设置成从服务器之后,可以通 过向它发送 SLAVEOF no one 来让它变回一个主服务器(数据库已有的数据会被保留)。</li>
+</ul>
+</li>
+<li>在启动服务器时,通过设置 <code>slaveof &lt;master-ip&gt; &lt;master-port&gt;</code> 配置选项来让服务器成为指定服务器的从服务器。</li>
+</ol>
+<h2 id="服务器在复制时遭遇下线"><a href="#服务器在复制时遭遇下线" class="headerlink" title="服务器在复制时遭遇下线"></a>服务器在复制时遭遇下线</h2><p>在实际的世界中,因 为故障而导致服务器下线的情况总是不可避免的。</p>
+<p>在一个由主服 务器和从服务器组成的系统中,主服务器或者从服务器都有可能会下 线,但是不同服 务<br>器下线带来的影响并不相同:</p>
+<ul>
+<li>如果下线的是从服务器,那么整个系 统处理读请求的性能将有所下降,但 整个系统仍然可以继续处理写请求和读请求,所以这种下线不会导致系统停机;</li>
+<li>另一方面,因 为在整个系统里面,只有主服 务器一个能够处理写请求,所以如果下 线的是主服务器,那么整个系 统将只能处理读请求而无法处理写请求,导致系统停机。</li>
+</ul>
+<h2 id="从服务器下线示例"><a href="#从服务器下线示例" class="headerlink" title="从服务器下线示例"></a>从服务器下线示例</h2><p>从服务器 B 下线,导致客户端 C 的访问失败,但只要客户端 C 改为访问其他在线的服务器,就可以解决 这个问题。<br><img src="./images/redis_sd.png" alt=""></p>
+<h2 id="主服务器下线示例"><a href="#主服务器下线示例" class="headerlink" title="主服务器下线示例"></a>主服务器下线示例</h2><p>主服务器下线导致主从服务器的连接中断,并使得整个系 统无法再执行写命令。</p>
+<p>这时从服务器还是可以继续处理读请求的,但是从服 务器的数据会因为主服务器下线而没办法再得到更新。<br><img src="./images/redis_md.png" alt=""></p>
+<h2 id="让系统重新上线的方法"><a href="#让系统重新上线的方法" class="headerlink" title="让系统重新上线的方法"></a>让系统重新上线的方法</h2><p>为了让系统能够回到正常上线状态(也即是,让系统中的服务器既能够处理读请求,又能够处理写请求),用户需要向系统中的某一个从服 务器发送 <code>SLAVEOF no one</code> 命令,让它变为新的主服务器,并向其他从服务器发送 <code>SLAVEOF newip port</code>命令,让它们去复制新的从服 务器。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/22/redis/2014-12-22-Redis复制集/" data-id="cjpuvgbdq006x9zcp40hkim64" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-12-20-Redis管理工具" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/20/redis/2014-12-20-Redis管理工具/" class="article-date">
+  <time datetime="2014-12-19T16:00:00.000Z" itemprop="datePublished">2014-12-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/20/redis/2014-12-20-Redis管理工具/">Redis管理工具</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="RedisLive"><a href="#RedisLive" class="headerlink" title="RedisLive"></a>RedisLive</h1><p><a href="https://github.com/nkrode/RedisLive" target="_blank" rel="noopener">https://github.com/nkrode/RedisLive</a></p>
+<h1 id="redis-commander"><a href="#redis-commander" class="headerlink" title="redis-commander"></a>redis-commander</h1><p><a href="https://github.com/joeferner/redis-commander" target="_blank" rel="noopener">https://github.com/joeferner/redis-commander</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/20/redis/2014-12-20-Redis管理工具/" data-id="cjpuvgbdp006v9zcp5onz8lbj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-12-17-RedisLua脚本" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/17/redis/2014-12-17-RedisLua脚本/" class="article-date">
+  <time datetime="2014-12-16T16:00:00.000Z" itemprop="datePublished">2014-12-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/17/redis/2014-12-17-RedisLua脚本/">RedisLua脚本</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Lua脚本"><a href="#Lua脚本" class="headerlink" title="Lua脚本"></a>Lua脚本</h2><ol>
+<li><p>使用脚本可以直接在服 务器端执行 Redis 命令,一般的数据 处理操作可以直接使用 Lua 语言或者 Lua 解释器提供的函数 库来完成,不必再返回 给客户端进行处理。</p>
+</li>
+<li><p>所有脚本都是以事 务的形式来执行的,脚本在 执行过程中不会被其他工作打断,也不会引起任何 竞争条件,完全可以使用 Lua 脚本来代替事 务和乐观锁。</p>
+</li>
+<li><p>所有脚本都是可重用的,也即是 说,重复执行相同的操作 时,只要调用储存在服务器内部的脚本 缓存就可以了,不用重新 发送整个脚本,从而尽可能地 节约网络资源。</p>
+</li>
+</ol>
+<h2 id="执行-Lua-脚本"><a href="#执行-Lua-脚本" class="headerlink" title="执行 Lua 脚本"></a>执行 Lua 脚本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVAL script numkeys key [key ...] arg [arg ...]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>script 参数是要执行的 Lua 脚本。</li>
+<li>numkeys 是脚本要处理的数据库键的数量,之后的 key [key …] 参数指定了脚本要 处理的数据库键,被传入的键可以在脚本里面通 过访问 KEYS 数组来取得,比如 KEYS[1] 就取出第一个 输入的键,KEYS[2] 取出第二个输入的键,诸如此类。</li>
+<li>arg [arg …] 参数指定了脚本要用到的参数,在脚本里面可以通 过访问 ARGV 数组来获取这些参数。显式地指定脚本里面用到的 键是为了配合 Redis 集群对键的检查,如果不这样做的话,在集群里面使用脚本可能会出 错。</li>
+</ul>
+<p>另外,通过显式地指定脚本要用到的数据 库键以及相关参数,而不是将数据 库键和参数硬写在脚本里面,用户可以更方便地重用同一个脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;PING&apos;)&quot; 0   # 在 Lua 脚本里面执行 PING 命令</span><br><span class="line">PONG</span><br><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;DBSIZE&apos;)&quot; 0  # 在 Lua 脚本里面执行 DBSIZE 命令</span><br><span class="line">(integer) 4</span><br><span class="line"></span><br><span class="line"># 在 Lua 脚本里面执行 GET 命令,取出键 msg 的值,并对值进行字符串拼接操作</span><br><span class="line">redis&gt; SET msg &quot;hello world&quot;</span><br><span class="line">OK</span><br><span class="line">redis&gt; EVAL &quot;return &apos;The message is: &apos; .. redis.call(&apos;GET&apos;, KEYS[1]) &apos;&quot; 1 msg</span><br><span class="line">&quot;The message is: hello world&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="redis-call-和-redis-pcall-的区别"><a href="#redis-call-和-redis-pcall-的区别" class="headerlink" title="redis.call() 和 redis.pcall() 的区别"></a>redis.call() 和 redis.pcall() 的区别</h2><p>redis.call() 和 redis.pcall() 都可以用来执行 Redis 命令,它们的不同之处在于，当被执行的脚本出错时：</p>
+<ul>
+<li>redis.call() 会返回出错脚本的名字以及 EVAL 命令的错误信息</li>
+<li>redis.pcall() 只返回 EVAL 命令的错误信息。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return redis.call(&apos;NotExistsCommand&apos;)&quot; 0</span><br><span class="line">(error) ERR Error running script (call to f_ddabd662fa0a8e105765181ee7606562c1e6f1ce):</span><br><span class="line">@user_script:1: @user_script: 1: Unknown Redis command called from Lua script</span><br><span class="line"></span><br><span class="line">redis&gt; EVAL &quot;return redis.pcall(&apos;NotExistsCommand&apos;)&quot; 0</span><br><span class="line">(error) @user_script: 1: Unknown Redis command called from Lua script</span><br></pre></td></tr></table></figure>
+<p>换句话来说,在被执行的脚本出错时, redis.call() 可以提供更详细的错误信息,方便进行查错。</p>
+<h2 id="使用-EVALSHA-来减少网络资源损耗"><a href="#使用-EVALSHA-来减少网络资源损耗" class="headerlink" title="使用 EVALSHA 来减少网络资源损耗"></a>使用 EVALSHA 来减少网络资源损耗</h2><p>任何 Lua 脚本,只要被 EVAL 命令执行过一次,就会被 储存到服务器的脚本缓存里面,用户只要通过 EVALSHA 命令,指定被 缓存脚本的 SHA1 值,就可以在不 发送脚本的情况下,再次 执行脚本:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVALSHA sha1 numkeys key [key ...] arg [arg ...]</span><br></pre></td></tr></table></figure></p>
+<p>通过 SHA1 值来重用返回 ‘hello world’ 信息的脚本:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVAL &quot;return &apos;hello world&apos;&quot; 0</span><br><span class="line">&quot;hello world&quot;</span><br><span class="line">redis&gt; EVALSHA 5332031c6b470dc5a0dd9b4bf2030dea6d65de91 0</span><br><span class="line">&quot;hello world&quot;</span><br></pre></td></tr></table></figure></p>
+<p>通过 SHA1 值来重用之前实现的 ZDECRBY 命令,这样就不用每次都 发送整个脚本了:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; EVALSHA 918130cae39ff0759b8256948742f77300a91cb2 1 salary 500 peter</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure></p>
+<h2 id="脚本管理命令"><a href="#脚本管理命令" class="headerlink" title="脚本管理命令"></a>脚本管理命令</h2><p>检查 sha1 值所代表的脚本是否已经被加入到脚本缓存里面,是的话返回 1 ,不是的话返回 0 。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT EXISTS sha1 [sha1 ...]</span><br></pre></td></tr></table></figure></p>
+<p>将脚本储存到脚本缓存里面,等待将来 EVALSHA 使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT LOAD script</span><br></pre></td></tr></table></figure></p>
+<p>清除脚本缓存储存的所有脚本。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT FLUSH</span><br></pre></td></tr></table></figure></p>
+<p>杀死运行超时的脚本。如果脚本已经执行过写入操作,那么还需要使用 SHUTDOWN NOSAVE 命令来强制服务器不保存数据,以免错误的数据被保存到数据库里面。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SCRIPT KILL</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/17/redis/2014-12-17-RedisLua脚本/" data-id="cjpuvgbdp006t9zcphezhh8lv" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-12-14-Redis运行时更改master-slave" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" class="article-date">
+  <time datetime="2014-12-13T16:00:00.000Z" itemprop="datePublished">2014-12-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/">Redis运行时更改master-slave</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="运行时更改master-slave"><a href="#运行时更改master-slave" class="headerlink" title="运行时更改master-slave"></a>运行时更改master-slave</h2><ol>
+<li><p>修改一台slave(设为A)为new master </p>
+<ol>
+<li>命令该服务不做其他redis服务的slave <ul>
+<li>命令: <code>slaveof no one</code> </li>
+</ul>
+</li>
+<li>修改其readonly为yes</li>
+</ol>
+</li>
+<li><p>其他的slave再指向new master A</p>
+<ol>
+<li>命令该服务为new master A的slave<ul>
+<li>命令格式 <code>slaveof IP port</code></li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="监控工具-sentinel"><a href="#监控工具-sentinel" class="headerlink" title="监控工具 sentinel"></a>监控工具 sentinel</h2><ul>
+<li>Sentinel不断与master通信,获取master的slave信息.</li>
+<li>监听master与slave的状态</li>
+<li>如果某slave失效,直接通知master去除该slave.</li>
+<li>如果master失效,,是按照slave优先级(可配置), 选取1个slave做 new master,把其他slave–&gt; new master</li>
+</ul>
+<h2 id="疑问-sentinel与master通信-如果某次因为master-IO操作频繁-导致超时"><a href="#疑问-sentinel与master通信-如果某次因为master-IO操作频繁-导致超时" class="headerlink" title="疑问: sentinel与master通信,如果某次因为master IO操作频繁,导致超时,"></a>疑问: sentinel与master通信,如果某次因为master IO操作频繁,导致超时,</h2><ul>
+<li>此时,认为master失效,很武断.</li>
+<li>解决: sentnel允许多个实例看守1个master, 当N台(N可设置)sentinel都认为master失效,才正式失效.</li>
+</ul>
+<h2 id="Sentinel选项配置"><a href="#Sentinel选项配置" class="headerlink" title="Sentinel选项配置"></a>Sentinel选项配置</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">port 26379 # 端口</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 6379 2 # 给主机起的名字(不重即可), 当2个sentinel实例都认为master失效时,正式失效</span><br><span class="line"></span><br><span class="line">sentinel down-after-milliseconds mymaster 30000  # 多少毫秒后连接不到master认为断开</span><br><span class="line">sentinel can-failover mymaster yes #是否允许sentinel修改slave-&gt;master. 如为no,则只能监控,无权修改./</span><br><span class="line">sentinel parallel-syncs mymaster 1 # 一次性修改几个slave指向新的new master.</span><br><span class="line">sentinel client-reconfig-script mymaster /var/redis/reconfig.sh # 在重新配置new master,new slave过程,可以触发的脚本</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/14/redis/2014-12-14-Redis运行时更改master-slave/" data-id="cjpuvgbdo006r9zcp2ilkg8ki" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-redis/2014-12-13-Redis服务端命令" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2014/12/13/redis/2014-12-13-Redis服务端命令/" class="article-date">
+  <time datetime="2014-12-12T16:00:00.000Z" itemprop="datePublished">2014-12-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2014/12/13/redis/2014-12-13-Redis服务端命令/">Redis服务端命令</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="ping"><a href="#ping" class="headerlink" title="ping"></a>ping</h2><p>检查网络连接以及服务器是否正常运作。</p>
+<h2 id="time"><a href="#time" class="headerlink" title="time"></a>time</h2><p>显示服务器时间 , 时间戳(秒), 微秒数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; time </span><br><span class="line">1) &quot;1375270361&quot;</span><br><span class="line">2) &quot;504511&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="dbsize"><a href="#dbsize" class="headerlink" title="dbsize"></a>dbsize</h2><p> 当前数据库的key的数量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis 127.0.0.1:6380&gt; dbsize</span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure></p>
+<h2 id="BGREWRITEAOF"><a href="#BGREWRITEAOF" class="headerlink" title="BGREWRITEAOF"></a>BGREWRITEAOF</h2><p>后台进程重写AOF</p>
+<h2 id="BGSAVE"><a href="#BGSAVE" class="headerlink" title="BGSAVE"></a>BGSAVE</h2><p> 后台保存rdb快照</p>
+<h2 id="SAVE"><a href="#SAVE" class="headerlink" title="SAVE"></a>SAVE</h2><p> 保存rdb快照</p>
+<h2 id="LASTSAVE"><a href="#LASTSAVE" class="headerlink" title="LASTSAVE"></a>LASTSAVE</h2><p>上次保存时间</p>
+<h2 id="Slaveof-master-Host-port"><a href="#Slaveof-master-Host-port" class="headerlink" title="Slaveof master-Host port"></a>Slaveof master-Host port</h2><p> 把当前实例设为master的slave</p>
+<h2 id="Flushall"><a href="#Flushall" class="headerlink" title="Flushall"></a>Flushall</h2><p>清空所有库所有键 </p>
+<h2 id="Flushdb"><a href="#Flushdb" class="headerlink" title="Flushdb"></a>Flushdb</h2><p>清空当前库所有键</p>
+<h2 id="Showdown-save-nosave"><a href="#Showdown-save-nosave" class="headerlink" title="Showdown [save/nosave]"></a>Showdown [save/nosave]</h2><p>关闭保存，关闭bu保存</p>
+<h2 id="注-如果不小心运行了flushall"><a href="#注-如果不小心运行了flushall" class="headerlink" title="注: 如果不小心运行了flushall,"></a>注: 如果不小心运行了flushall,</h2><ul>
+<li>立即 shutdown nosave ,关闭服务器</li>
+<li>然后 手工编辑aof文件, 去掉文件中的 “flushall ”相关行, </li>
+<li>然后开启服务器,就可以导入回原来数据.</li>
+</ul>
+<h2 id="如果-flushall之后-系统恰好bgrewriteaof了-那么aof就清空了-数据丢失"><a href="#如果-flushall之后-系统恰好bgrewriteaof了-那么aof就清空了-数据丢失" class="headerlink" title="如果,flushall之后,系统恰好bgrewriteaof了,那么aof就清空了,数据丢失."></a>如果,flushall之后,系统恰好bgrewriteaof了,那么aof就清空了,数据丢失.</h2><h2 id="Slowlog"><a href="#Slowlog" class="headerlink" title="Slowlog"></a>Slowlog</h2><p>显示慢查询</p>
+<h3 id="注-多慢才叫慢"><a href="#注-多慢才叫慢" class="headerlink" title="注:多慢才叫慢?"></a>注:多慢才叫慢?</h3><p>答: 由slowlog-log-slower-than 10000 ,来指定,(单位是微秒)</p>
+<h3 id="服务器储存多少条慢查询的记录"><a href="#服务器储存多少条慢查询的记录" class="headerlink" title="服务器储存多少条慢查询的记录?"></a>服务器储存多少条慢查询的记录?</h3><p>答: 由 slowlog-max-len 128 ,来做限制</p>
+<h2 id="Info-Replication-CPU-Memory"><a href="#Info-Replication-CPU-Memory" class="headerlink" title="Info [Replication/CPU/Memory..]"></a>Info [Replication/CPU/Memory..]</h2><p>查看redis服务器的信息</p>
+<h2 id="Config-get-配置项"><a href="#Config-get-配置项" class="headerlink" title="Config get 配置项"></a>Config get 配置项</h2><h2 id="Config-set-配置项-值"><a href="#Config-set-配置项-值" class="headerlink" title="Config set 配置项 值"></a>Config set 配置项 值</h2><ul>
+<li>特殊的选项,不允许用此命令设置,如slave-of, 需要用单独的slaveof命令来设置</li>
+</ul>
+<h1 id="Redis运维时需要注意的参数"><a href="#Redis运维时需要注意的参数" class="headerlink" title="Redis运维时需要注意的参数"></a>Redis运维时需要注意的参数</h1><h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><p>内存信息,比如内存占用数量、使用的内存分配器等等。</p>
+<ul>
+<li><code>info Memory</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">used_memory:859192 数据结构的空间</span><br><span class="line">used_memory_rss:7634944 实占空间</span><br><span class="line">mem_fragmentation_ratio:8.89 前2者的比例,1.N为佳,如果此值过大,说明redis的内存的碎片化严重,可以导出再导入一次.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><p>和主从复制有关的信息,比如服 务器的角色、主从服 务器的连接状态是否正常等等。</p>
+<ul>
+<li><code>info Replication</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">role:slave</span><br><span class="line">master_host:192.168.1.128</span><br><span class="line">master_port:6379</span><br><span class="line">master_link_status:up</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h2><p>和 RDB 持久化以及 AOF 持久化有关的信息,比如 RDB 持久化是否正在 进行、AOF 文件重写是否正在 进行等等。</p>
+<ul>
+<li><code>info Persistence</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdb_changes_since_last_save:0</span><br><span class="line">rdb_last_save_time:1375224063</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="fork耗时"><a href="#fork耗时" class="headerlink" title="fork耗时"></a>fork耗时</h2><ul>
+<li><code>info Status</code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">latest_fork_usec:936  上次导出rdb快照,持久化花费微秒</span><br><span class="line">注意: 如果某实例有10G内容,导出需要2分钟,</span><br><span class="line">每分钟写入10000次,导致不断的rdb导出,磁盘始处于高IO状态.</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="server"><a href="#server" class="headerlink" title="server"></a>server</h2><p>服务器本身的信息,比如版本号、 监听端口号、服 务器 ID 等等。</p>
+<ul>
+<li><code>info Server</code></li>
+</ul>
+<h2 id="clients"><a href="#clients" class="headerlink" title="clients"></a>clients</h2><p>已连接客户端的信息,比如已 连接客户端的数量、正在被阻塞的客 户端数量等等。</p>
+<ul>
+<li><code>info Clients</code></li>
+</ul>
+<h2 id="stats"><a href="#stats" class="headerlink" title="stats"></a>stats</h2><p>服务器的统计信息,比如已 处理的命令请求数量、每秒 钟处理的命令请求数量等等。</p>
+<ul>
+<li><code>info Stats</code></li>
+</ul>
+<h2 id="cpu"><a href="#cpu" class="headerlink" title="cpu"></a>cpu</h2><p>服务器的系统 CPU 占用量和用户 CPU 占用量。</p>
+<ul>
+<li><code>info Cpu</code></li>
+</ul>
+<h2 id="commandstats"><a href="#commandstats" class="headerlink" title="commandstats"></a>commandstats</h2><p>命令执行的统计信息,比如命令 执行的次数、命令耗 费的 CPU 时间、执行每个命令耗费的平均 CPU 时间等等。</p>
+<ul>
+<li><code>info commandstats</code></li>
+</ul>
+<h2 id="cluster"><a href="#cluster" class="headerlink" title="cluster"></a>cluster</h2><p>集群功能的相关信息。</p>
+<ul>
+<li><code>info cluster</code></li>
+</ul>
+<h2 id="keyspace"><a href="#keyspace" class="headerlink" title="keyspace"></a>keyspace</h2><p>和数据库键空间有关的信息,比如数据库的键数量、数据库已经被删除的过期键数量等等。</p>
+<ul>
+<li><code>info keyspace</code></li>
+</ul>
+<h2 id="查看服务器正在执行的命令"><a href="#查看服务器正在执行的命令" class="headerlink" title="查看服务器正在执行的命令"></a>查看服务器正在执行的命令</h2><ul>
+<li><code>MONITOR</code><br>实时地打印出 Redis 服务器接收到的命令,格式 为“时间戳 [数据库号码 IP地址和端口号 ] 被执行的命<br>令”。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; MONITOR</span><br><span class="line">OK</span><br><span class="line">1378822099.421623 [0 127.0.0.1:56604] &quot;PING&quot;</span><br><span class="line">1378822105.089572 [0 127.0.0.1:56604] &quot;SET&quot; &quot;msg&quot; &quot;hello world&quot;</span><br><span class="line">1378822109.036925 [0 127.0.0.1:56604] &quot;SET&quot; &quot;number&quot; &quot;123&quot;</span><br><span class="line">1378822140.649496 [0 127.0.0.1:56604] &quot;SADD&quot; &quot;fruits&quot; &quot;Apple&quot; &quot;Banana&quot; &quot;Cherry&quot;</span><br><span class="line">1378822154.117160 [0 127.0.0.1:56604] &quot;EXPIRE&quot; &quot;msg&quot; &quot;10086&quot;</span><br><span class="line">1378822257.329412 [0 127.0.0.1:56604] &quot;KEYS&quot; &quot;*&quot;</span><br><span class="line">1378822258.690131 [0 127.0.0.1:56604] &quot;DBSIZE&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="慢日志"><a href="#慢日志" class="headerlink" title="慢日志"></a>慢日志</h2><p>Redis 的慢查询功能用于将执行时间超过指定时长的命令记录起来,并向用 户展示那些被记录的命令,方便用户发现运行缓慢的命令,并 进行针对性的优化。</p>
+<p>慢查询功能可以通过以下两个配置 选项来进行设置:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slowlog-log-slower-than &lt;microseconds&gt;</span><br></pre></td></tr></table></figure></p>
+<p>执行时长超过 microseconds 微秒的命令将被 记录,将这个值设置为负数表示关闭慢查询功能。</p>
+<p>默认值为 10000 ,也即是 1/100 秒,因为 1 秒 = 1 百万微秒。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">slowlog-max-len &lt;length&gt;</span><br></pre></td></tr></table></figure></p>
+<p>慢查询日志的最大数量,当 记录的日志超过这个数量时,新日志会覆盖旧日志( FIFO)。默认值为 128 。</p>
+<h3 id="查看慢查询日志"><a href="#查看慢查询日志" class="headerlink" title="查看慢查询日志"></a>查看慢查询日志</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SLOWLOG GET [number]</span><br></pre></td></tr></table></figure>
+<p>返回服务器目前记录的慢查询日志。</p>
+<p>如果给定可选的 number 参数,那么只返回最多 number 条日志;否则的话,返回所有慢 查询日志。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 为测试需要,将 slowlog-log-slower-than 设成了 10 微秒</span><br><span class="line">redis&gt; SLOWLOG GET</span><br><span class="line">1) 1) (integer) 12</span><br><span class="line"># 唯一的日志标识符</span><br><span class="line">2) (integer) 1324097834</span><br><span class="line"># 被记录命令的执行时间,以 UNIX 时间戳格式表示</span><br><span class="line">3) (integer) 16</span><br><span class="line"># 命令执行耗费的时长,以微秒为单位</span><br><span class="line">4) 1) &quot;CONFIG&quot;</span><br><span class="line"># 被执行的命令,以数 组的形式排列</span><br><span class="line">2) &quot;GET&quot;</span><br><span class="line"># 这里完整的命令是 CONFIG GET slowlog-log-slower-than</span><br><span class="line">3) &quot;slowlog-log-slower-than&quot;</span><br></pre></td></tr></table></figure></p>
+<h3 id="查看目前已有的慢-查询日志数量。"><a href="#查看目前已有的慢-查询日志数量。" class="headerlink" title="查看目前已有的慢 查询日志数量。"></a>查看目前已有的慢 查询日志数量。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SLOWLOG LEN</span><br><span class="line">(integer) 14</span><br></pre></td></tr></table></figure>
+<h3 id="删除所有慢查询日志。"><a href="#删除所有慢查询日志。" class="headerlink" title="删除所有慢查询日志。"></a>删除所有慢查询日志。</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SLOWLOG RESET</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">config get/set slowlog-log-slower-than</span><br><span class="line">CONFIG get/SET slowlog-max-len </span><br><span class="line">slowlog get N 获取慢日志</span><br></pre></td></tr></table></figure>
+<h2 id="关闭服务器"><a href="#关闭服务器" class="headerlink" title="关闭服务器"></a>关闭服务器</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHUTDOWN [option]</span><br></pre></td></tr></table></figure>
+<p>在不给定 option 参数的情况下,服 务器会先执行持久化操作:</p>
+<ul>
+<li>如果打开了 AOF 持久化,那么 调用 fdatasync ,确保之前执行的命令能够被写入到硬盘。</li>
+<li>如果打开了 RDB 持久化并且数据 库已经发生了变化,那么执行 SAVE 命令。</li>
+</ul>
+<p>在以上操作都完成之后,服 务器关闭。</p>
+<p>在打开了持久化功能的情况下,使用 SHUTDOWN 命令关闭服务器不会丢失任何数据。</p>
+<p>option 选项的值可以是 save 或者 nosave :</p>
+<ul>
+<li>SHUTDOWN save 在关闭之前总是执行 SAVE 命令,用于在没有开启 RDB 持久化的情况下,创建一个 RDB 文件来保存数据;</li>
+<li>SHUTDOWN nosave 在关闭之前不执行 SAVE 命令,用于在数据 库可能已经出错的情况下,避免将错误的数据保存到 RDB 文件里面。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yacen.github.io/2014/12/13/redis/2014-12-13-Redis服务端命令/" data-id="cjpuvgbdn006p9zcpwtdipu7u" class="article-share-link">Share</a>
       
       
     </footer>
@@ -669,7 +879,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
   </nav>
 
 </section>
@@ -680,7 +890,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Categories</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Mysql/">Mysql</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Nginx/">Nginx</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/docker/">docker</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/egg/">egg</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/mongodb/">mongodb</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs/">nodejs</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/nodejs-yaml/">nodejs yaml</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/redis/">redis</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/request/">request</a></li></ul>
     </div>
   </div>
 
@@ -709,7 +919,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/06/">June 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">May 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">July 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/12/">December 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">August 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/07/">July 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/06/">June 2014</a></li></ul>
     </div>
   </div>
 
